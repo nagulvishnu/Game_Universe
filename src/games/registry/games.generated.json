@@ -1,0 +1,252 @@
+{
+  "games": [
+    {
+      "id": "dropzone-50",
+      "title": "Dropzone 50",
+      "description": "A 3D battle royale. Insert into the drop, scavenge weapons and armour, and fight it out to be the last one standing.",
+      "genre": "Battle Royale",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "0.1.0",
+      "tags": [
+        "Battle Royale",
+        "Aerial Insertion",
+        "Squad",
+        "Shooter",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Space",
+        "1-3",
+        "E",
+        "R"
+      ],
+      "featured": true,
+      "status": "playable",
+      "developer": "Game Universe",
+      "flagship": false,
+      "folder": "3d-battle-royale-game",
+      "external": false,
+      "launchUrl": "/play/3d-battle-royale-game/dist/index.html",
+      "thumbnailUrl": "/play/3d-battle-royale-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "turbo-horizon",
+      "title": "Turbo Horizon",
+      "description": "A high-octane 3D arcade racing game. Five tracks, six cars, changing weather and AI rivals to fight through. Chase your best lap time.",
+      "genre": "Racing",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "0.1.0",
+      "tags": [
+        "Racing",
+        "Arcade",
+        "Cars",
+        "Tracks",
+        "Weather",
+        "AI Rivals"
+      ],
+      "controls": [
+        "WASD",
+        "Arrow Keys",
+        "Space"
+      ],
+      "featured": true,
+      "status": "playable",
+      "developer": "Game Universe",
+      "flagship": false,
+      "folder": "3d-car-racing-game",
+      "external": false,
+      "launchUrl": "/play/3d-car-racing-game/dist/index.html",
+      "thumbnailUrl": "/play/3d-car-racing-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "ai-beast-world",
+      "title": "AI Beast World",
+      "description": "An open-world fantasy action RPG. Hunt beasts across a procedural island, chain melee combos, parry and cast, dive the deep water, awaken waystones, loot gear, and challenge The Warden.",
+      "genre": "RPG",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "0.1.0",
+      "tags": [
+        "Action RPG",
+        "Open World",
+        "Fantasy",
+        "Beasts",
+        "Exploration",
+        "Boss Fight"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "LMB / J",
+        "Shift",
+        "Space",
+        "F",
+        "Tab"
+      ],
+      "featured": true,
+      "status": "playable",
+      "developer": "Game Universe",
+      "flagship": true,
+      "folder": "build-ai-beast-world-rpg",
+      "external": false,
+      "launchUrl": "/play/build-ai-beast-world-rpg/dist/index.html",
+      "thumbnailUrl": "/play/build-ai-beast-world-rpg/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "monster-quest",
+      "title": "Monster Quest",
+      "description": "A turn-based creature RPG in the style of the classic monster-catcher games. Pick a starter, battle wild monsters, throw capture orbs, and beat the Gym Leader in each of 8 regions to reach the Championship Tournament.",
+      "genre": "RPG",
+      "category": "2D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "0.1.0",
+      "tags": [
+        "Turn-Based",
+        "Monster",
+        "Fantasy",
+        "Adventure",
+        "Capture",
+        "Types"
+      ],
+      "controls": [
+        "WASD",
+        "1-4",
+        "Enter",
+        "Esc"
+      ],
+      "featured": true,
+      "status": "playable",
+      "developer": "Game Universe",
+      "flagship": false,
+      "folder": "build-pokemon-inspired-browser-game",
+      "external": false,
+      "launchUrl": "/play/build-pokemon-inspired-browser-game/dist/index.html",
+      "thumbnailUrl": "/play/build-pokemon-inspired-browser-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "neon-front",
+      "title": "Neon Front",
+      "description": "A 2D action shooter. Dash and boost, throw grenades, melee, and spend your charge on an ultimate while the neon front pushes back.",
+      "genre": "Shooter",
+      "category": "2D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "0.1.0",
+      "tags": [
+        "Action",
+        "Shooter",
+        "Dash",
+        "Grenades",
+        "Vehicles"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Shift",
+        "Q",
+        "Space",
+        "G",
+        "V"
+      ],
+      "featured": true,
+      "status": "playable",
+      "developer": "Game Universe",
+      "flagship": false,
+      "folder": "feature-rich-2d-game-ideas",
+      "external": false,
+      "launchUrl": "/play/feature-rich-2d-game-ideas/dist/index.html",
+      "thumbnailUrl": "/play/feature-rich-2d-game-ideas/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "bastion-defense",
+      "title": "Bastion Defense",
+      "description": "A multi-level strategy tower defence. Place and upgrade five tower types, set their targeting, sell and retool, and control the wave speed as the siege escalates.",
+      "genre": "Strategy",
+      "category": "2D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "0.1.0",
+      "tags": [
+        "Tower Defense",
+        "Strategy",
+        "Waves",
+        "Upgrades"
+      ],
+      "controls": [
+        "1-5",
+        "Space",
+        "U",
+        "S",
+        "T",
+        "F",
+        "P"
+      ],
+      "featured": true,
+      "status": "playable",
+      "developer": "Game Universe",
+      "flagship": false,
+      "folder": "multi-level-interactive-strategy-game",
+      "external": false,
+      "launchUrl": "/play/multi-level-interactive-strategy-game/dist/index.html",
+      "thumbnailUrl": "/play/multi-level-interactive-strategy-game/thumbnail.svg",
+      "bannerUrl": null
+    }
+  ],
+  "diagnostics": [
+    {
+      "folder": "3d-battle-royale-game",
+      "id": "dropzone-50",
+      "title": "Dropzone 50",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "3d-car-racing-game",
+      "id": "turbo-horizon",
+      "title": "Turbo Horizon",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "build-ai-beast-world-rpg",
+      "id": "ai-beast-world",
+      "title": "AI Beast World",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "build-pokemon-inspired-browser-game",
+      "id": "monster-quest",
+      "title": "Monster Quest",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "feature-rich-2d-game-ideas",
+      "id": "neon-front",
+      "title": "Neon Front",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "multi-level-interactive-strategy-game",
+      "id": "bastion-defense",
+      "title": "Bastion Defense",
+      "level": "ok",
+      "messages": []
+    }
+  ]
+}

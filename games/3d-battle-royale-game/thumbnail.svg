@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Dropzone 50">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d2a52"/>
+      <stop offset="55%" stop-color="#2f6fb5"/>
+      <stop offset="100%" stop-color="#8fc4ea"/>
+    </linearGradient>
+    <linearGradient id="chute" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#bcd9f2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#sky)"/>
+  <circle cx="948" cy="132" r="58" fill="#eaf6ff" opacity="0.9"/>
+  <g fill="#ffffff" opacity="0.75">
+    <ellipse cx="250" cy="140" rx="96" ry="34"/>
+    <ellipse cx="322" cy="126" rx="64" ry="26"/>
+    <ellipse cx="820" cy="228" rx="78" ry="26" opacity="0.6"/>
+    <ellipse cx="452" cy="252" rx="58" ry="20" opacity="0.5"/>
+  </g>
+  <g stroke="#6fb7ff" stroke-width="3" stroke-dasharray="10 12" opacity="0.55" fill="none">
+    <path d="M600 236 L560 356"/>
+    <path d="M600 236 L640 356"/>
+  </g>
+  <path d="M600 236 C520 236 452 292 452 292 C452 292 520 336 600 336 C680 336 748 292 748 292 C748 292 680 236 600 236 Z" fill="url(#chute)"/>
+  <path d="M600 236 L600 336" stroke="#8fb4d6" stroke-width="3"/>
+  <path d="M530 262 L600 336 L670 262" fill="none" stroke="#8fb4d6" stroke-width="3"/>
+  <circle cx="600" cy="382" r="20" fill="#12314f"/>
+  <rect x="586" y="400" width="28" height="52" rx="12" fill="#12314f"/>
+  <rect x="566" y="412" width="20" height="46" rx="10" fill="#12314f"/>
+  <rect x="614" y="412" width="20" height="46" rx="10" fill="#12314f"/>
+  <g fill="#2f6fb5" opacity="0.85">
+    <path d="M0 520 L150 470 L300 516 L470 462 L640 514 L820 466 L990 520 L1200 470 L1200 630 L0 630 Z"/>
+    <path d="M0 578 L180 540 L360 584 L560 542 L760 588 L960 546 L1200 590 L1200 630 L0 630 Z" fill="#1c4a7d"/>
+  </g>
+  <text x="600" y="140" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="66" font-weight="bold" letter-spacing="8" fill="#ffffff">DROPZONE 50</text>
+  <text x="600" y="180" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="26" font-weight="bold" letter-spacing="10" fill="#cfe6ff">BATTLE ROYALE</text>
+  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#6fb7ff" stroke-opacity="0.55" stroke-width="3"/>
+</svg>

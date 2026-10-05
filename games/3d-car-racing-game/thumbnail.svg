@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Turbo Horizon">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a0530"/>
+      <stop offset="55%" stop-color="#4a0a4e"/>
+      <stop offset="100%" stop-color="#12021f"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a1140"/>
+      <stop offset="100%" stop-color="#0d0418"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffe9a0"/>
+      <stop offset="55%" stop-color="#ff3df2"/>
+      <stop offset="100%" stop-color="#b3168f"/>
+    </linearGradient>
+    <linearGradient id="streak" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#38e8ff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#38e8ff" stop-opacity="0.9"/>
+    </linearGradient>
+    <clipPath id="half"><rect x="0" y="0" width="600" height="630"/></clipPath>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#sky)"/>
+
+  <g opacity="0.85">
+    <circle cx="600" cy="300" r="150" fill="#ff3df2" opacity="0.18"/>
+    <circle cx="600" cy="300" r="96" fill="url(#sun)"/>
+    <g stroke="#12021f" stroke-width="7" opacity="0.75">
+      <rect x="504" y="238" width="192" height="9"/>
+      <rect x="504" y="262" width="192" height="9"/>
+      <rect x="504" y="286" width="192" height="9"/>
+      <rect x="504" y="310" width="192" height="9"/>
+      <rect x="504" y="334" width="192" height="9"/>
+    </g>
+  </g>
+
+  <path d="M600 396 L1050 630 L150 630 Z" fill="url(#road)"/>
+  <path d="M600 396 L640 630 L560 630 Z" fill="#0a0114" opacity="0.85"/>
+
+  <g stroke="url(#streak)" stroke-width="4" stroke-linecap="round" opacity="0.8">
+    <line x1="60" y1="150" x2="330" y2="150"/>
+    <line x1="120" y1="196" x2="300" y2="196"/>
+    <line x1="30" y1="242" x2="250" y2="242"/>
+    <line x1="900" y1="150" x2="1170" y2="150"/>
+    <line x1="900" y1="196" x2="1080" y2="196"/>
+    <line x1="950" y1="242" x2="1170" y2="242"/>
+  </g>
+
+  <g fill="#38e8ff" opacity="0.9">
+    <rect x="592" y="420" width="16" height="26" rx="4"/>
+    <rect x="592" y="462" width="16" height="34" rx="4"/>
+    <rect x="592" y="516" width="16" height="46" rx="4"/>
+  </g>
+
+  <g clip-path="url(#half)">
+    <rect x="0" y="546" width="600" height="21" fill="#f4f6ff"/>
+    <g fill="#161033">
+      <rect x="0" y="546" width="30" height="21"/><rect x="60" y="546" width="30" height="21"/>
+      <rect x="120" y="546" width="30" height="21"/><rect x="180" y="546" width="30" height="21"/>
+      <rect x="240" y="546" width="30" height="21"/><rect x="300" y="546" width="30" height="21"/>
+      <rect x="360" y="546" width="30" height="21"/><rect x="420" y="546" width="30" height="21"/>
+      <rect x="480" y="546" width="30" height="21"/><rect x="540" y="546" width="30" height="21"/>
+    </g>
+  </g>
+
+  <text x="600" y="470" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="76" font-weight="bold" letter-spacing="6" fill="#ffffff" opacity="0.96">TURBO</text>
+  <text x="600" y="524" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="52" font-weight="bold" letter-spacing="14" fill="#38e8ff">HORIZON</text>
+
+  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#ff3df2" stroke-opacity="0.45" stroke-width="3"/>
+</svg>

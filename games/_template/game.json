@@ -1,0 +1,17 @@
+{
+  "id": "my-new-game",
+  "title": "My New Game",
+  "description": "One or two sentences that sell the game.",
+  "genre": "Adventure",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.webp",
+  "banner": "banner.webp",
+  "entry": "index.html",
+  "featured": false,
+  "tags": ["3D", "Adventure"],
+  "controls": ["WASD", "Mouse", "Space"],
+  "status": "playable",
+  "developer": "Your Name",
+  "releaseDate": "2026-01-01"
+}

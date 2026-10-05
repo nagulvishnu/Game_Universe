@@ -1,0 +1,14 @@
+{
+  "id": "monster-quest",
+  "title": "Monster Quest",
+  "description": "A turn-based creature RPG in the style of the classic monster-catcher games. Pick a starter, battle wild monsters, throw capture orbs, and beat the Gym Leader in each of 8 regions to reach the Championship Tournament.",
+  "genre": "RPG",
+  "category": "2D",
+  "entry": "dist/index.html",
+  "version": "0.1.0",
+  "developer": "Game Universe",
+  "tags": ["Turn-Based", "Monster", "Fantasy", "Adventure", "Capture", "Types"],
+  "controls": ["WASD", "1-4", "Enter", "Esc"],
+  "featured": true,
+  "status": "playable"
+}

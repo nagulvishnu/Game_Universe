@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #0b0a14;
+  --panel: rgba(14, 12, 28, 0.78);
+  --edge: rgba(255, 214, 140, 0.35);
+  --gold: #ffd98a;
+  --ember: #ff8a4a;
+  --aether: #7ae8ff;
+  --violet: #b070ff;
+}
+html, body, #root { height: 100%; margin: 0; background: #05040a; overflow: hidden; overscroll-behavior: none; }
+body { font-family: "Rajdhani", "Trebuchet MS", system-ui, sans-serif; color: #f4ecd8; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: none; }
+.font-title { font-family: "Cinzel", Georgia, "Times New Roman", serif; letter-spacing: 0.08em; }
+.panel { background: var(--panel); border: 1px solid var(--edge); border-radius: 10px; backdrop-filter: blur(6px); box-shadow: 0 6px 30px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.03); }
+.btn {
+  position: relative; padding: 0.7rem 1.4rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; font-size: .95rem;
+  color: #fff3d6; background: linear-gradient(180deg, rgba(255,160,80,.28), rgba(120,50,20,.35)); border: 1px solid rgba(255,200,120,.55);
+  border-radius: 6px; cursor: pointer; transition: transform .12s, box-shadow .2s, background .2s; text-shadow: 0 1px 4px #000;
+}
+.btn:hover { transform: translateY(-1px) scale(1.02); box-shadow: 0 0 22px rgba(255,150,70,.55); background: linear-gradient(180deg, rgba(255,180,100,.4), rgba(150,60,20,.5)); }
+.btn:active { transform: scale(.98); }
+.btn.ghost { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.25); }
+.btn.ghost:hover { box-shadow: 0 0 16px rgba(255,255,255,.2); background: rgba(255,255,255,.1); }
+.tab { padding: .45rem 1rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; font-size: .85rem; border-bottom: 2px solid transparent; color: #b9ad94; cursor: pointer; }
+.tab.on { color: var(--gold); border-color: var(--gold); text-shadow: 0 0 12px rgba(255,200,100,.6); }
+.bar { position: relative; height: 12px; border-radius: 3px; background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.2); overflow: hidden; }
+.bar > i { position: absolute; left: 0; top: 0; bottom: 0; display: block; transition: width .12s linear; }
+.keycap { display: inline-flex; align-items: center; justify-content: center; min-width: 1.4em; padding: 0 .35em; height: 1.4em; font-size: .75em; font-weight: 700; border: 1px solid rgba(255,255,255,.5); border-radius: 4px; background: rgba(0,0,0,.55); color: #fff; }
+@keyframes bannerIn { 0% { opacity: 0; transform: translateY(-14px) scale(1.15); letter-spacing: .5em; } 12% { opacity: 1; transform: none; letter-spacing: .14em; } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(6px); } }
+@keyframes toastIn { 0% { opacity: 0; transform: translateX(-20px); } 10% { opacity: 1; transform: none; } 85% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes pulseGlow { 0%,100% { box-shadow: 0 0 6px rgba(255,200,100,.4); } 50% { box-shadow: 0 0 22px rgba(255,200,100,.95); } }
+@keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes flicker { 0%,100% { opacity: 1; } 50% { opacity: .75; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.anim-banner { animation: bannerIn 4s ease-out forwards; }
+.anim-toast { animation: toastIn 3.4s ease-out forwards; }
+.anim-up { animation: slideUp .5s ease-out both; }
+.ready { animation: pulseGlow 1s infinite; }
+input[type=range] { accent-color: #ffb066; }
+::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-thumb { background: rgba(255,200,120,.35); border-radius: 4px; }
+.scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; }

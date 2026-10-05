@@ -1,0 +1,14 @@
+{
+  "id": "ai-beast-world",
+  "title": "AI Beast World",
+  "description": "An open-world fantasy action RPG. Hunt beasts across a procedural island, chain melee combos, parry and cast, dive the deep water, awaken waystones, loot gear, and challenge The Warden.",
+  "genre": "RPG",
+  "category": "3D",
+  "entry": "dist/index.html",
+  "version": "0.1.0",
+  "developer": "Game Universe",
+  "tags": ["Action RPG", "Open World", "Fantasy", "Beasts", "Exploration", "Boss Fight"],
+  "controls": ["WASD", "Mouse", "LMB / J", "Shift", "Space", "F", "Tab"],
+  "featured": true,
+  "status": "playable"
+}

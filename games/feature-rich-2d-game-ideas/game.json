@@ -1,0 +1,14 @@
+{
+  "id": "neon-front",
+  "title": "Neon Front",
+  "description": "A 2D action shooter. Dash and boost, throw grenades, melee, and spend your charge on an ultimate while the neon front pushes back.",
+  "genre": "Shooter",
+  "category": "2D",
+  "entry": "dist/index.html",
+  "version": "0.1.0",
+  "developer": "Game Universe",
+  "tags": ["Action", "Shooter", "Dash", "Grenades", "Vehicles"],
+  "controls": ["WASD", "Mouse", "Shift", "Q", "Space", "G", "V"],
+  "featured": true,
+  "status": "playable"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "turbo-horizon",
+  "title": "Turbo Horizon",
+  "description": "A high-octane 3D arcade racing game. Five tracks, six cars, changing weather and AI rivals to fight through. Chase your best lap time.",
+  "genre": "Racing",
+  "category": "3D",
+  "entry": "dist/index.html",
+  "version": "0.1.0",
+  "developer": "Game Universe",
+  "tags": ["Racing", "Arcade", "Cars", "Tracks", "Weather", "AI Rivals"],
+  "controls": ["WASD", "Arrow Keys", "Space"],
+  "featured": true,
+  "status": "playable"
+}

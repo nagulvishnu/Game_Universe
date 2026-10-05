@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Neon Front">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a0a06"/>
+      <stop offset="60%" stop-color="#16060b"/>
+      <stop offset="100%" stop-color="#080308"/>
+    </linearGradient>
+    <linearGradient id="tracer" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff7a2d" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffd24d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g stroke="#ff7a2d" stroke-width="7" stroke-linecap="round" opacity="0.95">
+    <line x1="40" y1="196" x2="470" y2="196"/>
+    <line x1="60" y1="252" x2="360" y2="252"/>
+    <line x1="20" y1="432" x2="430" y2="432"/>
+  </g>
+  <g stroke="#ffd24d" stroke-width="5" stroke-linecap="round" opacity="0.85">
+    <line x1="730" y1="222" x2="1170" y2="222"/>
+    <line x1="840" y1="278" x2="1170" y2="278"/>
+    <line x1="770" y1="410" x2="1150" y2="410"/>
+  </g>
+  <g stroke="url(#tracer)" stroke-width="3" opacity="0.7">
+    <line x1="200" y1="330" x2="520" y2="330"/>
+  </g>
+  <g transform="translate(600 300)" fill="none" stroke="#ffd24d" stroke-width="7">
+    <circle r="86"/>
+    <path d="M0 -128 v46 M0 128 v-46 M-128 0 h46 M128 0 h-46"/>
+    <circle r="7" fill="#ff7a2d" stroke="none"/>
+  </g>
+  <g fill="#ff7a2d" opacity="0.9">
+    <circle cx="452" cy="252" r="7"/><circle cx="760" cy="278" r="6"/>
+    <circle cx="520" cy="368" r="5"/><circle cx="694" cy="330" r="5"/>
+  </g>
+  <text x="600" y="128" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="64" font-weight="bold" letter-spacing="8" fill="#ffffff">NEON FRONT</text>
+  <text x="600" y="512" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="26" font-weight="bold" letter-spacing="10" fill="#ff7a2d">2D ACTION SHOOTER</text>
+  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#ff7a2d" stroke-opacity="0.5" stroke-width="3"/>
+</svg>

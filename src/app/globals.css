@@ -1,0 +1,936 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: "Orbitron Variable", "Orbitron", "Eurostile", "Bank Gothic", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Rajdhani", "Segoe UI", system-ui, sans-serif;
+  --color-void: #04040b;
+  --color-ink: #e8ecff;
+  --color-dim: #9aa4cf;
+  --color-neon: #38e8ff;
+  --color-violet: #8b5cff;
+  --color-magenta: #ff3df2;
+  --color-amber: #ffb84d;
+  --color-danger: #ff4d6d;
+}
+
+:root {
+  --gu-cyan: #38e8ff;
+  --gu-violet: #8b5cff;
+  --gu-magenta: #ff3df2;
+  --gu-line: rgba(130, 165, 255, 0.2);
+  --gu-glass: rgba(9, 11, 28, 0.62);
+  --gu-nav-h: 64px;
+}
+
+html {
+  background: #04040b;
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: transparent;
+  color: #e8ecff;
+  font-family: var(--font-body);
+  font-size: 1.12rem;
+  line-height: 1.45;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(56, 232, 255, 0.35);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #070818;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a3170;
+  border: 2px solid #070818;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3b46a0;
+}
+
+/* ---------- focus ---------- */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid var(--gu-cyan);
+  outline-offset: 3px;
+}
+.gu-clip:focus-visible,
+.gu-btn:focus-visible,
+.gu-chip:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px #fff, 0 0 0 2px var(--gu-cyan);
+  background: rgba(56, 232, 255, 0.28);
+}
+
+.skip-link {
+  position: fixed;
+  left: 12px;
+  top: -60px;
+  z-index: 200;
+  background: #fff;
+  color: #000;
+  padding: 10px 16px;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+/* ---------- typography ---------- */
+.font-display {
+  font-family: var(--font-display);
+}
+.gu-kicker {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gu-cyan);
+}
+.gu-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.02;
+}
+.gu-glow-text {
+  text-shadow: 0 0 24px rgba(56, 232, 255, 0.45), 0 0 60px rgba(139, 92, 255, 0.35);
+}
+.gu-gradient-text {
+  background: linear-gradient(100deg, #fff 10%, #38e8ff 50%, #b07cff 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- atmosphere ---------- */
+.gu-atmo {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 700px at 12% 8%, rgba(90, 43, 255, 0.24), transparent 60%),
+    radial-gradient(900px 600px at 88% 28%, rgba(0, 168, 255, 0.14), transparent 60%),
+    radial-gradient(1000px 700px at 50% 112%, rgba(255, 43, 214, 0.13), transparent 60%),
+    #04040b;
+}
+.gu-atmo::before,
+.gu-atmo::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background-image:
+    radial-gradient(1.2px 1.2px at 20px 30px, #fff, transparent),
+    radial-gradient(1px 1px at 90px 120px, #9fd8ff, transparent),
+    radial-gradient(1.4px 1.4px at 160px 60px, #fff, transparent),
+    radial-gradient(1px 1px at 230px 180px, #d8c4ff, transparent),
+    radial-gradient(1.2px 1.2px at 300px 90px, #fff, transparent);
+  background-size: 340px 240px;
+  opacity: 0.55;
+  animation: gu-drift 160s linear infinite;
+}
+.gu-atmo::after {
+  background-size: 520px 380px;
+  opacity: 0.35;
+  animation-duration: 260s;
+  animation-direction: reverse;
+}
+.gu-atmo-grid {
+  position: absolute;
+  left: -20%;
+  right: -20%;
+  bottom: -10%;
+  height: 55%;
+  background-image:
+    linear-gradient(rgba(56, 232, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 232, 255, 0.16) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: perspective(500px) rotateX(62deg);
+  transform-origin: bottom;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent 85%);
+  opacity: 0.5;
+}
+@keyframes gu-drift {
+  to {
+    transform: translate3d(-340px, 240px, 0);
+  }
+}
+
+/* ---------- glass panels / buttons ---------- */
+.gu-clip {
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+.gu-clip-sm {
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px));
+}
+.gu-panel {
+  background: var(--gu-glass);
+  border: 1px solid var(--gu-line);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+}
+
+.gu-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.74rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #e8ecff;
+  background: rgba(20, 26, 70, 0.55);
+  border: 1px solid rgba(130, 165, 255, 0.4);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  cursor: pointer;
+  overflow: hidden;
+  transition: background 0.25s, color 0.25s, transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.gu-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s;
+}
+.gu-btn:hover:not(:disabled)::after {
+  transform: translateX(120%);
+}
+.gu-btn:hover:not(:disabled) {
+  border-color: var(--gu-cyan);
+  background: rgba(56, 232, 255, 0.16);
+  transform: translateY(-1px);
+}
+.gu-btn--primary {
+  color: #03121a;
+  background: linear-gradient(100deg, #38e8ff, #8b9cff);
+  border-color: transparent;
+  box-shadow: 0 0 28px rgba(56, 232, 255, 0.35);
+}
+.gu-btn--primary:hover:not(:disabled) {
+  background: linear-gradient(100deg, #7df2ff, #b3bdff);
+  box-shadow: 0 0 40px rgba(56, 232, 255, 0.6);
+}
+.gu-btn--primary:focus-visible {
+  background: #fff;
+  color: #000;
+}
+.gu-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.gu-btn--sm {
+  padding: 0.55rem 1rem;
+  font-size: 0.66rem;
+}
+
+.gu-chip {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.9rem;
+  color: #b8c2ee;
+  background: rgba(15, 20, 55, 0.6);
+  border: 1px solid rgba(130, 165, 255, 0.25);
+  cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.gu-chip:hover {
+  color: #fff;
+  border-color: var(--gu-cyan);
+}
+.gu-chip[aria-pressed="true"],
+.gu-chip[aria-current="true"] {
+  color: #03121a;
+  background: var(--gu-cyan);
+  border-color: var(--gu-cyan);
+  box-shadow: 0 0 18px rgba(56, 232, 255, 0.45);
+}
+.gu-chip small {
+  opacity: 0.65;
+  margin-left: 0.4em;
+  font-size: 0.85em;
+}
+
+.gu-tag {
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.55rem;
+  border: 1px solid rgba(130, 165, 255, 0.3);
+  color: #b8c2ee;
+}
+
+.gu-key {
+  display: inline-block;
+  min-width: 2.2rem;
+  padding: 0.3rem 0.7rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: #e8ecff;
+  background: linear-gradient(#1a2158, #0e1235);
+  border: 1px solid rgba(130, 165, 255, 0.45);
+  border-bottom-width: 3px;
+}
+
+.gu-input {
+  width: 100%;
+  padding: 0.95rem 1.1rem 0.95rem 3rem;
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  color: #fff;
+  background: rgba(8, 10, 30, 0.75);
+  border: 1px solid rgba(130, 165, 255, 0.3);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.gu-input::placeholder {
+  color: #7480b5;
+}
+.gu-input:focus {
+  outline: none;
+  border-color: var(--gu-cyan);
+  box-shadow: 0 0 0 1px var(--gu-cyan), 0 0 28px rgba(56, 232, 255, 0.2);
+}
+
+/* ---------- navigation ---------- */
+.gu-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: var(--gu-nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(1rem, 3vw, 2.5rem);
+  background: linear-gradient(to bottom, rgba(4, 4, 11, 0.85), rgba(4, 4, 11, 0));
+}
+.gu-nav a.gu-navlink,
+.gu-nav button.gu-navlink {
+  position: relative;
+  padding: 0.5rem 0.2rem;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #aab4e6;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.gu-navlink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--gu-cyan);
+  box-shadow: 0 0 10px var(--gu-cyan);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+.gu-navlink:hover,
+.gu-navlink[aria-current="page"] {
+  color: #fff;
+}
+.gu-navlink:hover::after,
+.gu-navlink[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+/* ---------- stage / hero ---------- */
+.gu-stage {
+  position: relative;
+  height: 100svh;
+  min-height: 600px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.gu-stage-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 45%, rgba(3, 3, 10, 0.75) 100%),
+    linear-gradient(to bottom, rgba(3, 3, 10, 0.55), transparent 22%, transparent 70%, rgba(3, 3, 10, 0.9));
+}
+.gu-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay;
+}
+
+.gu-preview {
+  animation: gu-rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes gu-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+.gu-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  transition: opacity 0.25s;
+  will-change: transform;
+}
+
+.gu-dock-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0.9rem;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #b8c2ee;
+  background: rgba(8, 10, 30, 0.7);
+  border: 1px solid rgba(130, 165, 255, 0.28);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.gu-dock-btn i {
+  display: block;
+  width: 8px;
+  height: 8px;
+  background: var(--c1, #38e8ff);
+  box-shadow: 0 0 10px var(--c1, #38e8ff);
+}
+.gu-dock-btn:hover,
+.gu-dock-btn[aria-current="true"],
+.gu-dock-btn:focus-visible {
+  color: #fff;
+  border-color: var(--c1, #38e8ff);
+  background: rgba(20, 26, 70, 0.8);
+}
+
+/* ---------- game art / cards ---------- */
+.gu-art {
+  position: relative;
+  overflow: hidden;
+  background: #0a0d26;
+}
+.gu-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.6s;
+}
+.gu-art-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background:
+    radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--c1) 55%, transparent), transparent 55%),
+    radial-gradient(circle at 80% 90%, color-mix(in srgb, var(--c2) 45%, transparent), transparent 55%),
+    linear-gradient(135deg, #090b22, #14102f);
+}
+.gu-art-fallback::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.045) 0 2px, transparent 2px 22px);
+}
+.gu-art-glyph {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.4rem, 7cqw, 4.5rem);
+  letter-spacing: 0.06em;
+  color: transparent;
+  -webkit-text-stroke: 2px color-mix(in srgb, var(--c1) 90%, #fff);
+  text-shadow: 0 0 30px var(--c1);
+}
+.gu-art-world {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.gu-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, rgba(16, 20, 54, 0.8), rgba(7, 9, 26, 0.9));
+  border: 1px solid var(--gu-line);
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s, border-color 0.3s;
+  container-type: inline-size;
+}
+.gu-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--c1) 22%, transparent), transparent 55%);
+  transition: opacity 0.4s;
+}
+.gu-card:hover,
+.gu-card:focus-within {
+  transform: translateY(-6px) scale(1.012);
+  border-color: var(--c1);
+  box-shadow: 0 18px 50px -10px color-mix(in srgb, var(--c1) 45%, transparent);
+}
+.gu-card:hover::before,
+.gu-card:focus-within::before {
+  opacity: 1;
+}
+.gu-card:hover .gu-art img,
+.gu-card:focus-within .gu-art img {
+  transform: scale(1.09);
+  filter: saturate(1.2) brightness(1.08);
+}
+.gu-card-reveal {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.45s ease, opacity 0.4s ease;
+}
+.gu-card:hover .gu-card-reveal,
+.gu-card:focus-within .gu-card-reveal {
+  max-height: 6rem;
+  opacity: 1;
+}
+@media (hover: none) {
+  .gu-card-reveal {
+    max-height: 6rem;
+    opacity: 1;
+  }
+}
+
+.gu-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.18rem 0.6rem;
+  font-family: var(--font-display);
+  font-size: 0.56rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: rgba(3, 5, 20, 0.8);
+  border: 1px solid currentColor;
+}
+.gu-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+.gu-badge--playable {
+  color: #4dffb0;
+}
+.gu-badge--development {
+  color: #ffb84d;
+}
+.gu-badge--coming-soon {
+  color: #b07cff;
+}
+.gu-badge--demo {
+  color: #ff7ad9;
+}
+
+/* ---------- details panel ---------- */
+.gu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(2, 3, 12, 0.6);
+  backdrop-filter: blur(4px);
+  animation: gu-fade 0.3s both;
+}
+.gu-details {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  width: min(560px, 100vw);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(10, 13, 38, 0.97), rgba(5, 6, 20, 0.98));
+  border-left: 1px solid var(--c1, var(--gu-line));
+  box-shadow: -30px 0 90px -20px color-mix(in srgb, var(--c1, #38e8ff) 40%, transparent);
+  animation: gu-slide-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.gu-details-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px dashed rgba(130, 165, 255, 0.2);
+}
+.gu-details-row dt {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  color: #7f8cc4;
+  text-transform: uppercase;
+  align-self: center;
+}
+.gu-details-row dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 600;
+}
+.gu-corners {
+  position: relative;
+}
+.gu-corners::before,
+.gu-corners::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  border: 2px solid var(--c1, var(--gu-cyan));
+}
+.gu-corners::before {
+  top: 8px;
+  left: 8px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.gu-corners::after {
+  bottom: 8px;
+  right: 8px;
+  border-left: 0;
+  border-top: 0;
+}
+@keyframes gu-slide-in {
+  from {
+    transform: translateX(60px);
+    opacity: 0;
+    filter: blur(8px);
+  }
+  to {
+    transform: none;
+    opacity: 1;
+    filter: none;
+  }
+}
+@keyframes gu-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- launch / intro / loader ---------- */
+.gu-launch {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: grid;
+  place-items: center;
+  pointer-events: all;
+  background: radial-gradient(circle at center, color-mix(in srgb, var(--c1) 70%, #fff) 0%, var(--c1) 12%, #05061a 70%);
+  animation: gu-portal-expand 1s cubic-bezier(0.7, 0, 0.2, 1) both;
+}
+.gu-launch[data-leaving="true"] {
+  animation: gu-fade-out 0.45s both;
+}
+.gu-launch > * {
+  animation: gu-rise 0.5s 0.45s both;
+}
+@keyframes gu-portal-expand {
+  from {
+    clip-path: circle(0% at var(--ox) var(--oy));
+  }
+  to {
+    clip-path: circle(150% at var(--ox) var(--oy));
+  }
+}
+@keyframes gu-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.gu-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background: radial-gradient(ellipse at center, rgba(12, 10, 40, 0.88), #03030a 75%);
+  backdrop-filter: blur(6px);
+  transition: opacity 0.8s, filter 0.8s, transform 0.8s;
+}
+html[data-intro="seen"] .gu-intro {
+  display: none;
+}
+.gu-intro[data-leaving="true"] {
+  opacity: 0;
+  filter: blur(14px);
+  transform: scale(1.08);
+  pointer-events: none;
+}
+.gu-intro-line {
+  opacity: 0;
+  animation: gu-rise 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.gu-bar {
+  height: 6px;
+  background: rgba(130, 165, 255, 0.18);
+  overflow: hidden;
+}
+.gu-bar > i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--c2, #8b5cff), var(--c1, #38e8ff));
+  box-shadow: 0 0 16px var(--c1, #38e8ff);
+  transition: width 0.25s ease-out;
+}
+
+/* ---------- misc animation ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  filter: blur(8px);
+  transition: opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.9s;
+  transition-delay: var(--d, 0ms);
+}
+.reveal[data-shown="true"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+.page-enter {
+  animation: gu-page-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes gu-page-in {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: scale(0.99);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+.gu-bob {
+  animation: gu-bob 2.4s ease-in-out infinite;
+}
+@keyframes gu-bob {
+  50% {
+    transform: translateY(6px);
+  }
+}
+.gu-pulse {
+  animation: gu-pulse 2s ease-in-out infinite;
+}
+@keyframes gu-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+.gu-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: var(--gu-cyan);
+  border-radius: 50%;
+  animation: gu-spin 0.8s linear infinite;
+}
+@keyframes gu-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.gu-fallback-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.5;
+  animation: gu-orb 14s ease-in-out infinite alternate;
+}
+@keyframes gu-orb {
+  to {
+    transform: translate3d(60px, -40px, 0) scale(1.2);
+  }
+}
+
+/* ---------- custom cursor ---------- */
+html.gu-cursor,
+html.gu-cursor * {
+  cursor: none !important;
+}
+html.gu-cursor input,
+html.gu-cursor textarea {
+  cursor: text !important;
+}
+.gu-cursor-dot,
+.gu-cursor-ring {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform;
+}
+.gu-cursor-dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 12px 3px var(--gu-cyan), 0 0 28px 6px rgba(139, 92, 255, 0.6);
+  transition: opacity 0.2s;
+}
+.gu-cursor-ring {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(56, 232, 255, 0.7);
+  border-radius: 50%;
+  transition: opacity 0.2s;
+}
+.gu-cursor-ring span {
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #03121a;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.gu-cursor-ring i {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s, border-color 0.3s;
+}
+.gu-cursor-ring[data-mode="link"] i {
+  transform: scale(1.5);
+  background: rgba(56, 232, 255, 0.12);
+}
+.gu-cursor-ring[data-mode="play"] i {
+  transform: scale(2.1);
+  background: var(--gu-cyan);
+  border-color: transparent;
+  box-shadow: 0 0 30px rgba(56, 232, 255, 0.7);
+}
+.gu-cursor-ring[data-mode="play"] span {
+  opacity: 1;
+}
+.gu-cursor-ring[data-mode="text"],
+.gu-cursor-dot[data-mode="text"] {
+  opacity: 0 !important;
+}
+.gu-cursor-trail {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+html[data-motion="reduced"] {
+  scroll-behavior: auto;
+}
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+html[data-motion="reduced"] .reveal {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+html[data-motion="reduced"] .gu-atmo::before,
+html[data-motion="reduced"] .gu-atmo::after {
+  animation: none;
+}

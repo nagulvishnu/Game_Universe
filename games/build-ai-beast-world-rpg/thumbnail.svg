@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="AI Beast World">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#150a30"/>
+      <stop offset="48%" stop-color="#3d1a63"/>
+      <stop offset="76%" stop-color="#8a3a86"/>
+      <stop offset="100%" stop-color="#2a1038"/>
+    </linearGradient>
+    <radialGradient id="moon" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff6dc"/>
+      <stop offset="70%" stop-color="#ffd9a0"/>
+      <stop offset="100%" stop-color="#ffb45a"/>
+    </radialGradient>
+    <linearGradient id="far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a2a7a"/>
+      <stop offset="100%" stop-color="#2a1447"/>
+    </linearGradient>
+    <linearGradient id="near" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1c0d33"/>
+      <stop offset="100%" stop-color="#0b0418"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#sky)"/>
+
+  <g fill="#ffffff">
+    <circle cx="196" cy="118" r="2.5" opacity="0.9"/><circle cx="352" cy="76" r="2" opacity="0.7"/>
+    <circle cx="878" cy="104" r="2.5" opacity="0.85"/><circle cx="1042" cy="168" r="2" opacity="0.7"/>
+    <circle cx="268" cy="228" r="2" opacity="0.6"/><circle cx="962" cy="252" r="2" opacity="0.6"/>
+    <circle cx="452" cy="140" r="2" opacity="0.55"/><circle cx="742" cy="86" r="2" opacity="0.55"/>
+  </g>
+
+  <circle cx="600" cy="228" r="132" fill="url(#moon)"/>
+  <g fill="#e9a86a" opacity="0.35">
+    <circle cx="556" cy="200" r="20"/>
+    <circle cx="646" cy="248" r="14"/>
+    <circle cx="618" cy="168" r="10"/>
+  </g>
+
+  <path d="M0 452 L118 372 L214 424 L322 340 L438 430 L546 356 L664 438 L790 366 L906 442 L1010 384 L1128 448 L1200 410 L1200 630 L0 630 Z" fill="url(#far)" opacity="0.92"/>
+  <path d="M0 528 L142 470 L268 522 L392 462 L520 528 L648 466 L784 530 L912 476 L1044 532 L1200 486 L1200 630 L0 630 Z" fill="url(#near)"/>
+
+  <g stroke="#ffb45a" stroke-width="9" stroke-linecap="round" fill="none" opacity="0.95">
+    <path d="M516 168 L406 96"/>
+    <path d="M556 146 L470 62"/>
+    <path d="M684 168 L794 96"/>
+    <path d="M644 146 L730 62"/>
+  </g>
+
+  <g fill="#ffd9a0">
+    <circle cx="392" cy="318" r="3.5"/><circle cx="806" cy="330" r="3"/>
+    <circle cx="470" cy="286" r="2.5"/><circle cx="742" cy="296" r="2.5"/>
+    <circle cx="600" cy="336" r="3"/>
+  </g>
+
+  <rect x="286" y="474" width="628" height="112" rx="14" fill="#0b0418" opacity="0.55"/>
+  <text x="600" y="524" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="58" font-weight="bold" letter-spacing="5" fill="#fff4d0">AI BEAST</text>
+  <text x="600" y="570" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="44" font-weight="bold" letter-spacing="16" fill="#ff9a3a">WORLD</text>
+
+  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#b07cff" stroke-opacity="0.5" stroke-width="3"/>
+</svg>

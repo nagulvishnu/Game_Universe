@@ -1,0 +1,14 @@
+{
+  "id": "bastion-defense",
+  "title": "Bastion Defense",
+  "description": "A multi-level strategy tower defence. Place and upgrade five tower types, set their targeting, sell and retool, and control the wave speed as the siege escalates.",
+  "genre": "Strategy",
+  "category": "2D",
+  "entry": "dist/index.html",
+  "version": "0.1.0",
+  "developer": "Game Universe",
+  "tags": ["Tower Defense", "Strategy", "Waves", "Upgrades"],
+  "controls": ["1-5", "Space", "U", "S", "T", "F", "P"],
+  "featured": true,
+  "status": "playable"
+}
