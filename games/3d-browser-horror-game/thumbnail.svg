@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Granny's House">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="42%" r="65%">
+      <stop offset="0%" stop-color="#3a2a12"/>
+      <stop offset="45%" stop-color="#171008"/>
+      <stop offset="100%" stop-color="#050302"/>
+    </radialGradient>
+    <linearGradient id="win" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffcf6e"/>
+      <stop offset="100%" stop-color="#c97a1b"/>
+    </linearGradient>
+    <linearGradient id="moon" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8ecf5"/>
+      <stop offset="100%" stop-color="#9aa7bd"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <circle cx="930" cy="120" r="62" fill="url(#moon)" opacity="0.85"/>
+  <circle cx="952" cy="106" r="52" fill="#0a0705" opacity="0.55"/>
+  <g stroke="#241a10" stroke-width="5" fill="#0d0a07">
+    <path d="M120 300 L150 210 L128 232 L142 168 L120 190 L132 128"/>
+    <path d="M1080 300 L1050 206 L1074 230 L1058 164 L1082 190 L1068 126"/>
+  </g>
+  <g fill="#0a0806">
+    <path d="M600 560 L600 470 M560 540 L560 480 M640 545 L640 486" stroke="#0a0806" stroke-width="10"/>
+    <ellipse cx="600" cy="452" rx="120" ry="26" opacity="0.9"/>
+  </g>
+  <path d="M330 630 L330 350 L600 210 L870 350 L870 630 Z" fill="#100b08"/>
+  <path d="M300 362 L600 196 L900 362 L870 386 L600 236 L330 386 Z" fill="#1c130c"/>
+  <rect x="420" y="400" width="110" height="110" fill="url(#win)" opacity="0.95"/>
+  <g stroke="#100b08" stroke-width="8">
+    <line x1="475" y1="400" x2="475" y2="510"/>
+    <line x1="420" y1="455" x2="530" y2="455"/>
+  </g>
+  <rect x="660" y="430" width="80" height="200" rx="6" fill="#050302"/>
+  <circle cx="726" cy="532" r="6" fill="#c9a24a"/>
+  <rect x="640" y="300" width="46" height="60" fill="#050302"/>
+  <g fill="#c97a1b" opacity="0.9">
+    <rect x="646" y="306" width="34" height="48"/>
+  </g>
+  <g opacity="0.85">
+    <circle cx="763" cy="252" r="14" fill="#0d0a07"/>
+    <circle cx="763" cy="226" r="18" fill="#0d0a07"/>
+    <path d="M763 208 C745 208 736 222 740 234 L786 234 C790 222 781 208 763 208 Z" fill="#1c130c"/>
+    <circle cx="756" cy="226" r="3.5" fill="#ffb84d"/>
+    <circle cx="770" cy="226" r="3.5" fill="#ffb84d"/>
+  </g>
+  <g fill="#ffffff" opacity="0.10">
+    <ellipse cx="260" cy="560" rx="180" ry="42"/>
+    <ellipse cx="940" cy="580" rx="200" ry="46"/>
+  </g>
+  <text x="600" y="118" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="72" font-weight="bold" letter-spacing="6" fill="#d8dde8">GRANNY'S HOUSE</text>
+  <text x="600" y="158" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="bold" letter-spacing="12" fill="#8b6d3f">3D HORROR ESCAPE</text>
+  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#8b6d3f" stroke-opacity="0.55" stroke-width="3"/>
+</svg>

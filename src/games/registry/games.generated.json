@@ -35,6 +35,39 @@
       "bannerUrl": null
     },
     {
+      "id": "grannys-house",
+      "title": "Granny's House",
+      "description": "A 3D first-person horror escape. Sneak through the dark house, solve puzzles, and get out before Granny catches you.",
+      "genre": "Horror",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Horror",
+        "Survival",
+        "Escape",
+        "Stealth",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Shift",
+        "E",
+        "Esc"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "flagship": false,
+      "folder": "3d-browser-horror-game",
+      "external": false,
+      "launchUrl": "/play/3d-browser-horror-game/dist/index.html",
+      "thumbnailUrl": "/play/3d-browser-horror-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
       "id": "turbo-horizon",
       "title": "Turbo Horizon",
       "description": "A high-octane 3D arcade racing game. Five tracks, six cars, changing weather and AI rivals to fight through. Chase your best lap time.",
@@ -64,6 +97,40 @@
       "external": false,
       "launchUrl": "/play/3d-car-racing-game/dist/index.html",
       "thumbnailUrl": "/play/3d-car-racing-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "sniper-deadline",
+      "title": "Sniper: Deadline",
+      "description": "A 3D sniper simulation with real ballistics and AI. Campaign ops, weapon workshop, survival and longshot modes.",
+      "genre": "Shooter",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "2.0.0",
+      "tags": [
+        "Sniper",
+        "Shooter",
+        "Ballistics",
+        "Tactical",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Space",
+        "R",
+        "Shift",
+        "Esc"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "flagship": false,
+      "folder": "build-3d-sniper-game",
+      "external": false,
+      "launchUrl": "/play/build-3d-sniper-game/dist/index.html",
+      "thumbnailUrl": "/play/build-3d-sniper-game/thumbnail.svg",
       "bannerUrl": null
     },
     {
@@ -214,9 +281,23 @@
       "messages": []
     },
     {
+      "folder": "3d-browser-horror-game",
+      "id": "grannys-house",
+      "title": "Granny's House",
+      "level": "ok",
+      "messages": []
+    },
+    {
       "folder": "3d-car-racing-game",
       "id": "turbo-horizon",
       "title": "Turbo Horizon",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "build-3d-sniper-game",
+      "id": "sniper-deadline",
+      "title": "Sniper: Deadline",
       "level": "ok",
       "messages": []
     },

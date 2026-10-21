@@ -1,0 +1,14 @@
+{
+  "id": "grannys-house",
+  "title": "Granny's House",
+  "description": "A 3D first-person horror escape. Sneak through the dark house, solve puzzles, and get out before Granny catches you.",
+  "genre": "Horror",
+  "category": "3D",
+  "entry": "dist/index.html",
+  "version": "1.0.0",
+  "developer": "Game Universe",
+  "tags": ["Horror", "Survival", "Escape", "Stealth", "3D"],
+  "controls": ["WASD", "Mouse", "Shift", "E", "Esc"],
+  "featured": false,
+  "status": "playable"
+}

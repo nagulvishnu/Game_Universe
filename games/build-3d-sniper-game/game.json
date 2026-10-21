@@ -1,0 +1,14 @@
+{
+  "id": "sniper-deadline",
+  "title": "Sniper: Deadline",
+  "description": "A 3D sniper simulation with real ballistics and AI. Campaign ops, weapon workshop, survival and longshot modes.",
+  "genre": "Shooter",
+  "category": "3D",
+  "entry": "dist/index.html",
+  "version": "2.0.0",
+  "developer": "Game Universe",
+  "tags": ["Sniper", "Shooter", "Ballistics", "Tactical", "3D"],
+  "controls": ["WASD", "Mouse", "Space", "R", "Shift", "Esc"],
+  "featured": false,
+  "status": "playable"
+}
