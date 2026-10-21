@@ -1,4 +1,4 @@
-export type WeaponId = 'knife' | 'axe' | 'pistol' | 'smg' | 'ar' | 'shotgun' | 'sniper';
+export type WeaponId = 'knife' | 'axe' | 'pistol' | 'smg' | 'ar' | 'shotgun' | 'sniper' | 'lmg' | 'burst' | 'revolver';
 export type AmmoType = 'light' | 'rifle' | 'shell';
 
 export interface WeaponDef {
@@ -20,6 +20,7 @@ export interface WeaponDef {
   zoom: number; // ADS fov
   len: number; // muzzle distance
   tracer: number;
+  burst?: number; // rounds per trigger pull (burst weapons)
 }
 
 export const WEAPONS: Record<WeaponId, WeaponDef> = {
@@ -30,6 +31,9 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
   ar: { id: 'ar', name: 'AK-47 Rifle', kind: 'gun', dmg: 26, rate: 0.11, range: 170, mag: 30, reload: 1.7, spread: 0.018, pellets: 1, auto: true, ammo: 'rifle', tier: 3, rarity: 2, recoil: 0.015, zoom: 48, len: 0.9, tracer: 0xffd166 },
   shotgun: { id: 'shotgun', name: 'M1887 Shotgun', kind: 'gun', dmg: 12, rate: 0.85, range: 42, mag: 6, reload: 2.0, spread: 0.075, pellets: 9, auto: false, ammo: 'shell', tier: 2, rarity: 2, recoil: 0.065, zoom: 55, len: 1.0, tracer: 0xffb36b },
   sniper: { id: 'sniper', name: 'AWM Sniper', kind: 'gun', dmg: 105, rate: 1.25, range: 420, mag: 5, reload: 2.3, spread: 0.0012, pellets: 1, auto: false, ammo: 'rifle', tier: 4, rarity: 3, recoil: 0.055, zoom: 22, len: 1.25, tracer: 0x9be7ff },
+  lmg: { id: 'lmg', name: 'M60 LMG', kind: 'gun', dmg: 24, rate: 0.1, range: 165, mag: 75, reload: 3.4, spread: 0.04, pellets: 1, auto: true, ammo: 'rifle', tier: 4, rarity: 3, recoil: 0.02, zoom: 52, len: 1.05, tracer: 0xffc96b },
+  burst: { id: 'burst', name: 'FAMAS Burst', kind: 'gun', dmg: 25, rate: 0.085, range: 175, mag: 30, reload: 1.8, spread: 0.012, pellets: 1, auto: false, burst: 3, ammo: 'rifle', tier: 3, rarity: 2, recoil: 0.02, zoom: 46, len: 0.85, tracer: 0xffd166 },
+  revolver: { id: 'revolver', name: 'Magnum Revolver', kind: 'gun', dmg: 62, rate: 0.42, range: 140, mag: 6, reload: 1.7, spread: 0.009, pellets: 1, auto: false, ammo: 'light', tier: 3, rarity: 2, recoil: 0.05, zoom: 46, len: 0.35, tracer: 0xffb36b },
 };
 
 export const RARITY_COLORS = [0xd1d5db, 0x4ade80, 0x38bdf8, 0xc084fc, 0xfbbf24];

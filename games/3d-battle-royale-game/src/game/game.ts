@@ -21,6 +21,10 @@ export interface Hud {
   zoneLabel: string; zoneTime: number; zoneKind: 'wait' | 'shrink' | 'final'; inZone: boolean;
   prompt: string | null; speed: number; vehicle: string | null; vehHp: number; alt: number;
   scoped: boolean; hint: string | null; touchAct: boolean;
+  spread: number;
+  heading: number;
+  streak: number;
+  streakLeft: number;
 }
 export interface Result {
   win: boolean; place: number; total: number; kills: number; dmg: number; time: number; score: number; mode: string; hs: number;
@@ -32,7 +36,7 @@ export interface UI {
   onState(s: GameState): void;
   onOver(r: Result): void;
   onHit(kill: boolean, head: boolean): void;
-  onHurt(zone: boolean): void;
+  onHurt(zone: boolean, from?: number): void;
   onPick(text: string, color: number): void;
 }
 
@@ -63,6 +67,12 @@ export class Game {
   camera: THREE.PerspectiveCamera;
   fx: FX;
   sky!: THREE.Mesh;
+  sun!: THREE.DirectionalLight;
+  weather: 'clear' | 'rain' = 'clear';
+  rain: THREE.InstancedMesh | null = null;
+  rainDrops: { x: number; y: number; z: number; s: number }[] = [];
+  clouds: THREE.InstancedMesh[] = [];
+  private rDummy = new THREE.Object3D();
   worldGroup = new THREE.Group();
   actorGroup = new THREE.Group();
   world!: World;
@@ -84,9 +94,11 @@ export class Game {
   endAt = 0;
   finished = false;
   airdropAt = 0;
+  lastPlayerShot = -10;
   airdrops: { x: number; z: number }[] = [];
   lootId = 0;
   hs = 0;
+  bonusScore = 0;
 
   keys = new Set<string>();
   input = { fire: false, ads: false, jump: false, brake: false, sprint: false, mx: 0, my: 0, lookX: 0, lookY: 0 };
@@ -136,6 +148,7 @@ export class Game {
     this.scene.add(new THREE.HemisphereLight(0xe3efff, 0x5b7a45, 1.0));
     const sun = new THREE.DirectionalLight(0xfff0d0, 1.5);
     sun.position.set(0.6, 1, 0.35);
+    this.sun = sun;
     this.scene.add(sun);
     this.scene.add(this.worldGroup, this.actorGroup);
     this.buildSky();
@@ -176,36 +189,97 @@ export class Game {
 
   /* ------------------------------------------------ setup ------------------------------------------------ */
   buildSky() {
-    const geo = new THREE.SphereGeometry(700, 20, 12);
+    const geo = new THREE.SphereGeometry(700, 24, 16);
     const cols: number[] = [];
-    const top = new THREE.Color(0x3b82c4), mid = new THREE.Color(0xb9d6f0), bot = new THREE.Color(0xd9e8f2);
+    const top = new THREE.Color(0x2f6fb8), mid = new THREE.Color(0xa8cbe8), hor = new THREE.Color(0xf2d9a8);
     const p = geo.attributes.position;
     const c = new THREE.Color();
     for (let i = 0; i < p.count; i++) {
       const y = p.getY(i) / 700;
-      if (y > 0) c.copy(mid).lerp(top, Math.pow(y, 0.6));
-      else c.copy(mid).lerp(bot, Math.min(1, -y * 3));
+      if (y > 0.08) c.copy(mid).lerp(top, Math.min(1, (y - 0.08) / 0.7));
+      else if (y > -0.05) c.copy(hor).lerp(mid, Math.max(0, (y + 0.05) / 0.13));
+      else c.copy(hor).lerp(new THREE.Color(0xc4b89a), Math.min(1, -y * 2.5));
       cols.push(c.r, c.g, c.b);
     }
     geo.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
     this.sky = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide, fog: false, depthWrite: false }));
     this.sky.renderOrder = -10;
     this.scene.add(this.sky);
-    // clouds
-    const n = 60;
-    const inst = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.55, fog: false }), n);
+    // sun disc + glow
+    const sunDir = new THREE.Vector3(0.6, 1, 0.35).normalize().multiplyScalar(620);
+    const disc = new THREE.Mesh(new THREE.SphereGeometry(22, 16, 12), new THREE.MeshBasicMaterial({ color: 0xfff6d8, fog: false, depthWrite: false }));
+    disc.position.copy(sunDir);
+    disc.renderOrder = -9;
+    const glow = new THREE.Mesh(new THREE.SphereGeometry(55, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffe8a0, transparent: true, opacity: 0.22, fog: false, depthWrite: false }));
+    glow.position.copy(sunDir);
+    glow.renderOrder = -9;
+    this.scene.add(disc, glow);
+    // clouds — two layers
+    const mkClouds = (n: number, yMin: number, yMax: number, sMin: number, sMax: number, op: number) => {
+      const inst = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: op, fog: false }), n);
+      const d = new THREE.Object3D();
+      for (let i = 0; i < n; i++) {
+        const cx = rnd(-450, 450), cz = rnd(-450, 450), cy = rnd(yMin, yMax);
+        const s = rnd(sMin, sMax);
+        d.position.set(cx, cy, cz);
+        d.scale.set(s, rnd(3, 7), s * rnd(0.5, 0.95));
+        d.rotation.y = rnd(0, 3);
+        d.updateMatrix();
+        inst.setMatrixAt(i, d.matrix);
+      }
+      inst.frustumCulled = false;
+      this.scene.add(inst);
+      return inst;
+    };
+    this.clouds = [mkClouds(40, 260, 340, 30, 70, 0.5), mkClouds(25, 180, 230, 18, 40, 0.3)];
+  }
+
+  buildRain() {
+    if (this.rain) return;
+    const n = 550;
+    const geo = new THREE.BoxGeometry(0.03, 0.7, 0.03);
+    const inst = new THREE.InstancedMesh(geo, new THREE.MeshBasicMaterial({ color: 0xaac8e0, transparent: true, opacity: 0.45, fog: true }), n);
+    inst.frustumCulled = false;
+    this.rainDrops = [];
     const d = new THREE.Object3D();
     for (let i = 0; i < n; i++) {
-      const cx = rnd(-450, 450), cz = rnd(-450, 450), cy = rnd(240, 330);
-      const s = rnd(25, 60);
-      d.position.set(cx, cy, cz);
-      d.scale.set(s, rnd(4, 8), s * rnd(0.5, 0.9));
-      d.rotation.y = rnd(0, 3);
+      const drop = { x: rnd(-40, 40), y: rnd(0, 35), z: rnd(-40, 40), s: rnd(0.8, 1.6) };
+      this.rainDrops.push(drop);
+      d.position.set(drop.x, drop.y, drop.z);
+      d.scale.set(1, drop.s, 1);
       d.updateMatrix();
       inst.setMatrixAt(i, d.matrix);
     }
-    inst.frustumCulled = false;
+    inst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.rain = inst;
     this.scene.add(inst);
+  }
+
+  updateRain(dt: number) {
+    if (!this.rain || this.weather !== 'rain' || !this.player) {
+      if (this.rain) this.rain.visible = false;
+      return;
+    }
+    this.rain.visible = true;
+    const p = this.player;
+    const d = this.rDummy;
+    for (let i = 0; i < this.rainDrops.length; i++) {
+      const r = this.rainDrops[i];
+      r.y -= (28 + r.s * 8) * dt;
+      if (r.y < 0) {
+        r.y = rnd(28, 38);
+        r.x = p.x + rnd(-40, 40);
+        r.z = p.z + rnd(-40, 40);
+      } else if (Math.abs(r.x - p.x) > 42) {
+        r.x = p.x + rnd(-40, 40);
+        r.z = p.z + rnd(-40, 40);
+      }
+      d.position.set(r.x, r.y, r.z);
+      d.scale.set(1, r.s, 1);
+      d.updateMatrix();
+      this.rain.setMatrixAt(i, d.matrix);
+    }
+    this.rain.instanceMatrix.needsUpdate = true;
   }
 
   resize = () => {
@@ -387,6 +461,7 @@ export class Game {
       table.push({ w, f: (x, z, b) => this.addLoot('ammo', x, z, { ammo: t, amount: t === 'light' ? 30 : t === 'rifle' ? 24 : 8, b }) });
     };
     wp('pistol', 4); wp('smg', 6); wp('shotgun', 5); wp('ar', 5.5); wp('sniper', 1.8);
+    wp('lmg', 1.6); wp('burst', 2.4); wp('revolver', 2.4);
     wp('axe', mode.meleeOnly ? 14 : 3);
     wp('knife', 0);
     am('light', 8); am('rifle', 6); am('shell', 4);
@@ -458,6 +533,7 @@ export class Game {
     this.finished = false;
     this.streak = 0;
     this.hs = 0;
+    this.bonusScore = 0;
     this.slow = 0;
     this.shake = 0;
     this.dmgTaken = 0;
@@ -465,9 +541,25 @@ export class Game {
     this.input.ads = false;
     this.keys.clear();
     setEngine(false);
+    this.lastPlayerShot = -10;
+    this.weather = Math.random() < 0.3 ? 'rain' : 'clear';
+    if (this.weather === 'rain') {
+      this.scene.fog = new THREE.Fog(0x8aa0b0, 80, 380);
+      this.scene.background = new THREE.Color(0x8aa0b0);
+      this.sun.intensity = 0.7;
+      this.sun.color.set(0xc8d8e8);
+      this.buildRain();
+    } else {
+      this.scene.fog = new THREE.Fog(0xb9d6f0, 110, 470);
+      this.scene.background = new THREE.Color(0xb9d6f0);
+      this.sun.intensity = 1.5;
+      this.sun.color.set(0xfff0d0);
+      if (this.rain) this.rain.visible = false;
+    }
     this.buildWorld(mode, true);
     this.state = 'playing';
     this.ui.onState('playing');
+    if (this.weather === 'rain') this.ui.onToast('STORMY DROP', 'Rain reduces visibility — stay sharp', 'info');
     this.ui.onToast('DROP IN!', 'Press SPACE to jump from the plane', 'info');
     this.requestLock();
   }
@@ -479,6 +571,12 @@ export class Game {
   toMenu() {
     setEngine(false);
     this.exitLock();
+    this.scene.fog = new THREE.Fog(0xb9d6f0, 110, 470);
+    this.scene.background = new THREE.Color(0xb9d6f0);
+    this.sun.intensity = 1.5;
+    this.sun.color.set(0xfff0d0);
+    this.weather = 'clear';
+    if (this.rain) this.rain.visible = false;
     this.buildWorld(MODES[0], false);
     this.state = 'menu';
     this.ui.onState('menu');
@@ -536,7 +634,7 @@ export class Game {
 
   liveScore() {
     const p = this.player;
-    return p.kills * 150 + this.hs * 50 + Math.floor(p.dmg * 0.5);
+    return p.kills * 150 + this.hs * 50 + Math.floor(p.dmg * 0.5) + this.bonusScore;
   }
 
   aliveCount() {
@@ -634,6 +732,7 @@ export class Game {
     if (p.slot === i) return;
     p.slot = i;
     p.reload = 0;
+    p.burstLeft = 0;
     p.cd = Math.max(p.cd, 0.2);
     this.syncWeapon(p);
     sfx('ui', 0.8);
@@ -655,6 +754,7 @@ export class Game {
     if (g.mag >= def.mag) return;
     if (a.isPlayer && a.ammo[def.ammo!] <= 0) return;
     a.reload = def.reload;
+    a.burstLeft = 0;
     if (a.isPlayer) sfx('reload');
   }
   finishReload(a: Actor) {
@@ -712,6 +812,9 @@ export class Game {
       p.guns[idx] = { id: def.id, mag: def.mag };
       p.ammo[def.ammo!] += def.mag;
       if (p.slot === 0) p.slot = idx + 1;
+      p.burstLeft = 0;
+      p.reload = 0;
+      p.cd = Math.max(p.cd, 0.25);
     }
     this.takeLoot(l, def.name, true);
     this.syncWeapon(p);
@@ -915,6 +1018,16 @@ export class Game {
     const dist = Math.hypot(a.x - p.x, a.z - p.z);
     this.fx.flash(mx, my, mz, 0.1, 0.38, 0.055, 0xffd27a, 0.95);
     this.fx.burst(mx, my, mz, 3, 5, 0.2, 0.07, 0xffc857, 0, 0.2);
+    // ejected brass (near shots only, keeps particle cost down)
+    if (dist < 70 && def.kind === 'gun') {
+      const fxv = -Math.sin(a.yaw), fzv = -Math.cos(a.yaw);
+      const rxv = Math.cos(a.yaw), rzv = -Math.sin(a.yaw);
+      const ejx = mx - fxv * def.len * 0.7, ejy = my - 0.1, ejz = mz - fzv * def.len * 0.7;
+      const cases = def.id === 'lmg' || def.id === 'shotgun' ? 2 : 1;
+      for (let i = 0; i < cases; i++) {
+        this.fx.emit(ejx, ejy, ejz, rxv * rnd(2, 3.6) + rnd(-0.4, 0.4), rnd(1.6, 3), rzv * rnd(2, 3.6) + rnd(-0.4, 0.4), rnd(0.5, 0.8), 0.04, 0xd9a441, 14);
+      }
+    }
     sfx(def.id, clamp(1 - dist / 130, 0, 1) * (a.isPlayer ? 1 : 0.8));
     const dmgMul = a.isPlayer ? 1 : 0.72;
     const sp = def.spread * spreadMul;
@@ -952,7 +1065,8 @@ export class Game {
     const g = p.gun!;
     const def = WEAPONS[g.id];
     g.mag--;
-    p.cd = def.rate;
+    p.burstLeft = Math.max(0, p.burstLeft - 1);
+    p.cd = def.burst && p.burstLeft === 0 ? 0.4 : def.rate;
     const d = this.camDir;
     const cam = this.camera.position;
     const ox = cam.x + d.x * (this.camDist + 0.4), oy = cam.y + d.y * (this.camDist + 0.4), oz = cam.z + d.z * (this.camDist + 0.4);
@@ -964,6 +1078,9 @@ export class Game {
     if (mv > 6) sm = 1.7; else if (mv > 1) sm = 1.2;
     if (!p.onGround) sm *= 1.8;
     if (this.input.ads) sm *= 0.45;
+    // first-shot accuracy: a settled, untouched trigger lands tighter
+    if (this.time - this.lastPlayerShot > 0.35) sm *= 0.5;
+    this.lastPlayerShot = this.time;
     this.fireGun(p, def, ox, oy, oz, d.x, d.y, d.z, mx, my, mz, sm);
     p.recoil = 1;
     this.camPitch += def.recoil * (this.input.ads ? 0.6 : 1) * rnd(0.7, 1.2);
@@ -979,7 +1096,7 @@ export class Game {
     const def = WEAPONS[g.id];
     if (g.mag <= 0) { b.reload = def.reload; return; }
     g.mag--;
-    b.cd = def.rate * (1.5 + (1 - Math.min(1, skill)) * 0.9) * (def.auto ? 1 : 1.2);
+    b.cd = def.rate * (def.burst ? def.burst * 1.25 : 1) * (1.5 + (1 - Math.min(1, skill)) * 0.9) * (def.auto ? 1 : 1.2);
     const ox = b.x, oy = b.y + 1.5, oz = b.z;
     let dx = tx - ox, dy = ty - oy, dz = tz - oz;
     const l = Math.hypot(dx, dy, dz) || 1;
@@ -1053,7 +1170,14 @@ export class Game {
       t.healT = 0;
       this.shake = Math.min(1, this.shake + 0.25 + dmg / 120);
       this.dmgTaken += d;
-      this.ui.onHurt(false);
+      let from: number | undefined;
+      if (src && src !== t) {
+        const vx = src.x - t.x, vz = src.z - t.z;
+        const dotF = -vx * Math.sin(this.camYaw) - vz * Math.cos(this.camYaw);
+        const dotR = vx * Math.cos(this.camYaw) - vz * Math.sin(this.camYaw);
+        from = Math.atan2(dotR, dotF) * 180 / Math.PI;
+      }
+      this.ui.onHurt(false, from);
       sfx('hurt');
     } else if (t.ai && src && src !== t) {
       const ai = t.ai;
@@ -1089,7 +1213,7 @@ export class Game {
     // feed
     const who = src && src !== t ? src.name : 'The Storm';
     const kind = src === p ? 'mine' : t === p ? 'dead' : 'norm';
-    this.ui.onFeed(`${who}|${src && src !== t ? wp || 'Weapon' : 'Zone'}|${t.name}`, kind);
+    this.ui.onFeed(`${who}|${src && src !== t ? (wp || 'Weapon') + (head ? ' 🎯' : '') : 'Zone'}|${t.name}`, kind);
     if (src === p && t !== p) {
       this.slow = 0.14;
       this.shake = Math.min(1, this.shake + 0.3);
@@ -1097,8 +1221,10 @@ export class Game {
       this.ui.onHit(true, head);
       this.streak = this.time - this.lastKillT < 7 ? this.streak + 1 : 1;
       this.lastKillT = this.time;
-      const names = ['', 'ELIMINATED', 'DOUBLE KILL!', 'TRIPLE KILL!!', 'QUAD KILL!!!', 'RAMPAGE!!!!'];
-      this.ui.onToast(names[Math.min(5, this.streak)], `${t.name} · +${head ? 200 : 150}`, 'kill');
+      if (this.streak >= 2) this.bonusScore += (this.streak - 1) * 50;
+      const names = ['', 'ELIMINATED', 'DOUBLE KILL!', 'TRIPLE KILL!!', 'QUAD KILL!!!', 'RAMPAGE!!!!', 'UNSTOPPABLE!!!', 'LEGENDARY!!!!'];
+      const pts = (head ? 200 : 150) + (this.streak - 1) * 50;
+      this.ui.onToast(names[Math.min(7, this.streak)], `${t.name} · +${pts}${this.streak > 1 ? ` ×${this.streak}` : ''}`, 'kill');
     }
     if (t === p) {
       this.endAt = this.time + 2.2;
@@ -1280,7 +1406,7 @@ export class Game {
     const prot = { x, z: zz };
     this.world.resolve(prot, 1);
     this.world.addBox(x - 0.8, zz - 0.8, x + 0.8, zz + 0.8, 1.2);
-    const pool: WeaponId[] = this.mode.meleeOnly ? ['axe', 'axe'] : ['sniper', 'ar', 'shotgun', 'smg'];
+    const pool: WeaponId[] = this.mode.meleeOnly ? ['axe', 'axe'] : ['sniper', 'ar', 'shotgun', 'smg', 'lmg', 'revolver'];
     for (let i = 0; i < 3; i++) {
       const id = pool[Math.floor(Math.random() * pool.length)];
       this.addLoot('weapon', x + Math.cos(i * 2.1) * 2.6, zz + Math.sin(i * 2.1) * 2.6, { wid: id, rarity: 4 });
@@ -1426,11 +1552,15 @@ export class Game {
     if (wantFire && p.cd <= 0 && p.reload <= 0) {
       if (def.kind === 'melee') {
         if (def.auto || edge) this.meleeAttack(p);
-      } else if (def.auto || edge) {
-        const g = p.gun!;
-        if (g.mag > 0) this.playerShoot();
-        else if (p.ammo[def.ammo!] > 0) this.startReload(p);
-        else if (edge) { p.cd = 0.25; sfx('hit', 0.3); }
+      } else {
+        const cont = def.auto || p.burstLeft > 0;
+        if (edge && def.burst && p.burstLeft === 0) p.burstLeft = def.burst;
+        if (cont || edge) {
+          const g = p.gun!;
+          if (g.mag > 0) this.playerShoot();
+          else if (p.ammo[def.ammo!] > 0) { p.burstLeft = 0; this.startReload(p); }
+          else if (edge) { p.burstLeft = 0; p.cd = 0.25; sfx('click', 0.8); }
+        }
       }
     }
     this.pickupPlayer();
@@ -1745,6 +1875,18 @@ export class Game {
     if (p.phase === 'plane') hint = this.isTouch ? 'TAP JUMP TO DROP' : 'PRESS SPACE TO JUMP';
     else if (p.phase === 'fall') hint = this.isTouch ? 'PUSH STICK FORWARD · LOOK DOWN TO DIVE' : 'W + LOOK DOWN TO DIVE · SPACE = PARACHUTE';
     const d = z ? Math.hypot(p.x - z.cx, p.z - z.cz) : 0;
+    let spread01 = 0;
+    if (def.kind === 'gun' && p.phase === 'ground') {
+      let sm = 1;
+      const mv = Math.hypot(p.vx, p.vz);
+      if (mv > 6) sm = 1.7; else if (mv > 1) sm = 1.2;
+      if (!p.onGround) sm *= 1.8;
+      if (this.input.ads) sm *= 0.45;
+      spread01 = clamp((def.spread * sm) / 0.08, 0, 1);
+      spread01 = Math.min(1, spread01 + p.recoil * 0.3);
+    }
+    const heading = ((-this.camYaw * 180 / Math.PI) % 360 + 360) % 360;
+    const streakLeft = this.streak > 0 ? Math.max(0, 7 - (this.time - this.lastKillT)) : 0;
     this.ui.onHud({
       alive: this.aliveCount(), total: this.mode.players, kills: p.kills, score: Math.round(this.liveScore()),
       hp: Math.max(0, Math.ceil(p.hp)), armor: Math.ceil(p.armor), phase: p.phase,
@@ -1764,6 +1906,10 @@ export class Game {
       scoped: !!(this.input.ads && p.weaponId === 'sniper' && p.phase === 'ground' && p.alive),
       hint,
       touchAct: !!prompt,
+      spread: spread01,
+      heading,
+      streak: streakLeft > 0 ? this.streak : 0,
+      streakLeft,
     });
   }
 
@@ -1815,6 +1961,13 @@ export class Game {
     ctx.beginPath();
     ctx.arc(z.tx, z.tz, Math.max(0.1, z.tr), 0, Math.PI * 2);
     ctx.stroke();
+    // view cone
+    ctx.fillStyle = 'rgba(255,255,255,0.07)';
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, win * 0.55, -Math.PI / 2 - 0.6, -Math.PI / 2 + 0.6);
+    ctx.closePath();
+    ctx.fill();
     // vehicles
     for (const v of this.vehicles) {
       if (v.wreck) continue;
@@ -1828,13 +1981,18 @@ export class Game {
       ctx.fill();
     }
     // enemies nearby
-    ctx.fillStyle = '#ef4444';
     for (const a of this.actors) {
       if (a === p || !a.alive || a.phase === 'plane') continue;
       const d = Math.hypot(a.x - p.x, a.z - p.z);
       if (d < 45 || a.phase === 'chute' || a.phase === 'fall') {
+        ctx.fillStyle = '#ef4444';
         ctx.beginPath();
         ctx.arc(a.x, a.z, 3.2, 0, 6.3);
+        ctx.fill();
+      } else if (d < 110) {
+        ctx.fillStyle = 'rgba(239,68,68,0.55)';
+        ctx.beginPath();
+        ctx.arc(a.x, a.z, 1.8, 0, 6.3);
         ctx.fill();
       }
     }
@@ -1861,6 +2019,44 @@ export class Game {
     ctx.fill();
     ctx.stroke();
     ctx.restore();
+    // far-enemy rim pips + compass letters
+    const heading = ((-this.camYaw * 180 / Math.PI) % 360 + 360) % 360;
+    const rimR = W / 2 - 6;
+    for (const a of this.actors) {
+      if (a === p || !a.alive || a.phase === 'plane') continue;
+      const dx = a.x - p.x, dz = a.z - p.z;
+      const d = Math.hypot(dx, dz);
+      if (d < 110 || d > 260) continue;
+      const be = Math.atan2(dx, -dz) * 180 / Math.PI;
+      const scr = ((-90 + (be - heading)) * Math.PI) / 180;
+      ctx.save();
+      ctx.translate(W / 2 + Math.cos(scr) * rimR, H / 2 + Math.sin(scr) * rimR);
+      ctx.rotate(scr + Math.PI / 2);
+      ctx.fillStyle = 'rgba(239,68,68,0.85)';
+      ctx.beginPath();
+      ctx.moveTo(0, -4);
+      ctx.lineTo(3.5, 3);
+      ctx.lineTo(-3.5, 3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+    const CARD: [number, string][] = [[0, 'N'], [45, 'NE'], [90, 'E'], [135, 'SE'], [180, 'S'], [225, 'SW'], [270, 'W'], [315, 'NW']];
+    ctx.font = 'bold 11px Rajdhani, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (const [b, label] of CARD) {
+      const delta = ((b - heading + 540) % 360) - 180;
+      if (Math.abs(delta) > 68) continue;
+      const ang = ((-90 + delta) * Math.PI) / 180;
+      const x = W / 2 + Math.cos(ang) * (W / 2 - 11);
+      const y = H / 2 + Math.sin(ang) * (W / 2 - 11);
+      ctx.fillStyle = label.length === 1 ? '#fbbf24' : 'rgba(255,255,255,0.8)';
+      ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+      ctx.lineWidth = 3;
+      ctx.strokeText(label, x, y);
+      ctx.fillText(label, x, y);
+    }
     ctx.strokeStyle = 'rgba(255,255,255,0.35)';
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -1898,6 +2094,7 @@ export class Game {
       this.update(dt);
       this.animateActors(dt);
       this.updateCamera(dt, real);
+      this.updateRain(dt);
       this.hudT -= real;
       if (this.hudT <= 0) { this.hudT = 0.09; this.pushHud(); }
       this.mapT++;

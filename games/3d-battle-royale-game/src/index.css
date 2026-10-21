@@ -86,11 +86,46 @@ html, body, #root {
   100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9) rotate(45deg); }
 }
 
+.hitmarker--kill { animation: hitmk 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.4) forwards; }
+@keyframes hitmk {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.6) rotate(45deg); }
+  25% { opacity: 1; transform: translate(-50%, -50%) scale(1.6) rotate(45deg); }
+  55% { opacity: 1; transform: translate(-50%, -50%) scale(1.15) rotate(45deg); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.45) rotate(45deg); }
+}
+
+.hitmarker--head { animation: hitmh 0.34s ease-out forwards; }
+@keyframes hitmh {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1.9) rotate(45deg); }
+  40% { opacity: 1; transform: translate(-50%, -50%) scale(1.05) rotate(45deg); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.25) rotate(45deg); }
+}
+
+.hurt-dir { animation: hurtdir 0.9s ease-out forwards; }
+@keyframes hurtdir {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.75); }
+  10% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  65% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
+}
+
 .hurt-vignette {
   background: radial-gradient(ellipse at center, transparent 40%, rgba(220, 20, 20, 0.7) 100%);
   animation: hurt 0.55s ease-out forwards;
 }
 @keyframes hurt { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+.ammo-low { animation: ammolow 0.7s ease-in-out infinite; }
+@keyframes ammolow {
+  0%, 100% { opacity: 1; text-shadow: 0 0 8px rgba(239, 68, 68, 0.8); }
+  50% { opacity: 0.45; text-shadow: 0 0 18px rgba(239, 68, 68, 1); }
+}
+
+.streak-badge { animation: streakpop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.5); }
+@keyframes streakpop {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
 
 .zone-vignette {
   background: radial-gradient(ellipse at center, transparent 35%, rgba(30, 140, 255, 0.55) 100%);
@@ -161,3 +196,21 @@ html, body, #root {
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+.mode-card { backdrop-filter: blur(4px); }
+.mode-card--active {
+  background: linear-gradient(160deg, rgba(251, 191, 36, 0.18), rgba(249, 115, 22, 0.1));
+  box-shadow: 0 0 24px rgba(251, 191, 36, 0.22), inset 0 0 0 1px rgba(251, 191, 36, 0.45);
+}
+.mode-card__glow {
+  position: absolute;
+  inset: -40%;
+  background: conic-gradient(from 0deg, transparent 0%, rgba(251, 191, 36, 0.16) 12%, transparent 28%);
+  animation: cardglow 3.2s linear infinite;
+  pointer-events: none;
+}
+@keyframes cardglow { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mode-card__glow, .float-slow, .pulse-text { animation: none; }
+}

@@ -8,7 +8,7 @@ export interface ToastItem { id: number; t: string; sub: string; kind: string }
 const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 const hex = (c: number) => '#' + c.toString(16).padStart(6, '0');
 
-const WICON: Record<string, string> = { knife: '🔪', axe: '🪓', pistol: '🔫', smg: '🔫', ar: '🔫', shotgun: '🔫', sniper: '🎯' };
+const WICON: Record<string, string> = { knife: '🔪', axe: '🪓', pistol: '🔫', smg: '🔫', ar: '🔫', shotgun: '🔫', sniper: '🎯', lmg: '🔫', burst: '🔫', revolver: '🔫' };
 
 interface Props {
   hud: HudData;
@@ -17,7 +17,7 @@ interface Props {
   picks: PickItem[];
   toast: ToastItem | null;
   hit: { k: number; kill: boolean; head: boolean };
-  hurt: { k: number };
+  hurt: { k: number; ang: number | null };
   isTouch: boolean;
   muted: boolean;
   onMute: () => void;
@@ -36,6 +36,19 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
       {hud.phase === 'fall' && <div className="absolute inset-0 speedlines opacity-70" />}
       {!hud.inZone && hud.hp > 0 && <div className="absolute inset-0 zone-vignette" />}
       {hurt.k > 0 && <div key={hurt.k} className="absolute inset-0 hurt-vignette" />}
+      {hurt.k > 0 && hurt.ang !== null && (
+        <div key={hurt.k} className="hurt-dir absolute left-1/2 top-1/2 pointer-events-none" style={{ width: 300, height: 300 }}>
+          <svg
+            width="300"
+            height="300"
+            viewBox="0 0 300 300"
+            style={{ transform: `rotate(${hurt.ang}deg)` }}
+          >
+            <path d="M 75 95 A 95 95 0 0 1 225 95" fill="none" stroke="#ef4444" strokeWidth="8" strokeLinecap="round" opacity="0.95" />
+            <path d="M 138 62 L 150 84 L 162 62" fill="none" stroke="#ef4444" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+      )}
       {hud.hp > 0 && hud.hp < 30 && <div className="absolute inset-0 zone-vignette" style={{ background: 'radial-gradient(ellipse at center, transparent 45%, rgba(200,0,0,0.45) 100%)' }} />}
       {hud.scoped && (
         <div className="absolute inset-0">
@@ -62,6 +75,18 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
         <div className="panel px-3 py-1 text-xs text-slate-300 tracking-widest w-fit">
           SCORE <span className="font-display text-amber-300 text-sm ml-1">{hud.score}</span>
         </div>
+        {hud.streak >= 2 && hud.streakLeft > 0 && (
+          <div className="panel px-2.5 py-1 w-fit border-orange-400/60 streak-badge">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">🔥</span>
+              <span className="font-display font-black text-orange-300 text-lg leading-none">×{hud.streak}</span>
+              <span className="text-[10px] tracking-widest text-orange-200/80">STREAK</span>
+            </div>
+            <div className="h-0.5 bg-black/50 rounded mt-1 overflow-hidden">
+              <div className="h-full bg-orange-400" style={{ width: `${(hud.streakLeft / 7) * 100}%` }} />
+            </div>
+          </div>
+        )}
         <div className="flex flex-col gap-1 mt-1">
           {feed.map((f) => {
             const [a, w, b] = f.text.split('|');
@@ -76,8 +101,22 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
         </div>
       </div>
 
-      {/* top-center zone timer */}
-      <div className="absolute left-1/2 -translate-x-1/2 top-3 flex flex-col items-center gap-1" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      {/* top-center compass + zone timer */}
+      <div className="absolute left-1/2 -translate-x-1/2 top-1 flex flex-col items-center gap-1.5">
+        <div className="relative overflow-hidden" style={{ width: 240, height: 22, background: 'rgba(9,14,26,0.55)', border: '1px solid rgba(255,255,255,0.09)', backdropFilter: 'blur(4px)', borderRadius: 6 }}>
+          {Array.from({ length: 24 }, (_, i) => i * 15).map((b) => {
+            const delta = ((b - hud.heading + 540) % 360) - 180;
+            if (Math.abs(delta) > 60) return null;
+            const x = 120 + (delta / 120) * 240;
+            const CARD: Record<number, string> = { 0: 'N', 45: 'NE', 90: 'E', 135: 'SE', 180: 'S', 225: 'SW', 270: 'W', 315: 'NW' };
+            return CARD[b] ? (
+              <div key={b} className="absolute font-display font-bold text-[11px]" style={{ left: x, top: 3, transform: 'translateX(-50%)', color: CARD[b].length === 1 ? '#fbbf24' : '#cbd5e1', textShadow: '0 1px 2px #000' }}>{CARD[b]}</div>
+            ) : (
+              <div key={b} className="absolute" style={{ left: x, top: 5, width: 1, height: 5, background: 'rgba(255,255,255,0.35)', transform: 'translateX(-50%)' }} />
+            );
+          })}
+          <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2" style={{ background: 'rgba(251,191,36,0.9)' }} />
+        </div>
         <div className="panel px-4 py-1 flex items-center gap-3" style={{ borderColor: zoneCol + '99' }}>
           <span className="text-[10px] sm:text-[11px] tracking-[0.2em]" style={{ color: zoneCol }}>{hud.zoneLabel}</span>
           {hud.zoneKind !== 'final' && <span className="font-display text-lg font-extrabold">{fmt(hud.zoneTime)}</span>}
@@ -99,13 +138,26 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
         <div className="absolute left-1/2 top-1/2">
           <div className="absolute -translate-x-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-white shadow-[0_0_4px_#000]" />
           {[0, 90, 180, 270].map((r) => (
-            <div key={r} className="absolute w-[2px] h-[7px] bg-white/90 shadow-[0_0_3px_#000]" style={{ transform: `translate(-50%, -50%) rotate(${r}deg) translateY(-13px)` }} />
+            <div
+              key={r}
+              className="absolute w-[2px] bg-white/90 shadow-[0_0_3px_#000]"
+              style={{
+                height: 7 + hud.spread * 5,
+                transformOrigin: '50% 50%',
+                transform: `translate(-50%, -50%) rotate(${r}deg) translateY(-${13 + hud.spread * 17}px)`,
+                transition: 'transform 90ms linear, height 90ms linear',
+              }}
+            />
           ))}
         </div>
       )}
       {hit.k > 0 && (
-        <div key={hit.k} className="absolute left-1/2 top-1/2 hitmarker" style={{ width: 26, height: 26 }}>
-          <div className="absolute inset-0" style={{ border: `3px solid ${hit.kill ? '#ef4444' : hit.head ? '#fde047' : '#fff'}`, boxShadow: '0 0 6px #000' }} />
+        <div
+          key={hit.k}
+          className={`absolute left-1/2 top-1/2 hitmarker ${hit.kill ? 'hitmarker--kill' : hit.head ? 'hitmarker--head' : ''}`}
+          style={{ width: hit.kill ? 34 : 26, height: hit.kill ? 34 : 26 }}
+        >
+          <div className="absolute inset-0" style={{ border: `3px solid ${hit.kill ? '#ef4444' : hit.head ? '#fde047' : '#fff'}`, boxShadow: `0 0 8px ${hit.kill ? '#ef4444' : hit.head ? '#fde047' : '#000'}` }} />
           <div className="absolute bg-black" style={{ left: '50%', top: -4, width: 8, height: 34, transform: 'translateX(-50%)', mixBlendMode: 'normal' }} />
           <div className="absolute bg-black" style={{ top: '50%', left: -4, height: 8, width: 34, transform: 'translateY(-50%)' }} />
         </div>
@@ -183,7 +235,7 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
             <div className="text-[11px] tracking-widest text-slate-400 uppercase">{hud.weapon}</div>
             {hud.isGun ? (
               <div className="font-display leading-none">
-                <span className={`text-3xl font-black ${hud.mag === 0 ? 'text-red-400' : 'text-white'}`}>{hud.mag}</span>
+                <span className={`text-3xl font-black ${hud.mag === 0 ? 'text-red-400' : hud.mag <= 3 ? 'text-red-300 ammo-low' : 'text-white'}`}>{hud.mag}</span>
                 <span className="text-slate-400 text-lg"> / {hud.reserve}</span>
               </div>
             ) : (

@@ -11,6 +11,36 @@ export interface ScoreEntry {
 
 const KEY = 'dropzone50.scores.v1';
 const NAME = 'dropzone50.name';
+const STATS = 'dropzone50.stats.v1';
+
+export interface LifetimeStats { games: number; kills: number; wins: number; }
+
+export function getLifetime(): LifetimeStats {
+  try {
+    const raw = localStorage.getItem(STATS);
+    if (raw) {
+      const s = JSON.parse(raw) as LifetimeStats;
+      if (s && typeof s.games === 'number') return s;
+    }
+  } catch { /* ignore */ }
+  // derive from the score table as a fallback
+  const scores = getScores();
+  return {
+    games: scores.length,
+    kills: scores.reduce((a, s) => a + s.kills, 0),
+    wins: scores.filter((s) => s.place === 1).length,
+  };
+}
+
+function bumpLifetime(kills: number, win: boolean) {
+  try {
+    const s = getLifetime();
+    s.games += 1;
+    s.kills += kills;
+    if (win) s.wins += 1;
+    localStorage.setItem(STATS, JSON.stringify(s));
+  } catch { /* ignore */ }
+}
 
 export function getScores(): ScoreEntry[] {
   try {
@@ -35,6 +65,7 @@ export function addScore(e: ScoreEntry): number {
   } catch {
     /* ignore */
   }
+  bumpLifetime(e.kills, e.place === 1);
   return rank;
 }
 

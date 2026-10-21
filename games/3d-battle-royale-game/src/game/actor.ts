@@ -65,6 +65,7 @@ export class Actor {
   medkits = 0;
   cd = 0;
   reload = 0;
+  burstLeft = 0;
   swing = 0;
   healT = 0;
   kills = 0;

@@ -11,7 +11,8 @@ import { Pause, GameOver } from './ui/Overlays';
 const EMPTY: HudData = {
   alive: 0, total: 0, kills: 0, score: 0, hp: 100, armor: 0, phase: 'plane', weapon: 'M9 Pistol', wid: 'pistol', mag: 0, reserve: 0, isGun: true,
   slots: [], gren: 0, bomb: 0, medkits: 0, heal: 0, reload: 0, zoneLabel: '', zoneTime: 0, zoneKind: 'wait', inZone: true,
-  prompt: null, speed: 0, vehicle: null, vehHp: 0, alt: 0, scoped: false, hint: null, touchAct: false,
+  prompt: null, speed: 0, vehicle: null, vehHp: 0, alt: 0, scoped: false, hint: null, touchAct: false, spread: 0,
+  heading: 0, streak: 0, streakLeft: 0,
 };
 
 const coarse = () => typeof window !== 'undefined' && (window.matchMedia?.('(pointer: coarse)').matches ?? false);
@@ -28,7 +29,7 @@ export default function App() {
   const [picks, setPicks] = useState<PickItem[]>([]);
   const [toast, setToast] = useState<ToastItem | null>(null);
   const [hit, setHit] = useState({ k: 0, kill: false, head: false });
-  const [hurt, setHurt] = useState({ k: 0 });
+  const [hurt, setHurt] = useState({ k: 0, ang: null as number | null });
   const [result, setResult] = useState<Result | null>(null);
   const [rank, setRank] = useState(-1);
   const [muted, setMutedState] = useState(isMuted());
@@ -63,12 +64,12 @@ export default function App() {
         setResult(r);
       },
       onHit: (kill, head) => setHit((h) => ({ k: h.k + 1, kill, head })),
-      onHurt: (zone) => {
+      onHurt: (zone, from) => {
         if (zone) return;
         const now = performance.now();
         if (now - hurtT.current < 120) return;
         hurtT.current = now;
-        setHurt((h) => ({ k: h.k + 1 }));
+        setHurt((h) => ({ k: h.k + 1, ang: from ?? null }));
       },
       onPick: (text, color) => {
         const id = idRef.current++;
@@ -102,7 +103,7 @@ export default function App() {
     setPicks([]);
     setToast(null);
     setHit({ k: 0, kill: false, head: false });
-    setHurt({ k: 0 });
+    setHurt({ k: 0, ang: null });
     setResult(null);
     setHud(EMPTY);
     game.isTouch = isTouch;

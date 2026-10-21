@@ -3,6 +3,10 @@ let master: GainNode;
 let noiseBuf: AudioBuffer;
 let muted = false;
 const last: Record<string, number> = {};
+let hitCombo = 0;
+let lastHitT = -10;
+let killStreakN = 0;
+let lastKillSfxT = -10;
 let engOsc: OscillatorNode | null = null;
 let engOsc2: OscillatorNode | null = null;
 let engGain: GainNode | null = null;
@@ -89,6 +93,18 @@ export function sfx(name: string, v = 1) {
       noise(0.5, 0.9 * v, 5000, 150);
       tone(90, 30, 0.4, 'sawtooth', 0.4 * v);
       break;
+    case 'lmg':
+      noise(0.16, 0.6 * v, 2800, 350);
+      tone(140, 50, 0.13, 'sawtooth', 0.24 * v);
+      break;
+    case 'burst':
+      noise(0.1, 0.5 * v, 4000, 600);
+      tone(240, 75, 0.09, 'square', 0.16 * v);
+      break;
+    case 'revolver':
+      noise(0.28, 0.85 * v, 3400, 180);
+      tone(130, 45, 0.24, 'sawtooth', 0.32 * v);
+      break;
     case 'swing':
       noise(0.16, 0.25 * v, 600, 3000, 'bandpass');
       break;
@@ -96,17 +112,32 @@ export function sfx(name: string, v = 1) {
       noise(0.08, 0.5 * v, 2000, 400);
       tone(180, 60, 0.1, 'triangle', 0.3 * v);
       break;
-    case 'hit':
-      tone(1300, 900, 0.05, 'square', 0.12 * v);
+    case 'hit': {
+      if (now - lastHitT > 0.85) hitCombo = 0;
+      lastHitT = now;
+      hitCombo = Math.min(hitCombo + 1, 8);
+      const mul = 1 + hitCombo * 0.09;
+      tone(1300 * mul, 900 * mul, 0.05, 'square', 0.12 * v);
+      if (hitCombo >= 3) tone(2600 * mul, 2600 * mul, 0.03, 'triangle', 0.05 * v);
       break;
+    }
     case 'head':
       tone(1900, 1200, 0.09, 'square', 0.16 * v);
       tone(950, 600, 0.12, 'triangle', 0.14 * v, 0.02);
       break;
-    case 'kill':
-      tone(500, 800, 0.1, 'square', 0.15 * v);
-      tone(800, 1200, 0.14, 'square', 0.15 * v, 0.09);
-      tone(1200, 1600, 0.2, 'triangle', 0.15 * v, 0.18);
+    case 'kill': {
+      if (now - lastKillSfxT > 7) killStreakN = 0;
+      lastKillSfxT = now;
+      killStreakN = Math.min(killStreakN + 1, 8);
+      const m = 1 + killStreakN * 0.07;
+      tone(500 * m, 800 * m, 0.1, 'square', 0.15 * v);
+      tone(800 * m, 1200 * m, 0.14, 'square', 0.15 * v, 0.09);
+      tone(1200 * m, 1600 * m, 0.2, 'triangle', 0.15 * v, 0.18);
+      if (killStreakN >= 3) tone(1600 * m, 2100 * m, 0.26, 'triangle', 0.09 * v, 0.3);
+      break;
+    }
+    case 'click':
+      tone(240, 160, 0.04, 'square', 0.12 * v);
       break;
     case 'hurt':
       tone(180, 80, 0.18, 'sawtooth', 0.28 * v);

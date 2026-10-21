@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { MODES, DIFFS, BOT_NAMES, type Difficulty, type ModeDef } from '../game/data';
-import { getScores, type ScoreEntry } from '../game/storage';
+import { getScores, getLifetime, type ScoreEntry } from '../game/storage';
 
 interface Props {
   name: string;
@@ -34,20 +34,34 @@ export function ScoreTable({ highlight, compact }: { highlight?: number; compact
   );
 }
 
+function StatChip({ icon, label, value, color }: { icon: string; label: string; value: string | number; color: string }) {
+  return (
+    <div className="panel px-3 py-2 flex items-center gap-2.5 min-w-0">
+      <span className="text-xl leading-none">{icon}</span>
+      <div className="min-w-0">
+        <div className="font-display font-black text-lg leading-none truncate" style={{ color }}>{value}</div>
+        <div className="text-[9px] tracking-[0.2em] text-slate-500 leading-none mt-0.5">{label}</div>
+      </div>
+    </div>
+  );
+}
+
 function ModeCard({ m, active, onClick }: { m: ModeDef; active: boolean; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className={`text-left p-3 rounded-lg border transition-all clip-tag ${active ? 'bg-amber-400/15 border-amber-400 shadow-[0_0_24px_rgba(251,191,36,0.25)] scale-[1.02]' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+      className={`mode-card text-left p-3 rounded-lg border transition-all duration-200 relative overflow-hidden ${active ? 'mode-card--active border-transparent' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
     >
-      <div className="flex items-center gap-2">
-        <span className="text-2xl">{m.icon}</span>
+      {active && <div className="mode-card__glow" aria-hidden />}
+      <div className="relative flex items-center gap-2.5">
+        <span className={`text-3xl leading-none transition-transform duration-200 ${active ? 'scale-110' : ''}`}>{m.icon}</span>
         <div className="min-w-0">
           <div className="font-display font-bold text-sm sm:text-base truncate">{m.name}</div>
           <div className="text-[10px] tracking-[0.15em] text-amber-300">{m.tag}</div>
         </div>
+        {active && <span className="ml-auto text-amber-400 font-display font-black text-xs">✓</span>}
       </div>
-      <div className="text-xs text-slate-300 mt-1 leading-snug hidden sm:block">{m.desc}</div>
+      <div className="text-xs text-slate-300 mt-1.5 leading-snug hidden sm:block relative">{m.desc}</div>
     </button>
   );
 }
@@ -55,6 +69,12 @@ function ModeCard({ m, active, onClick }: { m: ModeDef; active: boolean; onClick
 export default function Menu({ name, setName, mode, setMode, diff, setDiff, onPlay, isTouch }: Props) {
   const [lobby, setLobby] = useState(false);
   const m = MODES.find((x) => x.id === mode)!;
+  const stats = useMemo(() => {
+    const life = getLifetime();
+    const scores = getScores();
+    const best = scores.length ? scores[0].score : 0;
+    return { life, best };
+  }, []);
   const play = () => {
     if (m.room) setLobby(true);
     else onPlay();
@@ -82,7 +102,15 @@ export default function Menu({ name, setName, mode, setMode, diff, setDiff, onPl
           <p className="text-slate-300 tracking-[0.25em] text-[11px] sm:text-sm mt-1">DROP · LOOT · DRIVE · SURVIVE THE STORM</p>
         </header>
 
-        <div className="grid lg:grid-cols-[1.4fr_1fr] gap-4 mt-5 flex-1">
+        {/* lifetime stats strip */}
+        <div className="menu-in grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4" style={{ animationDelay: '0.05s' }}>
+          <StatChip icon="🏅" label="BEST SCORE" value={stats.best} color="#fbbf24" />
+          <StatChip icon="☠️" label="TOTAL KILLS" value={stats.life.kills} color="#f87171" />
+          <StatChip icon="🏆" label="WINS" value={stats.life.wins} color="#4ade80" />
+          <StatChip icon="🎮" label="MATCHES" value={stats.life.games} color="#7dd3fc" />
+        </div>
+
+        <div className="grid lg:grid-cols-[1.4fr_1fr] gap-4 mt-4 flex-1">
           <section className="menu-in flex flex-col gap-4" style={{ animationDelay: '0.1s' }}>
             <div className="panel p-3 sm:p-4">
               <div className="text-[11px] tracking-[0.25em] text-slate-400 mb-2">SELECT MODE</div>
@@ -98,7 +126,7 @@ export default function Menu({ name, setName, mode, setMode, diff, setDiff, onPl
                   value={name}
                   maxLength={14}
                   onChange={(e) => setName(e.target.value.toUpperCase())}
-                  className="w-full bg-black/40 border border-white/15 rounded px-3 py-2 font-display font-bold tracking-widest outline-none focus:border-amber-400"
+                  className="w-full bg-black/40 border border-white/15 rounded px-3 py-2 font-display font-bold tracking-widest outline-none focus:border-amber-400 transition-colors"
                   placeholder="YOU"
                 />
               </div>
@@ -106,15 +134,16 @@ export default function Menu({ name, setName, mode, setMode, diff, setDiff, onPl
                 <div className="text-[11px] tracking-[0.25em] text-slate-400 mb-2">BOT DIFFICULTY</div>
                 <div className="grid grid-cols-3 gap-1.5">
                   {(Object.keys(DIFFS) as Difficulty[]).map((d) => (
-                    <button key={d} onClick={() => setDiff(d)} className={`py-2 rounded text-[11px] font-bold tracking-widest border ${d === diff ? 'bg-amber-400 text-black border-amber-300' : 'bg-white/5 border-white/15 hover:bg-white/10'}`}>
+                    <button key={d} onClick={() => setDiff(d)} className={`py-2 rounded text-[11px] font-bold tracking-widest border transition-all ${d === diff ? 'bg-amber-400 text-black border-amber-300 scale-[1.03]' : 'bg-white/5 border-white/15 hover:bg-white/10'}`}>
                       {DIFFS[d].label}
                     </button>
                   ))}
                 </div>
               </div>
             </div>
-            <button onClick={play} className="btn-primary py-4 text-xl sm:text-2xl font-display">
-              {m.room ? 'CREATE ROOM' : 'DEPLOY'} ▶
+            <button onClick={play} className="btn-primary py-4 text-xl sm:text-2xl font-display relative overflow-hidden group">
+              <span className="relative z-10">{m.room ? 'CREATE ROOM' : 'DEPLOY'} ▶</span>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
           </section>
 
