@@ -37,6 +37,7 @@ export function GameOver({ r, rank, onRestart, onMenu }: { r: Result; rank: numb
             </>
           )}
           {rank === 0 && <div className="mt-2 pulse-text text-amber-300 font-display font-bold tracking-widest">★ NEW HIGH SCORE ★</div>}
+          <div className="mt-2 text-[11px] tracking-[0.2em] text-slate-400">{r.mode.toUpperCase()} · {r.map.toUpperCase()}</div>
           <div className="grid grid-cols-4 gap-2 mt-4">
             {[['KILLS', r.kills], ['DAMAGE', r.dmg], ['HEADSHOTS', r.hs], ['SURVIVED', mm]].map(([k, v]) => (
               <div key={k as string} className="bg-white/5 rounded py-2">

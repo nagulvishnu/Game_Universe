@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Game, type GameState, type Hud as HudData, type Result, type UI } from './game/game';
 import { initAudio, isMuted, setMuted, sfx } from './game/audio';
-import { addScore, getName, setName as saveName } from './game/storage';
+import { addScore, getName, setName as saveName, getMapSel, setMapSel } from './game/storage';
 import type { Difficulty } from './game/data';
 import Hud, { type FeedItem, type PickItem, type ToastItem } from './ui/Hud';
 import Touch from './ui/Touch';
@@ -13,6 +13,7 @@ const EMPTY: HudData = {
   slots: [], gren: 0, bomb: 0, medkits: 0, heal: 0, reload: 0, zoneLabel: '', zoneTime: 0, zoneKind: 'wait', inZone: true,
   prompt: null, speed: 0, vehicle: null, vehHp: 0, alt: 0, scoped: false, hint: null, touchAct: false, spread: 0,
   heading: 0, streak: 0, streakLeft: 0,
+  teamMode: false, teamAlive: 0, foeAlive: 0, myScore: 0, foeScore: 0, scoreLimit: 0, respawnLeft: 0, spectating: false, overtimeHint: false,
 };
 
 const coarse = () => typeof window !== 'undefined' && (window.matchMedia?.('(pointer: coarse)').matches ?? false);
@@ -35,6 +36,7 @@ export default function App() {
   const [muted, setMutedState] = useState(isMuted());
   const [name, setNameState] = useState(getName());
   const [mode, setMode] = useState('classic');
+  const [mapId, setMapId] = useState(() => getMapSel());
   const [diff, setDiff] = useState<Difficulty>('normal');
   const nameRef = useRef(name);
   const idRef = useRef(1);
@@ -59,7 +61,7 @@ export default function App() {
       },
       onState: (s) => setScreen(s),
       onOver: (r) => {
-        const entry = { name: nameRef.current || 'YOU', score: r.score, kills: r.kills, place: r.place, total: r.total, mode: r.mode, time: r.time, date: Date.now() };
+        const entry = { name: nameRef.current || 'YOU', score: r.score, kills: r.kills, place: r.place, total: r.total, mode: r.mode, map: r.map, time: r.time, date: Date.now() };
         setRank(addScore(entry));
         setResult(r);
       },
@@ -78,6 +80,7 @@ export default function App() {
       },
     };
     const g = new Game(canvasRef.current!, miniRef.current!, overlayRef.current!, ui, coarse());
+    g.previewMap(getMapSel());
     (window as unknown as { __game?: Game }).__game = g;
     setGame(g);
     return () => {
@@ -107,8 +110,8 @@ export default function App() {
     setResult(null);
     setHud(EMPTY);
     game.isTouch = isTouch;
-    game.startMatch(mode, diff, name.trim() || 'YOU');
-  }, [game, mode, diff, name, isTouch]);
+    game.startMatch(mode, diff, name.trim() || 'YOU', mapId);
+  }, [game, mode, diff, name, mapId, isTouch]);
 
   const restart = useCallback(() => {
     if (!game) return;
@@ -161,6 +164,13 @@ export default function App() {
           setName={(n) => { setNameState(n); saveName(n); }}
           mode={mode}
           setMode={(m) => { sfx('ui'); setMode(m); }}
+          map={mapId}
+          setMap={(id) => {
+            sfx('ui');
+            setMapId(id);
+            setMapSel(id);
+            game?.previewMap(id);
+          }}
           diff={diff}
           setDiff={setDiff}
           onPlay={start}

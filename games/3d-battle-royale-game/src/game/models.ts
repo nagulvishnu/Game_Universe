@@ -78,10 +78,11 @@ export function weaponModel(id: WeaponId): THREE.Group {
 }
 
 /* ---------------- humanoid ---------------- */
-const SKIN = 0xf1c27d;
-const PANTS = 0x1f2937;
-const legGeo = new THREE.BoxGeometry(0.2, 0.75, 0.24);
-legGeo.translate(0, -0.375, 0);
+const SKINS = [0xf1c27d, 0xe0ac69, 0xc68642, 0xa06840, 0x8d5524];
+const PANTS = [0x1f2937, 0x374151, 0x3a4536, 0x2b2f36];
+const VESTS = [0x2a3340, 0x37424e, 0x3a4a36, 0x4a3f33, 0x303a48];
+const GLOVE = 0x2b2f36;
+const BOOT = 0x1a1f26;
 const canopyGeo = new THREE.SphereGeometry(3.2, 14, 7, 0, Math.PI * 2, 0, Math.PI / 2);
 const canopyMat = new THREE.MeshLambertMaterial({ color: 0xf97316, side: THREE.DoubleSide });
 const shadowGeo = new THREE.CircleGeometry(0.6, 14);
@@ -91,8 +92,10 @@ const shadowMat = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: tr
 export interface Human {
   root: THREE.Group; // x,z
   body: THREE.Group; // y, yaw, pose
-  legL: THREE.Mesh;
-  legR: THREE.Mesh;
+  legL: THREE.Object3D;
+  legR: THREE.Object3D;
+  armL: THREE.Group;
+  head: THREE.Group;
   holder: THREE.Group;
   canopy: THREE.Group;
   shadow: THREE.Mesh;
@@ -100,24 +103,127 @@ export interface Human {
   weaponId: WeaponId | null;
 }
 
-export function makeHuman(shirt: number): Human {
+/** one arm hanging from a shoulder pivot (pad + upper + forearm + glove) */
+function buildArm(shirt: number): THREE.Group {
+  const g = new THREE.Group();
+  g.add(
+    bx(0.17, 0.12, 0.19, shirt, 0, -0.02, 0),          // shoulder pad / sleeve top
+    bx(0.12, 0.26, 0.12, shirt, 0, -0.2, 0),           // upper arm
+    bx(0.11, 0.24, 0.11, shirt, 0, -0.44, -0.02),      // forearm (sleeve)
+    bx(0.12, 0.11, 0.13, GLOVE, 0, -0.6, -0.03),       // gloved hand
+  );
+  return g;
+}
+
+/** leg hanging from a hip pivot (thigh + knee pad + shin + boot) */
+function buildLeg(pants: number): THREE.Group {
+  const g = new THREE.Group();
+  g.add(
+    bx(0.2, 0.36, 0.23, pants, 0, -0.2, 0),            // thigh
+    bx(0.21, 0.11, 0.24, 0x3d4653, 0, -0.42, 0),       // knee pad
+    bx(0.17, 0.24, 0.19, pants, 0, -0.58, 0),          // shin
+    bx(0.19, 0.13, 0.3, BOOT, 0, -0.76, -0.04),        // boot
+  );
+  return g;
+}
+
+/** head + face + per-variant headgear. variant -1 = player (amber cap + headset) */
+function buildHead(skin: number, shirt: number, variant: number): THREE.Group {
+  const g = new THREE.Group();
+  g.add(
+    bx(0.3, 0.33, 0.28, skin, 0, 0.17, 0),             // head
+    bx(0.05, 0.05, 0.02, 0x1a2230, -0.07, 0.2, -0.145), // eye L
+    bx(0.05, 0.05, 0.02, 0x1a2230, 0.07, 0.2, -0.145),  // eye R
+  );
+  const v = variant < 0 ? 99 : variant % 5;
+  if (v === 99) {
+    // player: cap + headset
+    g.add(
+      bx(0.32, 0.1, 0.3, 0xf59e0b, 0, 0.38, 0),
+      bx(0.3, 0.04, 0.14, 0xd97706, 0, 0.34, -0.2),
+      bx(0.06, 0.1, 0.06, 0x111827, -0.17, 0.22, 0),
+      bx(0.06, 0.1, 0.06, 0x111827, 0.17, 0.22, 0),
+    );
+  } else if (v === 0) {
+    // tactical cap
+    g.add(
+      bx(0.32, 0.1, 0.3, shirt, 0, 0.38, 0),
+      bx(0.3, 0.04, 0.14, 0x1f2937, 0, 0.34, -0.2),
+    );
+  } else if (v === 1) {
+    // helmet + mount
+    g.add(
+      bx(0.34, 0.18, 0.32, 0x8b939e, 0, 0.36, 0),
+      bx(0.1, 0.06, 0.05, 0x374151, 0, 0.36, -0.17),
+    );
+  } else if (v === 2) {
+    // hair
+    g.add(
+      bx(0.32, 0.11, 0.3, 0x2b2320, 0, 0.37, 0.01),
+      bx(0.32, 0.16, 0.1, 0x2b2320, 0, 0.28, 0.13),
+    );
+  } else if (v === 3) {
+    // beanie
+    g.add(
+      bx(0.32, 0.15, 0.3, 0xdc2626, 0, 0.37, 0),
+      bx(0.34, 0.06, 0.32, 0xb91c1c, 0, 0.31, 0),
+    );
+  } else {
+    // bandana + shades
+    g.add(
+      bx(0.32, 0.07, 0.3, 0xdc2626, 0, 0.34, 0),
+      bx(0.32, 0.05, 0.06, 0xdc2626, 0, 0.31, 0.14),
+      bx(0.24, 0.05, 0.02, 0x0b1220, 0, 0.2, -0.148),
+    );
+  }
+  return g;
+}
+
+export function makeHuman(shirt: number, variant = 0): Human {
   const root = new THREE.Group();
   const body = new THREE.Group();
   body.rotation.order = 'YXZ';
   root.add(body);
-  body.add(bx(0.58, 0.72, 0.32, shirt, 0, 1.2, 0), bx(0.62, 0.12, 0.34, 0x111827, 0, 0.88, 0));
-  body.add(bx(0.32, 0.32, 0.32, SKIN, 0, 1.78, 0), bx(0.36, 0.14, 0.36, 0x1f2937, 0, 1.95, 0));
-  const legL = new THREE.Mesh(legGeo, mat(PANTS));
-  const legR = new THREE.Mesh(legGeo, mat(PANTS));
-  legL.position.set(-0.16, 0.85, 0);
-  legR.position.set(0.16, 0.85, 0);
+  const skin = SKINS[Math.abs(variant + 3) % SKINS.length];
+  const pants = PANTS[Math.abs(variant) % PANTS.length];
+  const vest = VESTS[Math.abs(variant + 1) % VESTS.length];
+
+  // torso: hips → chest → shoulders + plate carrier
+  body.add(
+    bx(0.5, 0.14, 0.28, pants, 0, 0.92, 0),            // hips
+    bx(0.5, 0.08, 0.29, 0x111827, 0, 0.86, 0),         // belt
+    bx(0.08, 0.06, 0.03, 0xfbbf24, 0, 0.86, -0.15),    // buckle
+    bx(0.5, 0.44, 0.28, shirt, 0, 1.22, 0),            // chest
+    bx(0.58, 0.14, 0.3, shirt, 0, 1.44, 0),            // shoulders
+    bx(0.46, 0.32, 0.32, vest, 0, 1.24, -0.01),        // plate carrier
+    bx(0.08, 0.3, 0.04, 0x111827, -0.14, 1.24, -0.16), // strap L
+    bx(0.08, 0.3, 0.04, 0x111827, 0.14, 1.24, -0.16),  // strap R
+    bx(0.34, 0.34, 0.14, vest, 0, 1.22, 0.22),         // backpack
+    bx(0.36, 0.09, 0.16, 0x6b5a45, 0, 1.42, 0.22),     // bedroll
+    bx(0.14, 0.08, 0.14, skin, 0, 1.54, 0),            // neck
+  );
+
+  // legs (hip pivots)
+  const legL = buildLeg(pants);
+  const legR = buildLeg(pants);
+  legL.position.set(-0.15, 0.86, 0);
+  legR.position.set(0.15, 0.86, 0);
   body.add(legL, legR);
-  const holder = new THREE.Group();
-  holder.position.set(0.3, 1.35, -0.1);
-  holder.add(bx(0.13, 0.13, 0.45, shirt, 0, -0.02, -0.12));
+
+  // arms — right holds the weapon (same pivot/behavior as before)
+  const holder = buildArm(shirt);
+  holder.position.set(0.34, 1.4, -0.02);
   body.add(holder);
-  // off-hand arm
-  body.add(bx(0.13, 0.55, 0.13, shirt, -0.36, 1.2, 0));
+  const armL = buildArm(shirt);
+  armL.position.set(-0.34, 1.4, -0.02);
+  armL.rotation.z = -0.06;
+  body.add(armL);
+
+  // head
+  const head = buildHead(skin, shirt, variant);
+  head.position.set(0, 1.58, 0);
+  body.add(head);
+
   const canopy = new THREE.Group();
   const dome = new THREE.Mesh(canopyGeo, canopyMat);
   dome.position.y = 3.6;
@@ -127,7 +233,7 @@ export function makeHuman(shirt: number): Human {
   const shadow = new THREE.Mesh(shadowGeo, shadowMat);
   shadow.position.y = 0.04;
   root.add(shadow);
-  return { root, body, legL, legR, holder, canopy, shadow, weapon: null, weaponId: null };
+  return { root, body, legL, legR, armL, head, holder, canopy, shadow, weapon: null, weaponId: null };
 }
 
 export function setHumanWeapon(h: Human, id: WeaponId) {

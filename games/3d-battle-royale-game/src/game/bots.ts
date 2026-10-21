@@ -53,10 +53,18 @@ function findLoot(g: Game, b: Actor, range: number): Loot | null {
 function pickRoam(g: Game, b: Actor) {
   const ai = b.ai!;
   const z = g.zone;
-  let cx = z.tx, cz = z.tz, r = z.tr;
+  let cx = z.tx, cz = z.tz, r = g.mode.respawn ? g.mode.half * 0.85 : z.tr;
   if (z.stage === 'final') { cx = z.cx; cz = z.cz; r = z.r; }
   const p = g.player;
-  if (Math.random() < 0.22 && p.alive && p.phase === 'ground') { cx = p.x; cz = p.z; r = 30; }
+  // teammates rally around the player
+  if ((g.mode.teamSize ?? 1) > 1 && !b.isPlayer && b.team === p.team && p.alive && p.phase !== 'plane') {
+    cx = p.x + rnd(-20, 20);
+    cz = p.z + rnd(-20, 20);
+    r = 16;
+  } else if (g.mode.room && !b.isPlayer && b.team !== p.team && p.alive && p.phase === 'ground') {
+    // arena rivals hunt the player directly — no loitering
+    cx = p.x; cz = p.z; r = 26;
+  } else if (Math.random() < 0.22 && p.alive && p.phase === 'ground') { cx = p.x; cz = p.z; r = 30; }
   const a = Math.random() * 6.28;
   const rr = Math.sqrt(Math.random()) * Math.max(3, r * 0.75);
   const h = g.mode.half;
@@ -74,11 +82,11 @@ function think(g: Game, b: Actor) {
   const dist = (e: Actor) => Math.hypot(e.x - b.x, e.z - b.z);
   let best: Actor | null = null, bd = 1e9;
   for (const e of g.actors) {
-    if (e === b || !e.alive || e.phase === 'plane' || e.phase === 'fall' || e.phase === 'chute') continue;
+    if (e === b || !e.alive || e.team === b.team || e.phase === 'plane' || e.phase === 'fall' || e.phase === 'chute') continue;
     const d = dist(e);
     if (d < sight && d < bd) { bd = d; best = e; }
   }
-  let tgt: Actor | null = ai.target && ai.target.alive && ai.target.phase !== 'plane' && dist(ai.target) < sight * 1.4 ? ai.target : null;
+  let tgt: Actor | null = ai.target && ai.target.alive && ai.target.team !== b.team && ai.target.phase !== 'plane' && dist(ai.target) < sight * 1.4 ? ai.target : null;
   let tl = tgt ? hasLos(g, b, tgt) : false;
   if ((!tgt || !tl) && best && best !== tgt) {
     const bl = hasLos(g, b, best);

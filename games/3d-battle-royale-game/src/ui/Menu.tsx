@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { MODES, DIFFS, BOT_NAMES, type Difficulty, type ModeDef } from '../game/data';
+import { MODES, DIFFS, MAPS, BOT_NAMES, type Difficulty, type ModeDef, type MapDef } from '../game/data';
 import { getScores, getLifetime, type ScoreEntry } from '../game/storage';
 
 interface Props {
@@ -7,6 +7,8 @@ interface Props {
   setName: (n: string) => void;
   mode: string;
   setMode: (m: string) => void;
+  map: string;
+  setMap: (m: string) => void;
   diff: Difficulty;
   setDiff: (d: Difficulty) => void;
   onPlay: () => void;
@@ -24,7 +26,7 @@ export function ScoreTable({ highlight, compact }: { highlight?: number; compact
       {scores.slice(0, compact ? 5 : 10).map((s: ScoreEntry, i) => (
         <div key={s.date + '-' + i} className={`grid grid-cols-[24px_1fr_52px_36px_52px] gap-x-2 px-2 py-1 rounded ${i === highlight ? 'bg-amber-400/25 border border-amber-400/70' : i % 2 ? 'bg-white/[0.03]' : ''}`}>
           <span className={i < 3 ? 'text-amber-300 font-bold' : 'text-slate-500'}>{i + 1}</span>
-          <span className="truncate">{s.name} <span className="text-[10px] text-slate-500">{s.mode}</span></span>
+          <span className="truncate">{s.name} <span className="text-[10px] text-slate-500">{s.mode}{s.map ? ` · ${s.map}` : ''}</span></span>
           <span className="text-right font-display text-amber-200 text-[13px]">{s.score}</span>
           <span className="text-right">{s.kills}</span>
           <span className="text-right text-slate-300">#{s.place}</span>
@@ -66,7 +68,35 @@ function ModeCard({ m, active, onClick }: { m: ModeDef; active: boolean; onClick
   );
 }
 
-export default function Menu({ name, setName, mode, setMode, diff, setDiff, onPlay, isTouch }: Props) {
+const BIOME_DOT: Record<string, string> = { green: '#4ade80', desert: '#fbbf24', snow: '#e0f2fe', tropical: '#2dd4bf', volcanic: '#f87171' };
+
+function MapCard({ m, active, onClick }: { m: MapDef; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`mode-card text-left p-2.5 rounded-lg border transition-all duration-200 relative overflow-hidden ${active ? 'mode-card--active border-transparent' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+    >
+      {active && <div className="mode-card__glow" aria-hidden />}
+      <div className="relative flex items-center gap-2">
+        <span className={`text-2xl leading-none transition-transform duration-200 ${active ? 'scale-110' : ''}`}>{m.icon}</span>
+        <div className="min-w-0">
+          <div className="font-display font-bold text-sm truncate">{m.name}</div>
+          <div className="text-[9px] tracking-[0.15em] flex items-center gap-1.5">
+            <span className="inline-block w-2 h-2 rounded-full" style={{ background: BIOME_DOT[m.biome] }} />
+            <span className="text-amber-300">{m.tag}</span>
+          </div>
+        </div>
+        <div className="ml-auto text-right leading-none">
+          <div className="font-display font-black text-sm text-sky-300">{m.half * 2}m</div>
+          <div className="text-[8px] tracking-[0.2em] text-slate-500 mt-0.5">WORLD</div>
+        </div>
+      </div>
+      <div className="text-[11px] text-slate-400 mt-1 leading-snug hidden sm:block relative">{m.desc}</div>
+    </button>
+  );
+}
+
+export default function Menu({ name, setName, mode, setMode, map, setMap, diff, setDiff, onPlay, isTouch }: Props) {
   const [lobby, setLobby] = useState(false);
   const m = MODES.find((x) => x.id === mode)!;
   const stats = useMemo(() => {
@@ -118,6 +148,15 @@ export default function Menu({ name, setName, mode, setMode, diff, setDiff, onPl
                 {MODES.map((x) => <ModeCard key={x.id} m={x} active={x.id === mode} onClick={() => setMode(x.id)} />)}
               </div>
               <div className="sm:hidden text-xs text-slate-300 mt-2">{m.desc}</div>
+            </div>
+            <div className="panel p-3 sm:p-4">
+              <div className="flex items-baseline justify-between mb-2">
+                <div className="text-[11px] tracking-[0.25em] text-slate-400">SELECT MAP</div>
+                <div className="text-[10px] text-slate-500">{MAPS.length} WORLDS</div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {MAPS.map((x) => <MapCard key={x.id} m={x} active={x.id === map} onClick={() => setMap(x.id)} />)}
+              </div>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="panel p-3">

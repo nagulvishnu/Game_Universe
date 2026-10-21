@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import {
   WEAPONS, MODES, DIFFS, BOT_NAMES, SHIRTS, RARITY_COLORS,
-  type ModeDef, type Difficulty, type WeaponId, type WeaponDef, type VehicleType, type AmmoType,
+  MAPS, getMap, BIOME_SKY, DEFAULT_MAP,
+  type MapDef, type ModeDef, type Difficulty, type WeaponId, type WeaponDef, type VehicleType, type AmmoType,
 } from './data';
 import { Actor, Vehicle, type Loot, type Phase } from './actor';
 import { World, rayCyl } from './world';
@@ -25,9 +26,18 @@ export interface Hud {
   heading: number;
   streak: number;
   streakLeft: number;
+  teamMode: boolean;
+  teamAlive: number;
+  foeAlive: number;
+  myScore: number;
+  foeScore: number;
+  scoreLimit: number;
+  respawnLeft: number;
+  spectating: boolean;
+  overtimeHint: boolean;
 }
 export interface Result {
-  win: boolean; place: number; total: number; kills: number; dmg: number; time: number; score: number; mode: string; hs: number;
+  win: boolean; place: number; total: number; kills: number; dmg: number; time: number; score: number; mode: string; map: string; hs: number;
 }
 export interface UI {
   onHud(h: Hud): void;
@@ -72,11 +82,13 @@ export class Game {
   rain: THREE.InstancedMesh | null = null;
   rainDrops: { x: number; y: number; z: number; s: number }[] = [];
   clouds: THREE.InstancedMesh[] = [];
+  hemi!: THREE.HemisphereLight;
   private rDummy = new THREE.Object3D();
   worldGroup = new THREE.Group();
   actorGroup = new THREE.Group();
   world!: World;
   mode: ModeDef = MODES[0];
+  mapDef: MapDef = MAPS[0];
   diff: Difficulty = 'normal';
   botSkill = 0.8;
   playerName = 'YOU';
@@ -99,6 +111,12 @@ export class Game {
   lootId = 0;
   hs = 0;
   bonusScore = 0;
+  /** arena modes: kills per team */
+  teamScore: Record<number, number> = {};
+  /** true when player's team won (used when player is dead but team survived) */
+  pendingWin: boolean | null = null;
+  /** arena time limit tied → next kill wins */
+  overtime = false;
 
   keys = new Set<string>();
   input = { fire: false, ads: false, jump: false, brake: false, sprint: false, mx: 0, my: 0, lookX: 0, lookY: 0 };
@@ -126,7 +144,7 @@ export class Game {
   maxPr = 1;
   camTmp = new THREE.Vector3();
   camDir = new THREE.Vector3();
-  playerJumpAt = 0.42;
+  playerJumpAt = 0.92; // auto-eject near end of flight; SPACE ejects anytime
   lastKillInfo = '';
   dmgTaken = 0;
 
@@ -145,7 +163,8 @@ export class Game {
     this.scene.add(this.camera);
     this.scene.fog = new THREE.Fog(0xb9d6f0, 110, 470);
     this.scene.background = new THREE.Color(0xb9d6f0);
-    this.scene.add(new THREE.HemisphereLight(0xe3efff, 0x5b7a45, 1.0));
+    this.hemi = new THREE.HemisphereLight(0xe3efff, 0x5b7a45, 1.0);
+    this.scene.add(this.hemi);
     const sun = new THREE.DirectionalLight(0xfff0d0, 1.5);
     sun.position.set(0.6, 1, 0.35);
     this.sun = sun;
@@ -165,7 +184,8 @@ export class Game {
     window.addEventListener('blur', this.onBlur);
     document.addEventListener('pointerlockchange', this.onLockChange);
     document.addEventListener('pointerlockerror', this.onLockError);
-    this.buildWorld(MODES[0], false);
+    this.buildWorld(this.scaleMode(MODES[0], DEFAULT_MAP), false);
+    this.applySky();
     this.lastT = performance.now();
     this.raf = requestAnimationFrame(this.loop);
   }
@@ -294,12 +314,19 @@ export class Game {
     this.scene.remove(this.worldGroup, this.actorGroup);
     this.worldGroup.traverse((o) => {
       const m = o as THREE.Mesh;
-      if (m.isMesh && m.userData.own) m.geometry.dispose();
+      if (m.isMesh && m.userData.own) {
+        m.geometry?.dispose();
+        const mm = m.material as THREE.Material | THREE.Material[];
+        if (Array.isArray(mm)) mm.forEach((x) => x.dispose());
+        else mm?.dispose();
+      }
     });
+    this.zoneTex?.dispose();
+    this.zoneTex = null;
     this.worldGroup = new THREE.Group();
     this.actorGroup = new THREE.Group();
     this.scene.add(this.worldGroup, this.actorGroup);
-    this.world = new World(mode.half, mode.towns, Math.floor(Math.random() * 1e9));
+    this.world = new World(mode.half, mode.towns, Math.floor(Math.random() * 1e9), this.mapDef.biome);
     this.worldGroup.add(this.world.group);
     this.fx.clear();
     this.actors = [];
@@ -316,7 +343,7 @@ export class Game {
     this.spawnVehicles(mode, false);
     this.spawnLoot(mode);
     this.spawnZone(mode);
-    this.spawnActors(mode);
+    if (!mode.room) this.spawnActors(mode); // arena modes spawn via spawnArena (no plane)
   }
 
   spawnVehicles(mode: ModeDef, decor: boolean) {
@@ -357,6 +384,12 @@ export class Game {
   }
 
   spawnZone(mode: ModeDef) {
+    // arena (respawn) modes: one big static safe area covering the whole map — no wall, no shrinking
+    if (mode.respawn) {
+      const r = mode.half * 1.5;
+      this.zone = { cx: 0, cz: 0, r, fx: 0, fz: 0, fr: r, tx: 0, tz: 0, tr: r, phase: 0, stage: 'final', t: 0, dur: 9999, dps: 0 };
+      return;
+    }
     const geo = new THREE.CylinderGeometry(1, 1, 140, 72, 1, true);
     const cv = document.createElement('canvas');
     cv.width = 8;
@@ -496,10 +529,15 @@ export class Game {
     this.worldGroup.add(mesh);
     this.plane = { dx, dz, sx: -dx * len / 2 - dz * off, sz: -dz * len / 2 + dx * off, len, p: 0.06, speed: 62, alt: 165, x: 0, z: 0, mesh };
     mesh.rotation.y = Math.atan2(-dx, -dz);
+    const ts = mode.teamSize ?? 1;
     for (let i = 0; i < total; i++) {
       const isP = i === 0;
       const color = isP ? 0xf59e0b : SHIRTS[i % SHIRTS.length];
-      const a = new Actor(i, isP ? this.playerName : names[i % names.length], isP, makeHuman(color), color);
+      const a = new Actor(i, isP ? this.playerName : names[i % names.length], isP, makeHuman(color, isP ? -1 : i), color);
+      // teams: solo = everyone own team · duos/squads = player's team 0, rival teams 1..N
+      if (ts <= 1) a.team = i;
+      else if (i < ts) a.team = 0;
+      else a.team = 1 + Math.floor((i - ts) / ts);
       a.yaw = Math.atan2(-dx, -dz);
       a.y = this.plane.alt;
       if (isP) {
@@ -510,8 +548,15 @@ export class Game {
         this.camYaw = a.yaw;
         this.camPitch = -0.15;
       } else {
-        if (!mode.meleeOnly && Math.random() < 0.3) a.guns[0] = { id: 'pistol', mag: 12 };
-        initBot(this, a, rnd(0.1, 0.92));
+        if (mode.respawn) {
+          // arena deathmatch: every rival starts armed so duels fight from second one
+          a.guns[0] = { id: 'pistol', mag: 12 };
+          a.ammo.light = 36;
+          a.slot = 1;
+        } else if (!mode.meleeOnly && Math.random() < 0.3) a.guns[0] = { id: 'pistol', mag: 12 };
+        // teammates drop right after the player so the squad lands together
+        const jumpAt = ts > 1 && a.team === 0 ? this.playerJumpAt + 0.03 * i + rnd(0, 0.04) : rnd(0.1, 0.92);
+        initBot(this, a, jumpAt);
       }
       this.syncWeapon(a);
       this.actorGroup.add(a.human.root);
@@ -520,12 +565,91 @@ export class Game {
     this.updatePlane(0);
   }
 
-  /* ------------------------------------------------ match flow ------------------------------------------------ */
-  lastCfg: { mode: string; diff: Difficulty; name: string } = { mode: 'classic', diff: 'normal', name: 'YOU' };
+  /** Arena deathmatch: skip the plane, spawn both teams armed and facing each other on the ground. */
+  spawnArena() {
+    const mode = this.mode;
+    this.botSkill = DIFFS[this.diff].acc;
+    const names = BOT_NAMES.slice().sort(() => Math.random() - 0.5);
+    const ts = mode.teamSize ?? 1;
+    const h = mode.half;
+    for (let i = 0; i < mode.players; i++) {
+      const isP = i === 0;
+      const color = isP ? 0xf59e0b : SHIRTS[i % SHIRTS.length];
+      const a = new Actor(i, isP ? this.playerName : names[i % names.length], isP, makeHuman(color, isP ? -1 : i), color);
+      if (ts <= 1) a.team = i;
+      else if (i < ts) a.team = 0;
+      else a.team = 1 + Math.floor((i - ts) / ts);
+      // team 0 on the west edge, rivals on the east edge, facing arena center
+      const side = a.team === 0 ? -1 : 1;
+      a.x = side * h * 0.38 + rnd(-5, 5);
+      a.z = rnd(-h * 0.2, h * 0.2);
+      a.y = 0;
+      a.yaw = Math.atan2(a.x, a.z); // look toward center
+      a.phase = 'ground';
+      a.onGround = true;
+      // everyone starts armed so the fight begins immediately
+      a.guns[0] = { id: 'pistol', mag: 12 };
+      a.ammo.light = 36;
+      a.slot = 1;
+      if (isP) {
+        this.player = a;
+        this.camYaw = a.yaw;
+        this.camPitch = -0.05;
+      } else {
+        initBot(this, a, 0);
+      }
+      this.syncWeapon(a);
+      this.actorGroup.add(a.human.root);
+      this.actors.push(a);
+    }
+  }
 
-  startMatch(modeId: string, diff: Difficulty, name: string) {
-    const mode = MODES.find((m) => m.id === modeId) ?? MODES[0];
-    this.lastCfg = { mode: modeId, diff, name };
+  /* ------------------------------------------------ match flow ------------------------------------------------ */
+  lastCfg: { mode: string; diff: Difficulty; name: string; map: string } = { mode: 'classic', diff: 'normal', name: 'YOU', map: DEFAULT_MAP };
+
+  /** Combine a mode's size with the selected map: scales world half, zone, loot and vehicles together. */
+  scaleMode(base: ModeDef, mapId: string): ModeDef {
+    this.mapDef = getMap(mapId);
+    const half = Math.round(this.mapDef.half * (base.half / 300));
+    const k = half / base.half;
+    const v = (n: number) => Math.max(n > 0 ? 1 : 0, Math.round(n * k));
+    return {
+      ...base,
+      half,
+      towns: Math.max(3, Math.round((this.mapDef.towns * base.towns) / 6)),
+      startR: Math.round(base.startR * k),
+      loot: Math.round(base.loot * k * k),
+      vehicles: { car: v(base.vehicles.car), bike: v(base.vehicles.bike), truck: v(base.vehicles.truck) },
+      phases: base.phases.map((p) => ({ ...p, radius: Math.round(p.radius * k) })),
+    };
+  }
+
+  /** fog/sun/sky tint for the current map + weather; fog range scales with map size */
+  applySky() {
+    const s = BIOME_SKY[this.mapDef.biome];
+    const rain = this.weather === 'rain';
+    const sizeK = Math.max(1, this.mode.half / 300);
+    const fog = rain ? 0x8aa0b0 : s.fog;
+    this.scene.fog = new THREE.Fog(fog, (rain ? 80 : 110) * sizeK, (rain ? 380 : 470) * sizeK);
+    this.scene.background = new THREE.Color(fog);
+    this.sun.intensity = rain ? 0.7 : s.sunI;
+    this.sun.color.set(rain ? 0xc8d8e8 : s.sun);
+    this.hemi.intensity = rain ? 0.8 : s.ambI;
+    this.hemi.color.set(rain ? 0xd8e2ea : s.amb);
+    (this.sky.material as THREE.MeshBasicMaterial).color.set(rain ? 0xc9d4de : s.tint);
+  }
+
+  /** rebuild the menu backdrop world on the picked map (menu state only) */
+  previewMap(mapId: string) {
+    if (this.state !== 'menu') return;
+    this.weather = 'clear';
+    this.buildWorld(this.scaleMode(MODES[0], mapId), false);
+    this.applySky();
+  }
+
+  startMatch(modeId: string, diff: Difficulty, name: string, mapId: string = DEFAULT_MAP) {
+    const mode = this.scaleMode(MODES.find((m) => m.id === modeId) ?? MODES[0], mapId);
+    this.lastCfg = { mode: modeId, diff, name, map: mapId };
     this.diff = diff;
     this.playerName = name || 'YOU';
     this.time = 0;
@@ -534,6 +658,9 @@ export class Game {
     this.streak = 0;
     this.hs = 0;
     this.bonusScore = 0;
+    this.teamScore = {};
+    this.pendingWin = null;
+    this.overtime = false;
     this.slow = 0;
     this.shake = 0;
     this.dmgTaken = 0;
@@ -543,41 +670,33 @@ export class Game {
     setEngine(false);
     this.lastPlayerShot = -10;
     this.weather = Math.random() < 0.3 ? 'rain' : 'clear';
-    if (this.weather === 'rain') {
-      this.scene.fog = new THREE.Fog(0x8aa0b0, 80, 380);
-      this.scene.background = new THREE.Color(0x8aa0b0);
-      this.sun.intensity = 0.7;
-      this.sun.color.set(0xc8d8e8);
-      this.buildRain();
-    } else {
-      this.scene.fog = new THREE.Fog(0xb9d6f0, 110, 470);
-      this.scene.background = new THREE.Color(0xb9d6f0);
-      this.sun.intensity = 1.5;
-      this.sun.color.set(0xfff0d0);
-      if (this.rain) this.rain.visible = false;
-    }
+    if (this.weather === 'rain') this.buildRain();
+    else if (this.rain) this.rain.visible = false;
     this.buildWorld(mode, true);
+    this.applySky();
     this.state = 'playing';
     this.ui.onState('playing');
     if (this.weather === 'rain') this.ui.onToast('STORMY DROP', 'Rain reduces visibility — stay sharp', 'info');
-    this.ui.onToast('DROP IN!', 'Press SPACE to jump from the plane', 'info');
+    if (mode.room) {
+      this.spawnArena();
+      this.ui.onToast('FIGHT!', 'Arena deathmatch — no plane, no storm', 'info');
+    } else {
+      this.ui.onToast('DROP IN!', 'Press SPACE to jump from the plane', 'info');
+    }
     this.requestLock();
   }
 
   restart() {
-    this.startMatch(this.lastCfg.mode, this.lastCfg.diff, this.lastCfg.name);
+    this.startMatch(this.lastCfg.mode, this.lastCfg.diff, this.lastCfg.name, this.lastCfg.map);
   }
 
   toMenu() {
     setEngine(false);
     this.exitLock();
-    this.scene.fog = new THREE.Fog(0xb9d6f0, 110, 470);
-    this.scene.background = new THREE.Color(0xb9d6f0);
-    this.sun.intensity = 1.5;
-    this.sun.color.set(0xfff0d0);
     this.weather = 'clear';
     if (this.rain) this.rain.visible = false;
-    this.buildWorld(MODES[0], false);
+    this.buildWorld(this.scaleMode(MODES[0], this.lastCfg.map), false);
+    this.applySky();
     this.state = 'menu';
     this.ui.onState('menu');
   }
@@ -623,10 +742,12 @@ export class Game {
     this.input.fire = false;
     setEngine(false);
     this.exitLock();
-    const place = win ? 1 : p.place || this.mode.players;
+    const arena = !!this.mode.scoreLimit;
+    const place = win ? 1 : arena ? 2 : p.place || this.mode.players;
     let score = this.liveScore() + Math.max(0, this.mode.players - place + 1) * 20;
+    if (arena) score += this.myTeamScore() * 120;
     if (win) score += 1000;
-    const res: Result = { win, place, total: this.mode.players, kills: p.kills, dmg: Math.round(p.dmg), time: Math.round(this.time), score: Math.round(score), mode: this.mode.name, hs: this.hs };
+    const res: Result = { win, place, total: this.mode.players, kills: p.kills, dmg: Math.round(p.dmg), time: Math.round(this.time), score: Math.round(score), mode: this.mode.name, map: this.mapDef.name, hs: this.hs };
     sfx(win ? 'win' : 'lose');
     this.ui.onState('over');
     this.ui.onOver(res);
@@ -1001,7 +1122,7 @@ export class Game {
       if (tg > 0 && tg < best) { best = tg; kind = 'ground'; }
     }
     for (const e of this.actors) {
-      if (e === a || !e.alive || e.phase === 'plane' || e.phase === 'vehicle') continue;
+      if (e === a || !e.alive || e.team === a.team || e.phase === 'plane' || e.phase === 'vehicle') continue;
       const t = rayCyl(ox, oy, oz, dx, dy, dz, e.x, e.z, 0.5, e.y, e.y + 1.95, best);
       if (t < best) { best = t; kind = 'actor'; actor = e; head = oy + dy * t > e.y + 1.55; }
     }
@@ -1123,7 +1244,7 @@ export class Game {
     const wide = def.id === 'axe';
     let bestE: Actor | null = null, bd = 1e9;
     for (const e of this.actors) {
-      if (e === a || !e.alive || e.phase === 'plane' || e.phase === 'vehicle') continue;
+      if (e === a || !e.alive || e.team === a.team || e.phase === 'plane' || e.phase === 'vehicle') continue;
       const dx = e.x - a.x, dz = e.z - a.z;
       const d = Math.hypot(dx, dz);
       if (d > def.range + 0.5) continue;
@@ -1149,6 +1270,7 @@ export class Game {
 
   damageActor(t: Actor, dmg: number, src: Actor | null, head = false, wp = '', px = t.x, py = t.y + 1.2, pz = t.z) {
     if (!t.alive || t.phase === 'plane') return;
+    if (src && src !== t && src.team === t.team) return; // no friendly fire
     let d = dmg;
     if (t.armor > 0) {
       const ab = Math.min(t.armor, d * 0.55);
@@ -1192,14 +1314,37 @@ export class Game {
 
   killActor(t: Actor, src: Actor | null, wp: string, head: boolean) {
     if (!t.alive) return;
-    t.place = this.aliveCount();
+    const ts = this.mode.teamSize ?? 1;
+    if (ts > 1) {
+      t.place = new Set(this.actors.filter((a) => a.alive).map((a) => a.team)).size;
+    } else {
+      t.place = this.aliveCount();
+    }
     t.alive = false;
     t.hp = 0;
     if (t.vehicle) this.exitVehicle(t);
     const p = this.player;
     if (src && src !== t) src.kills++;
     this.fx.burst(t.x, t.y + 1, t.z, 20, 7, 0.8, 0.15, 0xc4162a, 16, 0.6);
-    // drop loot
+    const who = src && src !== t ? src.name : 'The Storm';
+    const kind = src === p ? 'mine' : t === p ? 'dead' : 'norm';
+    // ---------- arena deathmatch: score + respawn ----------
+    if (this.mode.respawn) {
+      t.deaths++;
+      t.respawnT = this.mode.respawn;
+      if (src && src !== t) this.teamScore[src.team] = (this.teamScore[src.team] ?? 0) + 1;
+      this.ui.onFeed(`${who}|${src && src !== t ? (wp || 'Weapon') + (head ? ' 🎯' : '') : 'Zone'}|${t.name}`, kind);
+      if (src === p && t !== p) this.playerKillFx(t, head);
+      if (t === p) {
+        this.shake = 1;
+        this.input.fire = false;
+        this.ui.onToast('YOU DIED', `Redeploying in ${this.mode.respawn}s`, 'dead');
+      }
+      if (this.overtime) this.endOvertime();
+      else this.checkRoomScore();
+      return;
+    }
+    // ---------- battle royale: loot drops ----------
     const gx = t.x, gz = t.z;
     t.guns.forEach((g, i) => {
       if (g) this.addLoot('weapon', gx + rnd(-1.4, 1.4), gz + rnd(-1.4, 1.4), { wid: g.id });
@@ -1211,31 +1356,132 @@ export class Game {
     for (let i = 0; i < Math.min(2, t.gren); i++) this.addLoot('grenade', gx + rnd(-1, 1), gz + rnd(-1, 1));
     if (t.armor > 20) this.addLoot('shield', gx + rnd(-1, 1), gz + rnd(-1, 1));
     // feed
-    const who = src && src !== t ? src.name : 'The Storm';
-    const kind = src === p ? 'mine' : t === p ? 'dead' : 'norm';
     this.ui.onFeed(`${who}|${src && src !== t ? (wp || 'Weapon') + (head ? ' 🎯' : '') : 'Zone'}|${t.name}`, kind);
-    if (src === p && t !== p) {
-      this.slow = 0.14;
-      this.shake = Math.min(1, this.shake + 0.3);
-      sfx('kill');
-      this.ui.onHit(true, head);
-      this.streak = this.time - this.lastKillT < 7 ? this.streak + 1 : 1;
-      this.lastKillT = this.time;
-      if (this.streak >= 2) this.bonusScore += (this.streak - 1) * 50;
-      const names = ['', 'ELIMINATED', 'DOUBLE KILL!', 'TRIPLE KILL!!', 'QUAD KILL!!!', 'RAMPAGE!!!!', 'UNSTOPPABLE!!!', 'LEGENDARY!!!!'];
-      const pts = (head ? 200 : 150) + (this.streak - 1) * 50;
-      this.ui.onToast(names[Math.min(7, this.streak)], `${t.name} · +${pts}${this.streak > 1 ? ` ×${this.streak}` : ''}`, 'kill');
-    }
+    if (src === p && t !== p) this.playerKillFx(t, head);
     if (t === p) {
-      this.endAt = this.time + 2.2;
       this.shake = 1;
-      setEngine(false);
-      this.ui.onToast('YOU DIED', src && src !== t ? `Eliminated by ${src.name}` : 'The storm got you', 'dead');
       this.input.fire = false;
+      setEngine(false);
+      const teamLeft = ts > 1 && this.actors.some((a) => a.team === p.team && a.alive);
+      if (teamLeft) {
+        this.ui.onToast('YOU DIED', 'Spectating your squad', 'dead');
+      } else {
+        this.endAt = this.time + 2.2;
+        this.ui.onToast('YOU DIED', src && src !== t ? `Eliminated by ${src.name}` : 'The storm got you', 'dead');
+      }
     }
-    const left = this.aliveCount();
-    if (left <= 1 && !this.endAt) {
-      if (p.alive) { this.endAt = this.time + 2; this.ui.onToast('WINNER WINNER!', 'Last one standing', 'win'); }
+    // last one / last team standing
+    if (!this.endAt) {
+      const teamsAlive = new Set(this.actors.filter((a) => a.alive).map((a) => a.team));
+      if (teamsAlive.size <= 1 && teamsAlive.has(p.team)) {
+        this.pendingWin = true;
+        if (p.alive) p.place = 1;
+        this.endAt = this.time + 2;
+        this.ui.onToast('WINNER WINNER!', ts > 1 ? 'Your team is the last one standing' : 'Last one standing', 'win');
+      }
+    }
+  }
+
+  playerKillFx(t: Actor, head: boolean) {
+    this.slow = 0.14;
+    this.shake = Math.min(1, this.shake + 0.3);
+    sfx('kill');
+    this.ui.onHit(true, head);
+    this.streak = this.time - this.lastKillT < 7 ? this.streak + 1 : 1;
+    this.lastKillT = this.time;
+    if (this.streak >= 2) this.bonusScore += (this.streak - 1) * 50;
+    const names = ['', 'ELIMINATED', 'DOUBLE KILL!', 'TRIPLE KILL!!', 'QUAD KILL!!!', 'RAMPAGE!!!!', 'UNSTOPPABLE!!!', 'LEGENDARY!!!!'];
+    const pts = (head ? 200 : 150) + (this.streak - 1) * 50;
+    this.ui.onToast(names[Math.min(7, this.streak)], `${t.name} · +${pts}${this.streak > 1 ? ` ×${this.streak}` : ''}`, 'kill');
+  }
+
+  myTeamScore(): number {
+    return this.teamScore[this.player.team] ?? 0;
+  }
+
+  foeTeamScore(): number {
+    let best = 0;
+    for (const [k, v] of Object.entries(this.teamScore)) {
+      if (+k !== this.player.team) best = Math.max(best, v);
+    }
+    return best;
+  }
+
+  /** arena: a team hit the kill limit */
+  checkRoomScore() {
+    const m = this.mode;
+    if (!m.scoreLimit || this.endAt) return;
+    const mine = this.myTeamScore(), theirs = this.foeTeamScore();
+    if (mine < m.scoreLimit && theirs < m.scoreLimit) return;
+    this.pendingWin = mine > theirs;
+    this.endAt = this.time + 1.6;
+    this.ui.onToast(this.pendingWin ? 'TEAM VICTORY!' : 'TEAM DEFEAT', `Final ${mine} — ${theirs}`, this.pendingWin ? 'win' : 'dead');
+  }
+
+  /** arena overtime: first team to lead after time expires wins */
+  endOvertime() {
+    if (this.endAt) return;
+    const mine = this.myTeamScore(), theirs = this.foeTeamScore();
+    if (mine === theirs) return; // still tied — keep sudden death going
+    this.pendingWin = mine > theirs;
+    this.endAt = this.time + 1.6;
+    this.ui.onToast(this.pendingWin ? 'TEAM VICTORY!' : 'TEAM DEFEAT', `Overtime ${mine} — ${theirs}`, this.pendingWin ? 'win' : 'dead');
+  }
+
+  /** arena time limit reached */
+  endRoomByTime() {
+    if (this.endAt || this.overtime) return;
+    const mine = this.myTeamScore(), theirs = this.foeTeamScore();
+    if (mine === theirs) {
+      this.overtime = true;
+      this.ui.onToast('SUDDEN DEATH', 'Next kill wins it', 'kill');
+      return;
+    }
+    this.pendingWin = mine > theirs;
+    this.endAt = this.time + 1.6;
+    this.ui.onToast(this.pendingWin ? 'TIME! YOUR TEAM WINS' : 'TIME! DEFEAT', `Final ${mine} — ${theirs}`, this.pendingWin ? 'win' : 'dead');
+  }
+
+  respawnActor(a: Actor) {
+    a.alive = true;
+    a.hp = 100;
+    a.armor = 0;
+    a.guns = [{ id: 'pistol', mag: 12 }];
+    a.slot = 1;
+    a.ammo = { light: 36, rifle: 0, shell: 0 };
+    a.melee = 'knife';
+    a.medkits = 0;
+    a.gren = 0;
+    a.bomb = 0;
+    a.vx = a.vy = a.vz = 0;
+    a.reload = 0;
+    a.burstLeft = 0;
+    a.healT = 0;
+    a.swing = 0;
+    a.recoil = 0;
+    a.pose = 0;
+    a.vehicle = null;
+    a.phase = 'ground';
+    a.y = 0;
+    a.onGround = true;
+    a.respawnT = 0;
+    const h = this.mode.half;
+    const side = a.team === 0 ? -1 : 1; // team 0 spawns west, rivals east
+    a.x = side * h * 0.72 + rnd(-12, 12);
+    a.z = rnd(-h * 0.35, h * 0.35);
+    a.yaw = Math.atan2(-(0 - a.x), -(0 - a.z)); // face arena center
+    if (a.ai) {
+      a.ai.target = null;
+      a.ai.loot = null;
+      a.ai.state = 'roam';
+      a.ai.roamT = 0;
+    }
+    this.syncWeapon(a);
+    if (a.isPlayer) {
+      this.camYaw = a.yaw;
+      this.camPitch = -0.1;
+      this.input.fire = false;
+      this.ui.onToast('REDEPLOYED', 'Pistol + 36 ammo · loot up fast', 'info');
     }
   }
 
@@ -1379,15 +1625,22 @@ export class Game {
     const ai = b.ai!;
     b.phase = 'fall';
     b.y = this.plane!.alt;
-    // pick landing spot: nearest of a few random loot spots to jump point
-    let best = this.world.spots[0], bd = 1e9;
-    for (let i = 0; i < 6; i++) {
-      const s = this.world.spots[Math.floor(Math.random() * this.world.spots.length)];
-      const d = Math.hypot(s.x - b.x, s.z - b.z);
-      if (d < bd) { bd = d; best = s; }
+    const ts = this.mode.teamSize ?? 1;
+    if (ts > 1 && b.team === this.player.team && !b.isPlayer) {
+      // teammates land beside the player
+      ai.landX = this.player.x + rnd(-14, 14);
+      ai.landZ = this.player.z + rnd(-14, 14);
+    } else {
+      // pick landing spot: nearest of a few random loot spots to jump point
+      let best = this.world.spots[0], bd = 1e9;
+      for (let i = 0; i < 6; i++) {
+        const s = this.world.spots[Math.floor(Math.random() * this.world.spots.length)];
+        const d = Math.hypot(s.x - b.x, s.z - b.z);
+        if (d < bd) { bd = d; best = s; }
+      }
+      ai.landX = best.x + rnd(-3, 3);
+      ai.landZ = best.z + rnd(-3, 3);
     }
-    ai.landX = best.x + rnd(-3, 3);
-    ai.landZ = best.z + rnd(-3, 3);
   }
 
   airdrop() {
@@ -1441,12 +1694,23 @@ export class Game {
   jumpOut(a: Actor) {
     const pl = this.plane!;
     a.phase = 'fall';
-    a.vx = pl.dx * 22;
-    a.vz = pl.dz * 22;
-    a.vy = -6;
+    // fly wherever the camera is looking; only sync to plane dir if still facing it
+    const fx = -Math.sin(this.camYaw), fz = -Math.cos(this.camYaw);
+    const aligned = fx * pl.dx + fz * pl.dz > 0.9;
+    const sx = aligned ? pl.dx : fx;
+    const sz = aligned ? pl.dz : fz;
+    if (aligned) this.camYaw = a.yaw;
+    a.vx = sx * 26;
+    a.vz = sz * 26;
+    a.vy = -4;
+    this.camPitch = -0.25;
     sfx('jump');
     this.shake = 0.5;
-    this.ui.onToast('SKYDIVE!', 'Look down to dive · SPACE opens parachute', 'info');
+    this.ui.onToast(
+      'SKYDIVE!',
+      this.isTouch ? 'STICK STEERS · LOOK DOWN TO DIVE · JUMP = PARACHUTE' : 'WASD STEERS · LOOK DOWN TO DIVE · SPACE = PARACHUTE',
+      'info',
+    );
   }
 
   updatePlayer(dt: number) {
@@ -1481,24 +1745,40 @@ export class Game {
     p.recoil = Math.max(0, p.recoil - dt * 10);
     if (p.reload > 0) { p.reload -= dt; if (p.reload <= 0) this.finishReload(p); }
 
-    if (p.phase === 'plane') return;
+    if (p.phase === 'plane') {
+      // jump whenever you want — auto-eject only near the end of the flight
+      if (jumpPressed) this.jumpOut(p);
+      return;
+    }
     if (p.phase === 'fall' || p.phase === 'chute') {
       if (p.phase === 'fall') {
         if (jumpPressed && p.y < 140) this.openChute(p);
+        // look down = dive (fast, less travel) · look up/horizontal = glide (far)
         const ld = clamp((-p.pitch + 0.15) / 0.9, 0, 1);
-        const hs = 32 - 26 * ld;
-        const tvy = -(30 + 30 * ld);
-        const fw = Math.max(m.y, 0);
-        const wx = fx * fw * hs + rx * m.x * 12, wz = fz * fw * hs + rz * m.x * 12;
-        p.vx += (wx - p.vx) * Math.min(1, 2.5 * dt);
-        p.vz += (wz - p.vz) * Math.min(1, 2.5 * dt);
+        const hs = 34 - 26 * ld;
+        const tvy = -(28 + 34 * ld);
+        // full WASD steering; S air-brakes, A/D bank sideways
+        const back = Math.max(-m.y, 0);
+        const mul = hs * (1 - back * 0.55);
+        const wx = fx * m.y * mul + rx * m.x * hs * 0.55;
+        const wz = fz * m.y * mul + rz * m.x * hs * 0.55;
+        p.vx += (wx - p.vx) * Math.min(1, 3.2 * dt);
+        p.vz += (wz - p.vz) * Math.min(1, 3.2 * dt);
         p.vy += (tvy - p.vy) * Math.min(1, 3 * dt);
         if (p.y < 52) this.openChute(p);
       } else {
-        const wx = fx * m.y * 14 + rx * m.x * 10, wz = fz * m.y * 14 + rz * m.x * 10;
-        p.vx += (wx - p.vx) * Math.min(1, 2.2 * dt);
-        p.vz += (wz - p.vz) * Math.min(1, 2.2 * dt);
-        p.vy += (-11 - p.vy) * Math.min(1, 4 * dt);
+        // parachute — SPACE cuts it for a fast drop
+        if (jumpPressed) {
+          p.phase = 'fall';
+          p.vy = Math.min(p.vy, -14);
+          sfx('click', 0.7);
+          if (p.y < 10) this.land(p);
+          return;
+        }
+        const wx = fx * m.y * 16 + rx * m.x * 11, wz = fz * m.y * 16 + rz * m.x * 11;
+        p.vx += (wx - p.vx) * Math.min(1, 2.4 * dt);
+        p.vz += (wz - p.vz) * Math.min(1, 2.4 * dt);
+        p.vy += (-10 - p.vy) * Math.min(1, 4 * dt);
       }
       p.x += p.vx * dt; p.z += p.vz * dt; p.y += p.vy * dt;
       const pp = { x: p.x, z: p.z };
@@ -1571,7 +1851,7 @@ export class Game {
     const d = this.camDir;
     let best: Actor | null = null, ba = 0.12;
     for (const e of this.actors) {
-      if (e === p || !e.alive || e.phase === 'plane' || e.phase === 'vehicle') continue;
+      if (e === p || !e.alive || e.team === p.team || e.phase === 'plane' || e.phase === 'vehicle') continue;
       const dx = e.x - this.camera.position.x, dy = e.y + 1.3 - this.camera.position.y, dz = e.z - this.camera.position.z;
       const l = Math.hypot(dx, dy, dz);
       if (l > 70) continue;
@@ -1646,7 +1926,7 @@ export class Game {
 
   updateZone(dt: number) {
     const z = this.zone;
-    if (!z) return;
+    if (!z || this.mode.respawn) return;
     z.t += dt;
     if (z.stage === 'wait') {
       if (z.t >= z.dur) {
@@ -1680,7 +1960,6 @@ export class Game {
         const dmg = z.dps * dt;
         a.hp -= dmg;
         if (a.isPlayer) {
-          this.ui.onHurt(true);
           if (Math.random() < dt * 2) sfx('hurt', 0.4);
           this.shake = Math.max(this.shake, 0.08);
         }
@@ -1767,6 +2046,18 @@ export class Game {
       if (a.phase === 'fall') hx = 1.1;
       if (a.reload > 0) hx -= 0.4;
       h.holder.rotation.x = hx;
+      // left arm: supports gun aim, swings opposite legs otherwise
+      if (!a.alive) {
+        h.armL.rotation.x = 0.3;
+      } else if (a.phase === 'fall' || a.phase === 'chute') {
+        h.armL.rotation.x = 1.1;
+      } else if (def.kind === 'gun') {
+        h.armL.rotation.x = hx;
+      } else {
+        h.armL.rotation.x = -sw * 0.8;
+      }
+      // head glances toward aim
+      h.head.rotation.x = -hx * 0.35;
       if (!a.isPlayer) {
         a.swing = Math.max(0, a.swing - dt * 4);
         a.recoil = Math.max(0, a.recoil - dt * 10);
@@ -1785,13 +2076,22 @@ export class Game {
       if (a.reload > 0) { a.reload -= dt; if (a.reload <= 0) this.finishReload(a); }
       updateBot(this, a, dt);
     }
+    // arena respawns + time limit
+    if (this.mode.respawn && this.state === 'playing') {
+      for (const a of this.actors) {
+        if (a.alive || a.respawnT <= 0) continue;
+        a.respawnT -= dt;
+        if (a.respawnT <= 0) this.respawnActor(a);
+      }
+      if (this.mode.timeLimit && this.time >= this.mode.timeLimit && !this.endAt) this.endRoomByTime();
+    }
     this.updateVehicles(dt);
     this.updateProjectiles(dt);
     this.updateZone(dt);
     this.updateLoot(dt);
     this.fx.update(dt);
     if (this.endAt && this.time >= this.endAt && !this.finished) {
-      this.finish(this.player.alive);
+      this.finish(this.pendingWin ?? this.player.alive);
     }
   }
 
@@ -1820,8 +2120,8 @@ export class Game {
       tfov = WEAPONS[p.weaponId].zoom;
     } else if (this.keys.has('ShiftLeft') && p.speed > 6) tfov += 4;
     if (!p.alive || this.state === 'over') {
-      // orbit
-      const focus = p.alive ? p : this.actors.find((a) => a.alive) ?? p;
+      // orbit — spectate a living teammate first in team modes
+      const focus = p.alive ? p : this.actors.find((a) => a.alive && a.team === p.team) ?? this.actors.find((a) => a.alive) ?? p;
       const t = this.time * 0.35;
       tx = focus.x; tz = focus.z; ty = focus.y + 1.5;
       yaw = t; pitch = -0.35; dist = 7; shoulder = 0;
@@ -1873,7 +2173,8 @@ export class Game {
     else if (swap) prompt = `E · SWAP FOR ${WEAPONS[swap.wid!].name.toUpperCase()}`;
     let hint: string | null = null;
     if (p.phase === 'plane') hint = this.isTouch ? 'TAP JUMP TO DROP' : 'PRESS SPACE TO JUMP';
-    else if (p.phase === 'fall') hint = this.isTouch ? 'PUSH STICK FORWARD · LOOK DOWN TO DIVE' : 'W + LOOK DOWN TO DIVE · SPACE = PARACHUTE';
+    else if (p.phase === 'fall') hint = this.isTouch ? 'STICK STEERS · LOOK DOWN TO DIVE' : 'WASD STEERS · LOOK DOWN TO DIVE · SPACE = PARACHUTE';
+    else if (p.phase === 'chute') hint = this.isTouch ? 'STICK STEERS · JUMP TO LAND' : 'WASD STEERS · SPACE TO LAND';
     const d = z ? Math.hypot(p.x - z.cx, p.z - z.cz) : 0;
     let spread01 = 0;
     if (def.kind === 'gun' && p.phase === 'ground') {
@@ -1887,6 +2188,11 @@ export class Game {
     }
     const heading = ((-this.camYaw * 180 / Math.PI) % 360 + 360) % 360;
     const streakLeft = this.streak > 0 ? Math.max(0, 7 - (this.time - this.lastKillT)) : 0;
+    const ts = this.mode.teamSize ?? 1;
+    const teamMode = ts > 1;
+    const teamAlive = teamMode ? this.actors.filter((a) => a.team === p.team && a.alive).length : 0;
+    const foeAlive = teamMode ? this.actors.filter((a) => a.team !== p.team && a.alive).length : 0;
+    const arena = !!this.mode.respawn;
     this.ui.onHud({
       alive: this.aliveCount(), total: this.mode.players, kills: p.kills, score: Math.round(this.liveScore()),
       hp: Math.max(0, Math.ceil(p.hp)), armor: Math.ceil(p.armor), phase: p.phase,
@@ -1895,10 +2201,10 @@ export class Game {
       gren: p.gren, bomb: p.bomb, medkits: p.medkits,
       heal: p.healT > 0 ? 1 - p.healT / 1.6 : 0,
       reload: p.reload > 0 && g ? 1 - p.reload / WEAPONS[g.id].reload : 0,
-      zoneLabel: z ? (z.stage === 'wait' ? 'ZONE CLOSES IN' : z.stage === 'shrink' ? 'ZONE SHRINKING' : 'FINAL ZONE') : '',
-      zoneTime: z ? Math.max(0, z.dur - z.t) : 0,
-      zoneKind: z ? z.stage : 'wait',
-      inZone: z ? d <= z.r : true,
+      zoneLabel: arena ? '' : (z ? (z.stage === 'wait' ? 'ZONE CLOSES IN' : z.stage === 'shrink' ? 'ZONE SHRINKING' : 'FINAL ZONE') : ''),
+      zoneTime: arena ? 0 : (z ? Math.max(0, z.dur - z.t) : 0),
+      zoneKind: arena ? 'final' : (z ? z.stage : 'wait'),
+      inZone: arena ? true : (z ? d <= z.r : true),
       prompt, speed: p.vehicle ? Math.round(Math.abs(p.vehicle.speed) * 3.6) : 0,
       vehicle: p.vehicle ? p.vehicle.def.name : null,
       vehHp: p.vehicle ? Math.max(0, p.vehicle.hp / p.vehicle.def.hp) : 0,
@@ -1910,6 +2216,15 @@ export class Game {
       heading,
       streak: streakLeft > 0 ? this.streak : 0,
       streakLeft,
+      teamMode,
+      teamAlive,
+      foeAlive,
+      myScore: this.myTeamScore(),
+      foeScore: this.foeTeamScore(),
+      scoreLimit: this.mode.scoreLimit ?? 0,
+      respawnLeft: !p.alive && this.mode.respawn ? Math.max(0, Math.ceil(p.respawnT)) : 0,
+      spectating: !p.alive && teamMode && !this.mode.respawn && teamAlive > 0,
+      overtimeHint: this.overtime,
     });
   }
 
@@ -1944,23 +2259,25 @@ export class Game {
       if (Math.abs(b.x0 - p.x) > win * 1.5 || Math.abs(b.z0 - p.z) > win * 1.5) continue;
       ctx.fillRect(b.x0, b.z0, b.x1 - b.x0, b.z1 - b.z0);
     }
-    // zone
+    // zone (not drawn in arena modes)
     const z = this.zone;
-    ctx.fillStyle = 'rgba(56,189,248,0.35)';
-    ctx.beginPath();
-    ctx.rect(p.x - 600, p.z - 600, 1200, 1200);
-    ctx.arc(z.cx, z.cz, Math.max(0.1, z.r), 0, Math.PI * 2, true);
-    ctx.fill('evenodd');
-    ctx.strokeStyle = '#38bdf8';
-    ctx.lineWidth = 2 / s;
-    ctx.beginPath();
-    ctx.arc(z.cx, z.cz, Math.max(0.1, z.r), 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 1.5 / s;
-    ctx.beginPath();
-    ctx.arc(z.tx, z.tz, Math.max(0.1, z.tr), 0, Math.PI * 2);
-    ctx.stroke();
+    if (!this.mode.respawn) {
+      ctx.fillStyle = 'rgba(56,189,248,0.35)';
+      ctx.beginPath();
+      ctx.rect(p.x - 600, p.z - 600, 1200, 1200);
+      ctx.arc(z.cx, z.cz, Math.max(0.1, z.r), 0, Math.PI * 2, true);
+      ctx.fill('evenodd');
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2 / s;
+      ctx.beginPath();
+      ctx.arc(z.cx, z.cz, Math.max(0.1, z.r), 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5 / s;
+      ctx.beginPath();
+      ctx.arc(z.tx, z.tz, Math.max(0.1, z.tr), 0, Math.PI * 2);
+      ctx.stroke();
+    }
     // view cone
     ctx.fillStyle = 'rgba(255,255,255,0.07)';
     ctx.beginPath();
@@ -1980,11 +2297,20 @@ export class Game {
       ctx.arc(a.x, a.z, 6, 0, 6.3);
       ctx.fill();
     }
-    // enemies nearby
+    // nearby actors — teammates green, enemies red
+    const ts = this.mode.teamSize ?? 1;
     for (const a of this.actors) {
       if (a === p || !a.alive || a.phase === 'plane') continue;
+      const ally = ts > 1 && a.team === p.team;
       const d = Math.hypot(a.x - p.x, a.z - p.z);
-      if (d < 45 || a.phase === 'chute' || a.phase === 'fall') {
+      if (ally) {
+        if (d < 130) {
+          ctx.fillStyle = '#4ade80';
+          ctx.beginPath();
+          ctx.arc(a.x, a.z, 3, 0, 6.3);
+          ctx.fill();
+        }
+      } else if (d < 45 || a.phase === 'chute' || a.phase === 'fall') {
         ctx.fillStyle = '#ef4444';
         ctx.beginPath();
         ctx.arc(a.x, a.z, 3.2, 0, 6.3);
@@ -2027,12 +2353,13 @@ export class Game {
       const dx = a.x - p.x, dz = a.z - p.z;
       const d = Math.hypot(dx, dz);
       if (d < 110 || d > 260) continue;
+      const ally = ts > 1 && a.team === p.team;
       const be = Math.atan2(dx, -dz) * 180 / Math.PI;
       const scr = ((-90 + (be - heading)) * Math.PI) / 180;
       ctx.save();
       ctx.translate(W / 2 + Math.cos(scr) * rimR, H / 2 + Math.sin(scr) * rimR);
       ctx.rotate(scr + Math.PI / 2);
-      ctx.fillStyle = 'rgba(239,68,68,0.85)';
+      ctx.fillStyle = ally ? 'rgba(74,222,128,0.9)' : 'rgba(239,68,68,0.85)';
       ctx.beginPath();
       ctx.moveTo(0, -4);
       ctx.lineTo(3.5, 3);

@@ -59,6 +59,39 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
         </div>
       )}
 
+      {/* top-center: team scoreboard (duos / squads / arena) */}
+      {hud.teamMode && (
+        <div className="absolute left-1/2 top-3 -translate-x-1/2 panel px-4 py-1.5 flex items-center gap-3" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 6px)' }}>
+          {hud.scoreLimit > 0 ? (
+            <>
+              <span className="text-[10px] tracking-widest text-emerald-300 font-bold">YOUR TEAM</span>
+              <span className="font-display text-2xl font-extrabold leading-none text-emerald-300">{hud.myScore}</span>
+              <span className="text-slate-500 font-bold">—</span>
+              <span className="font-display text-2xl font-extrabold leading-none text-red-400">{hud.foeScore}</span>
+              <span className="text-[10px] tracking-widest text-red-300 font-bold">RIVALS</span>
+              {hud.overtimeHint && <span className="text-[10px] tracking-widest text-amber-300 font-bold animate-pulse">SUDDEN DEATH</span>}
+            </>
+          ) : (
+            <>
+              <span className="text-[10px] tracking-widest text-emerald-300 font-bold">SQUAD</span>
+              <span className="font-display text-xl font-extrabold leading-none text-emerald-300">{hud.teamAlive}</span>
+              <span className="text-slate-500 font-bold text-xs">VS</span>
+              <span className="font-display text-xl font-extrabold leading-none text-red-400">{hud.foeAlive}</span>
+              <span className="text-[10px] tracking-widest text-red-300 font-bold">RIVALS</span>
+            </>
+          )}
+          {hud.scoreLimit > 0 && <span className="text-[10px] text-slate-500 tracking-widest">FIRST TO {hud.scoreLimit}</span>}
+        </div>
+      )}
+
+      {/* center: respawn countdown (arena) */}
+      {hud.respawnLeft > 0 && (
+        <div className="absolute left-1/2 top-1/3 -translate-x-1/2 text-center pointer-events-none">
+          <div className="text-xs tracking-[0.35em] text-slate-400 font-bold mb-1">REDEPLOYING</div>
+          <div className="font-display text-7xl font-black text-amber-300 leading-none drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">{hud.respawnLeft}</div>
+        </div>
+      )}
+
       {/* top-left stats */}
       <div className="absolute left-3 top-3 flex flex-col gap-2" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="flex gap-2">
@@ -75,6 +108,11 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
         <div className="panel px-3 py-1 text-xs text-slate-300 tracking-widest w-fit">
           SCORE <span className="font-display text-amber-300 text-sm ml-1">{hud.score}</span>
         </div>
+        {hud.spectating && (
+          <div className="panel px-3 py-1.5 w-fit border-emerald-400/50">
+            <span className="text-[10px] tracking-[0.25em] text-emerald-300 font-bold">SPECTATING YOUR SQUAD</span>
+          </div>
+        )}
         {hud.streak >= 2 && hud.streakLeft > 0 && (
           <div className="panel px-2.5 py-1 w-fit border-orange-400/60 streak-badge">
             <div className="flex items-center gap-2">
@@ -117,10 +155,12 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
           })}
           <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2" style={{ background: 'rgba(251,191,36,0.9)' }} />
         </div>
-        <div className="panel px-4 py-1 flex items-center gap-3" style={{ borderColor: zoneCol + '99' }}>
-          <span className="text-[10px] sm:text-[11px] tracking-[0.2em]" style={{ color: zoneCol }}>{hud.zoneLabel}</span>
-          {hud.zoneKind !== 'final' && <span className="font-display text-lg font-extrabold">{fmt(hud.zoneTime)}</span>}
-        </div>
+        {hud.zoneLabel && (
+          <div className="panel px-4 py-1 flex items-center gap-3" style={{ borderColor: zoneCol + '99' }}>
+            <span className="text-[10px] sm:text-[11px] tracking-[0.2em]" style={{ color: zoneCol }}>{hud.zoneLabel}</span>
+            {hud.zoneKind !== 'final' && <span className="font-display text-lg font-extrabold">{fmt(hud.zoneTime)}</span>}
+          </div>
+        )}
         {!hud.inZone && hud.hp > 0 && <div className="pulse-text text-sm font-bold text-sky-300 tracking-widest bg-black/40 px-3 rounded">OUTSIDE SAFE ZONE — RUN!</div>}
       </div>
 

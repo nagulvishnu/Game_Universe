@@ -37,6 +37,43 @@ export const WEAPONS: Record<WeaponId, WeaponDef> = {
 };
 
 export const RARITY_COLORS = [0xd1d5db, 0x4ade80, 0x38bdf8, 0xc084fc, 0xfbbf24];
+
+/* ---------------- maps ---------------- */
+export type Biome = 'green' | 'desert' | 'snow' | 'tropical' | 'volcanic';
+
+export interface MapDef {
+  id: string;
+  name: string;
+  tag: string;
+  desc: string;
+  icon: string;
+  half: number;   // world half-size at Classic scale
+  towns: number;  // town count at Classic scale
+  biome: Biome;
+}
+
+export const MAPS: MapDef[] = [
+  { id: 'valley', name: 'Green Valley', tag: 'EXPANDED · TEMPERATE', desc: 'Huge rolling grassland, thick pine forest and 9 market towns.', icon: '🌲', half: 380, towns: 9, biome: 'green' },
+  { id: 'dunes', name: 'Dust Basin', tag: 'DESERT', desc: 'Sun-bleached dunes, rock mesas and adobe compounds.', icon: '🏜️', half: 355, towns: 7, biome: 'desert' },
+  { id: 'frost', name: 'Frosthold', tag: 'SNOW', desc: 'Frozen pines and white peaks — long sightlines, cold fights.', icon: '🏔️', half: 355, towns: 7, biome: 'snow' },
+  { id: 'isle', name: 'Sunset Isle', tag: 'TROPICAL', desc: 'Palm coasts and bright jungle villages under a warm sky.', icon: '🌴', half: 330, towns: 7, biome: 'tropical' },
+  { id: 'ash', name: 'Ashlands', tag: 'VOLCANIC', desc: 'Black rock, dead woods and a sky that never quite clears.', icon: '🌋', half: 340, towns: 6, biome: 'volcanic' },
+];
+
+export const DEFAULT_MAP = 'valley';
+
+export function getMap(id: string): MapDef {
+  return MAPS.find((m) => m.id === id) ?? MAPS[0];
+}
+
+/** per-biome atmosphere: fog/background color, sun color+intensity, sky-sphere tint, ambient light */
+export const BIOME_SKY: Record<Biome, { fog: number; sun: number; sunI: number; tint: number; amb: number; ambI: number }> = {
+  green: { fog: 0xb9d6f0, sun: 0xfff0d0, sunI: 1.5, tint: 0xffffff, amb: 0xe3efff, ambI: 1.0 },
+  desert: { fog: 0xe8d3ab, sun: 0xffe4b0, sunI: 1.7, tint: 0xffe0bc, amb: 0xffe8c8, ambI: 1.1 },
+  snow: { fog: 0xdfeaf5, sun: 0xeef4ff, sunI: 1.3, tint: 0xeaf2ff, amb: 0xeaf2ff, ambI: 1.15 },
+  tropical: { fog: 0xc9e6d8, sun: 0xfff2d8, sunI: 1.6, tint: 0xd6f4e6, amb: 0xd8f2e4, ambI: 1.05 },
+  volcanic: { fog: 0x8f7d72, sun: 0xffb08a, sunI: 1.0, tint: 0xb0907e, amb: 0xbba89c, ambI: 0.85 },
+};
 export const RARITY_NAMES = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
 
 export type VehicleType = 'car' | 'bike' | 'truck';
@@ -77,6 +114,14 @@ export interface ModeDef {
   phases: ZonePhase[];
   meleeOnly?: boolean;
   room?: boolean;
+  /** 1 = free-for-all (default). 2 = duos team mode. 4 = squads. */
+  teamSize?: number;
+  /** arena deathmatch: seconds until respawn (no elimination) */
+  respawn?: number;
+  /** arena: first team to N kills wins */
+  scoreLimit?: number;
+  /** arena: match length in seconds (sudden death on tie) */
+  timeLimit?: number;
 }
 
 export const MODES: ModeDef[] = [
@@ -101,23 +146,111 @@ export const MODES: ModeDef[] = [
     ],
   },
   {
-    id: 'room',
-    name: 'Room Match',
-    tag: 'PRIVATE ROOM · 12',
-    desc: 'Create a room, gather the squad, fight on a compact arena. Fast & tense.',
-    icon: '🚪',
-    players: 12,
-    half: 190,
-    startR: 280,
-    towns: 4,
-    loot: 130,
-    vehicles: { car: 3, bike: 3, truck: 2 },
-    room: true,
+    id: 'duel',
+    name: 'Duel Duos',
+    tag: 'DUOS · 25 TEAMS',
+    desc: 'Drop with a partner — you + 1 bot ally vs 24 rival duos. Last team standing wins.',
+    icon: '🤝',
+    players: 50,
+    half: 290,
+    startR: 420,
+    towns: 6,
+    loot: 300,
+    vehicles: { car: 6, bike: 6, truck: 4 },
+    teamSize: 2,
     phases: [
-      { wait: 34, shrink: 20, radius: 120, dps: 3 },
-      { wait: 16, shrink: 18, radius: 62, dps: 6 },
-      { wait: 12, shrink: 14, radius: 26, dps: 10 },
-      { wait: 8, shrink: 12, radius: 5, dps: 14 },
+      { wait: 44, shrink: 28, radius: 195, dps: 2 },
+      { wait: 24, shrink: 24, radius: 105, dps: 4 },
+      { wait: 20, shrink: 22, radius: 52, dps: 7 },
+      { wait: 14, shrink: 18, radius: 22, dps: 10 },
+      { wait: 8, shrink: 16, radius: 4, dps: 14 },
+    ],
+  },
+  {
+    id: 'squad',
+    name: 'Squad Ops',
+    tag: 'SQUADS · 12 TEAMS',
+    desc: 'You + 3 bot squadmates drop against 11 squads of 4. Only one team walks out.',
+    icon: '🎖️',
+    players: 48,
+    half: 300,
+    startR: 440,
+    towns: 7,
+    loot: 340,
+    vehicles: { car: 6, bike: 7, truck: 5 },
+    teamSize: 4,
+    phases: [
+      { wait: 48, shrink: 30, radius: 200, dps: 2 },
+      { wait: 25, shrink: 25, radius: 110, dps: 4 },
+      { wait: 20, shrink: 22, radius: 55, dps: 7 },
+      { wait: 14, shrink: 18, radius: 22, dps: 10 },
+      { wait: 8, shrink: 16, radius: 4, dps: 14 },
+    ],
+  },
+  {
+    id: 'room1',
+    name: 'Room 1v1',
+    tag: 'ARENA · 1v1',
+    desc: 'Tiny arena, two fighters, infinite redeploy. First to 6 kills takes it.',
+    icon: '🎯',
+    players: 2,
+    half: 100,
+    startR: 140,
+    towns: 1,
+    loot: 45,
+    vehicles: { car: 0, bike: 0, truck: 0 },
+    room: true,
+    teamSize: 2,
+    respawn: 4,
+    scoreLimit: 6,
+    timeLimit: 180,
+    phases: [
+      { wait: 40, shrink: 20, radius: 90, dps: 1 },
+      { wait: 10, shrink: 14, radius: 6, dps: 4 },
+    ],
+  },
+  {
+    id: 'room2',
+    name: 'Room 2v2',
+    tag: 'ARENA · 2v2',
+    desc: 'Pair up in a compact arena with fast redeploy. First team to 10 kills wins.',
+    icon: '⚔️',
+    players: 4,
+    half: 120,
+    startR: 170,
+    towns: 1,
+    loot: 70,
+    vehicles: { car: 0, bike: 0, truck: 0 },
+    room: true,
+    teamSize: 2,
+    respawn: 5,
+    scoreLimit: 10,
+    timeLimit: 240,
+    phases: [
+      { wait: 40, shrink: 20, radius: 110, dps: 1 },
+      { wait: 10, shrink: 14, radius: 6, dps: 4 },
+    ],
+  },
+  {
+    id: 'room4',
+    name: 'Room 4v4',
+    tag: 'ARENA · 4v4',
+    desc: 'Full squad brawl on a small map. First team to 15 kills — or the highest score at time — wins.',
+    icon: '💥',
+    players: 8,
+    half: 140,
+    startR: 200,
+    towns: 2,
+    loot: 100,
+    vehicles: { car: 0, bike: 0, truck: 0 },
+    room: true,
+    teamSize: 4,
+    respawn: 6,
+    scoreLimit: 15,
+    timeLimit: 300,
+    phases: [
+      { wait: 40, shrink: 20, radius: 130, dps: 1 },
+      { wait: 10, shrink: 14, radius: 6, dps: 4 },
     ],
   },
   {

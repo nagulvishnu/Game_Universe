@@ -5,6 +5,7 @@ export interface ScoreEntry {
   place: number;
   total: number;
   mode: string;
+  map?: string;
   time: number;
   date: number;
 }
@@ -12,6 +13,22 @@ export interface ScoreEntry {
 const KEY = 'dropzone50.scores.v1';
 const NAME = 'dropzone50.name';
 const STATS = 'dropzone50.stats.v1';
+const MAPKEY = 'dropzone50.map';
+
+export function getMapSel(fallback = 'valley'): string {
+  try {
+    return localStorage.getItem(MAPKEY) || fallback;
+  } catch {
+    return fallback;
+  }
+}
+export function setMapSel(id: string) {
+  try {
+    localStorage.setItem(MAPKEY, id);
+  } catch {
+    /* ignore */
+  }
+}
 
 export interface LifetimeStats { games: number; kills: number; wins: number; }
 

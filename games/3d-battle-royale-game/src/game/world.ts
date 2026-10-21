@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { BOX } from './models';
+import type { Biome } from './data';
 
 export interface Box { x0: number; z0: number; x1: number; z1: number; h: number }
 export interface Circ { x: number; z: number; r: number; h: number }
@@ -68,6 +69,7 @@ interface Inst { x: number; y: number; z: number; sx: number; sy: number; sz: nu
 
 function instanced(geo: THREE.BufferGeometry, material: THREE.Material, list: Inst[]): THREE.InstancedMesh {
   const m = new THREE.InstancedMesh(geo, material, Math.max(1, list.length));
+  m.userData.own = true;
   const d = new THREE.Object3D();
   const col = new THREE.Color();
   list.forEach((it, i) => {
@@ -85,6 +87,7 @@ function instanced(geo: THREE.BufferGeometry, material: THREE.Material, list: In
 
 export class World {
   half: number;
+  biome: Biome;
   group = new THREE.Group();
   boxes: Box[] = [];
   circs: Circ[] = [];
@@ -95,8 +98,9 @@ export class World {
   private grid = new Map<number, { b: number[]; c: number[] }>();
   private rnd: () => number;
 
-  constructor(half: number, townCount: number, seed: number) {
+  constructor(half: number, townCount: number, seed: number, biome: Biome = 'green') {
     this.half = half;
+    this.biome = biome;
     this.rnd = mulberry(seed);
     this.buildGround();
     this.buildTowns(townCount);
@@ -137,21 +141,41 @@ export class World {
 
   private buildGround() {
     const size = this.half * 2 + 900;
+    const GROUND: Record<Biome, { base: string; lo: number[]; hi: number[] }> = {
+      green: { base: '#4f8a3b', lo: [40, 110, 30], hi: [80, 170, 60] },
+      desert: { base: '#cfae74', lo: [170, 140, 90], hi: [225, 195, 135] },
+      snow: { base: '#dde6ee', lo: [205, 218, 232], hi: [240, 246, 252] },
+      tropical: { base: '#54a049', lo: [45, 130, 55], hi: [95, 185, 80] },
+      volcanic: { base: '#3c352f', lo: [45, 38, 34], hi: [95, 78, 66] },
+    };
+    const gcol = GROUND[this.biome];
     const cv = document.createElement('canvas');
     cv.width = cv.height = 128;
     const c = cv.getContext('2d')!;
-    c.fillStyle = '#4f8a3b';
+    c.fillStyle = gcol.base;
     c.fillRect(0, 0, 128, 128);
     for (let i = 0; i < 900; i++) {
-      const g = 110 + Math.floor(Math.random() * 60);
-      c.fillStyle = `rgba(${40 + Math.random() * 40},${g},${30 + Math.random() * 30},0.35)`;
+      const t = Math.random();
+      const r = Math.floor(gcol.lo[0] + (gcol.hi[0] - gcol.lo[0]) * t);
+      const gg = Math.floor(gcol.lo[1] + (gcol.hi[1] - gcol.lo[1]) * t);
+      const b = Math.floor(gcol.lo[2] + (gcol.hi[2] - gcol.lo[2]) * t);
+      c.fillStyle = `rgba(${r},${gg},${b},0.35)`;
       c.fillRect(Math.random() * 128, Math.random() * 128, 2 + Math.random() * 4, 2 + Math.random() * 4);
+    }
+    if (this.biome === 'snow') {
+      for (let i = 0; i < 120; i++) {
+        c.fillStyle = 'rgba(255,255,255,0.5)';
+        c.beginPath();
+        c.arc(Math.random() * 128, Math.random() * 128, 1 + Math.random() * 3, 0, 7);
+        c.fill();
+      }
     }
     const tex = new THREE.CanvasTexture(cv);
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(size / 28, size / 28);
     tex.colorSpace = THREE.SRGBColorSpace;
     const g = new THREE.Mesh(new THREE.PlaneGeometry(size, size).rotateX(-Math.PI / 2), new THREE.MeshLambertMaterial({ map: tex }));
+    g.userData.own = true;
     this.group.add(g);
   }
 
@@ -168,7 +192,14 @@ export class World {
     }
     const walls: Inst[] = [];
     const crates: Inst[] = [];
-    const palette = [0xd6c7a1, 0xc9b79c, 0xb9c4cf, 0xe0d4c0, 0xcaa98a, 0xa7b8a0, 0xd8b4a0];
+    const PALETTES: Record<Biome, number[]> = {
+      green: [0xd6c7a1, 0xc9b79c, 0xb9c4cf, 0xe0d4c0, 0xcaa98a, 0xa7b8a0, 0xd8b4a0],
+      desert: [0xd8b98a, 0xc9a06a, 0xe2c9a0, 0xba8f5f, 0xd9c29a, 0xc4a37a],
+      snow: [0xe8eef5, 0xd8dfe8, 0xc4ccd8, 0xb8c4d2, 0xdde4ee, 0xafbccc],
+      tropical: [0xe0d4c0, 0xa7c4a0, 0xd8b4a0, 0xf0e0c0, 0xc9d8b0, 0xdeb89a],
+      volcanic: [0x4a4440, 0x57504a, 0x6b625c, 0x3f3a36, 0x5c524a, 0x6e615a],
+    };
+    const palette = PALETTES[this.biome];
     const t = 0.45;
     const WH = 3.4;
     const wall = (x0: number, z0: number, x1: number, z1: number, c: number) => {
@@ -259,7 +290,9 @@ export class World {
     const crA: Inst[] = [];
     const crB: Inst[] = [];
     const greens = [0x2f7d32, 0x3a8f3e, 0x2a6f3a, 0x4a9a3c, 0x23623a];
-    const nTrees = Math.floor(h * h * 0.0042);
+    const treeMul = this.biome === 'desert' ? 0.35 : this.biome === 'volcanic' ? 0.6 : 1;
+    const nTrees = Math.floor(h * h * 0.0042 * treeMul);
+    const bi = this.biome;
     for (let i = 0; i < nTrees; i++) {
       const x = this.R(-h + 4, h - 4), z = this.R(-h + 4, h - 4);
       let near = false;
@@ -267,22 +300,64 @@ export class World {
       if (near) continue;
       const s = this.R(0.8, 1.5);
       const c = greens[Math.floor(this.rnd() * greens.length)];
-      trunks.push({ x, y: 0, z, sx: 0.55 * s, sy: 3 * s, sz: 0.55 * s, ry: 0, c: 0x6b4423 });
-      crA.push({ x, y: 2.2 * s, z, sx: 2.3 * s, sy: 3.6 * s, sz: 2.3 * s, ry: this.rnd() * 3, c });
-      crB.push({ x, y: 4.6 * s, z, sx: 1.7 * s, sy: 3 * s, sz: 1.7 * s, ry: this.rnd() * 3, c: greens[(Math.floor(this.rnd() * 5) + 1) % 5] });
-      this.addCirc(x, z, 0.55 * s, 9);
+      if (bi === 'desert') {
+        // cacti
+        const ch = this.R(1.6, 3.4);
+        trunks.push({ x, y: 0, z, sx: 0.9 * s, sy: ch, sz: 0.9 * s, ry: this.rnd() * 3, c: 0x4f7a45 });
+        if (this.rnd() < 0.6) {
+          const ax = this.rnd() < 0.5 ? 0.7 : -0.7;
+          trunks.push({ x: x + ax * s, y: ch * 0.45, z, sx: 0.7 * s, sy: 0.55 * s, sz: 0.55 * s, ry: 0, c: 0x4f7a45 });
+          trunks.push({ x: x + ax * 1.15 * s, y: ch * 0.45 + 0.5 * s, z, sx: 0.5 * s, sy: 1.0 * s, sz: 0.5 * s, ry: 0, c: 0x4f7a45 });
+        }
+        this.addCirc(x, z, 0.6 * s, 5);
+      } else if (bi === 'volcanic') {
+        // dead trees
+        trunks.push({ x, y: 0, z, sx: 0.5 * s, sy: this.R(2.4, 3.8) * s, sz: 0.5 * s, ry: this.rnd() * 3, c: 0x35302c });
+        crA.push({ x, y: 2.1 * s, z, sx: 0.22 * s, sy: 0.22 * s, sz: 1.7 * s, ry: this.rnd() * 3, c: 0x35302c });
+        if (this.rnd() < 0.5) crB.push({ x, y: 2.7 * s, z, sx: 0.2 * s, sy: 0.2 * s, sz: 1.3 * s, ry: this.rnd() * 3, c: 0x3d3833 });
+        this.addCirc(x, z, 0.5 * s, 7);
+      } else if (bi === 'tropical') {
+        // palms
+        const th = this.R(3.2, 5.2) * s;
+        trunks.push({ x, y: 0, z, sx: 0.5 * s, sy: th, sz: 0.5 * s, ry: this.rnd() * 3, c: 0x8a6a42 });
+        crA.push({ x, y: th, z, sx: 3.0 * s, sy: 0.9 * s, sz: 3.0 * s, ry: this.rnd() * 3, c: 0x2f8f45 });
+        crB.push({ x, y: th + 0.7 * s, z, sx: 1.9 * s, sy: 0.7 * s, sz: 1.9 * s, ry: this.rnd() * 3, c: 0x3fae58 });
+        this.addCirc(x, z, 0.5 * s, 9);
+      } else if (bi === 'snow') {
+        // snow-dusted pines
+        trunks.push({ x, y: 0, z, sx: 0.55 * s, sy: 3 * s, sz: 0.55 * s, ry: 0, c: 0x5c4530 });
+        crA.push({ x, y: 2.2 * s, z, sx: 2.3 * s, sy: 3.6 * s, sz: 2.3 * s, ry: this.rnd() * 3, c: 0x2b5f42 });
+        crB.push({ x, y: 4.6 * s, z, sx: 1.7 * s, sy: 3 * s, sz: 1.7 * s, ry: this.rnd() * 3, c: 0x25523a });
+        crB.push({ x, y: 5.6 * s, z, sx: 1.1 * s, sy: 1.1 * s, sz: 1.1 * s, ry: this.rnd() * 3, c: 0xf2f7fb });
+        this.addCirc(x, z, 0.55 * s, 9);
+      } else {
+        trunks.push({ x, y: 0, z, sx: 0.55 * s, sy: 3 * s, sz: 0.55 * s, ry: 0, c: 0x6b4423 });
+        crA.push({ x, y: 2.2 * s, z, sx: 2.3 * s, sy: 3.6 * s, sz: 2.3 * s, ry: this.rnd() * 3, c });
+        crB.push({ x, y: 4.6 * s, z, sx: 1.7 * s, sy: 3 * s, sz: 1.7 * s, ry: this.rnd() * 3, c: greens[(Math.floor(this.rnd() * 5) + 1) % 5] });
+        this.addCirc(x, z, 0.55 * s, 9);
+      }
     }
     const tg = new THREE.CylinderGeometry(0.5, 0.65, 1, 6).translate(0, 0.5, 0);
     const cg = new THREE.ConeGeometry(1, 1, 7).translate(0, 0.5, 0);
     const lm = new THREE.MeshLambertMaterial({ color: 0xffffff });
     this.group.add(instanced(tg, lm, trunks), instanced(cg, lm, crA), instanced(cg, lm, crB));
 
+    const ROCKS: Record<Biome, number[]> = {
+      green: [0x7b8794, 0x6b7280, 0x8a8f98],
+      desert: [0xb08d57, 0xc49a6c, 0x9a7b4f],
+      snow: [0xc9d4e0, 0xb4c2d2, 0xd8e2ee],
+      tropical: [0x7d8a72, 0x8f9a80, 0x6e7a66],
+      volcanic: [0x4a4442, 0x57504c, 0x3b3634],
+    };
+    const rockMul = this.biome === 'desert' ? 1.8 : this.biome === 'volcanic' ? 1.5 : 1;
     const rocks: Inst[] = [];
-    for (let i = 0; i < Math.floor(h / 4); i++) {
+    const nRocks = Math.floor((h / 4) * rockMul);
+    for (let i = 0; i < nRocks; i++) {
       const x = this.R(-h + 6, h - 6), z = this.R(-h + 6, h - 6);
       if (this.buildingAt(x, z, 8) >= 0) continue;
       const s = this.R(0.9, 2.6);
-      rocks.push({ x, y: s * 0.35, z, sx: s, sy: s * 0.75, sz: s * this.R(0.8, 1.2), ry: this.rnd() * 3, c: [0x7b8794, 0x6b7280, 0x8a8f98][Math.floor(this.rnd() * 3)] });
+      const pal = ROCKS[bi];
+      rocks.push({ x, y: s * 0.35, z, sx: s, sy: s * 0.75, sz: s * this.R(0.8, 1.2), ry: this.rnd() * 3, c: pal[Math.floor(this.rnd() * pal.length)] });
       this.addCirc(x, z, s * 0.85, s * 1.2);
     }
     this.group.add(instanced(new THREE.IcosahedronGeometry(1, 0), new THREE.MeshLambertMaterial({ color: 0xffffff, flatShading: true }), rocks));
@@ -290,20 +365,37 @@ export class World {
 
   private buildMountains() {
     const list: Inst[] = [];
+    const MTS: Record<Biome, number[]> = {
+      green: [0x5f6b7a, 0x6b7787, 0x586274, 0x7a8696],
+      desert: [0xb08d57, 0xc49a6c, 0x9a7b4f, 0xd0a878],
+      snow: [0xdde6f0, 0xcbd7e6, 0xeef4fb, 0xc0cddd],
+      tropical: [0x6b7d5a, 0x7a8c66, 0x5d6e4e, 0x86977a],
+      volcanic: [0x4a4442, 0x57504c, 0x3b3634, 0x6b5a50],
+    };
+    const caps: Inst[] = [];
+    const pal = MTS[this.biome];
     const n = 44;
     for (let i = 0; i < n; i++) {
       const a = (i / n) * Math.PI * 2 + this.R(-0.05, 0.05);
       const dist = this.half * 1.22 + this.R(10, 70);
       const hh = this.R(50, 120);
-      list.push({ x: Math.cos(a) * dist, y: 0, z: Math.sin(a) * dist, sx: this.R(55, 95), sy: hh, sz: this.R(55, 95), ry: this.rnd() * 3, c: [0x5f6b7a, 0x6b7787, 0x586274, 0x7a8696][Math.floor(this.rnd() * 4)] });
+      const sx = this.R(55, 95);
+      list.push({ x: Math.cos(a) * dist, y: 0, z: Math.sin(a) * dist, sx, sy: hh, sz: this.R(55, 95), ry: this.rnd() * 3, c: pal[Math.floor(this.rnd() * pal.length)] });
+      if (this.biome === 'snow') {
+        caps.push({ x: Math.cos(a) * dist, y: hh * 0.72, z: Math.sin(a) * dist, sx: sx * 0.45, sy: hh * 0.3, sz: sx * 0.45, ry: 0, c: 0xffffff });
+      } else if (this.biome === 'volcanic' && this.rnd() < 0.5) {
+        caps.push({ x: Math.cos(a) * dist, y: hh * 0.9, z: Math.sin(a) * dist, sx: sx * 0.3, sy: hh * 0.14, sz: sx * 0.3, ry: 0, c: 0xff5a1f });
+      }
     }
     const g = new THREE.ConeGeometry(1, 1, 6).translate(0, 0.5, 0);
     this.group.add(instanced(g, new THREE.MeshLambertMaterial({ color: 0xffffff, flatShading: true }), list));
+    if (caps.length) this.group.add(instanced(g, new THREE.MeshLambertMaterial({ color: 0xffffff, flatShading: true }), caps));
   }
 
   private buildRoads() {
     const geo = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
-    const m = new THREE.MeshLambertMaterial({ color: 0x40454e });
+    const ROAD: Record<Biome, number> = { green: 0x40454e, desert: 0x8f7a58, snow: 0x6f7885, tropical: 0x4a4f52, volcanic: 0x2b2724 };
+    const m = new THREE.MeshLambertMaterial({ color: ROAD[this.biome] });
     const nodes = [...this.towns.map((t) => ({ x: t.x, z: t.z })), { x: 0, z: 0 }];
     const link = (a: { x: number; z: number }, b: { x: number; z: number }) => {
       const dx = b.x - a.x, dz = b.z - a.z;
@@ -312,6 +404,7 @@ export class World {
       mesh.scale.set(len, 1, 6);
       mesh.position.set((a.x + b.x) / 2, 0.05, (a.z + b.z) / 2);
       mesh.rotation.y = -Math.atan2(dz, dx);
+      mesh.userData.own = true;
       this.group.add(mesh);
     };
     for (let i = 0; i < nodes.length; i++) {

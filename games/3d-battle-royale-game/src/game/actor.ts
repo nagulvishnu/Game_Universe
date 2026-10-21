@@ -71,6 +71,11 @@ export class Actor {
   kills = 0;
   dmg = 0;
   place = 0;
+  /** team id; in FFA modes every actor has a unique team (themselves) */
+  team = 0;
+  /** arena modes: seconds until respawn (0 = not waiting) */
+  respawnT = 0;
+  deaths = 0;
   vehicle: Vehicle | null = null;
   ramCd = 0;
   walkT = 0;
