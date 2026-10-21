@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Starfall">
+  <defs>
+    <linearGradient id="space" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#020617"/>
+      <stop offset="55%" stop-color="#0b1030"/>
+      <stop offset="100%" stop-color="#050716"/>
+    </linearGradient>
+    <radialGradient id="planet" cx="0.35" cy="0.3" r="0.9">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="45%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#0b1030"/>
+    </radialGradient>
+    <linearGradient id="engine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="laser" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f43f5e" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#fb7185"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#space)"/>
+  <g fill="#ffffff">
+    <circle cx="90" cy="80" r="1.6" opacity="0.8"/><circle cx="240" cy="140" r="1.2" opacity="0.6"/>
+    <circle cx="420" cy="60" r="1.8" opacity="0.9"/><circle cx="610" cy="110" r="1.2" opacity="0.5"/>
+    <circle cx="820" cy="70" r="1.6" opacity="0.8"/><circle cx="990" cy="130" r="1.4" opacity="0.7"/>
+    <circle cx="1120" cy="60" r="1.8" opacity="0.9"/><circle cx="150" cy="260" r="1.2" opacity="0.5"/>
+    <circle cx="1080" cy="280" r="1.4" opacity="0.6"/><circle cx="520" cy="200" r="1.2" opacity="0.5"/>
+    <circle cx="330" cy="320" r="1.4" opacity="0.6"/><circle cx="900" cy="230" r="1.2" opacity="0.5"/>
+  </g>
+
+  <circle cx="980" cy="560" r="260" fill="url(#planet)" opacity="0.9"/>
+  <path d="M760 430 A260 260 0 0 0 1200 420" stroke="#7dd3fc" stroke-width="3" fill="none" opacity="0.5"/>
+
+  <!-- enemy drones -->
+  <g fill="#f43f5e">
+    <polygon points="300,210 322,222 300,234 278,222"/>
+    <polygon points="880,180 900,191 880,202 860,191" opacity="0.85"/>
+  </g>
+  <g stroke="url(#laser)" stroke-width="4" stroke-linecap="round">
+    <line x1="560" y1="260" x2="330" y2="222"/>
+    <line x1="620" y1="240" x2="870" y2="192"/>
+  </g>
+
+  <!-- player ship (sleek arrow) -->
+  <g transform="translate(600 330) rotate(-18)">
+    <polygon points="0,-64 26,26 0,10 -26,26" fill="#e2e8f0"/>
+    <polygon points="0,-52 12,12 0,2 -12,12" fill="#38bdf8"/>
+    <polygon points="-26,26 -8,10 -14,34" fill="#94a3b8"/>
+    <polygon points="26,26 8,10 14,34" fill="#94a3b8"/>
+    <rect x="-7" y="30" width="14" height="46" rx="7" fill="url(#engine)"/>
+  </g>
+
+  <g stroke="#38bdf8" stroke-width="3" opacity="0.55" stroke-linecap="round">
+    <line x1="120" y1="420" x2="300" y2="420"/>
+    <line x1="80" y1="470" x2="230" y2="470"/>
+  </g>
+
+  <text x="600" y="560" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="82" font-weight="bold" letter-spacing="14" fill="#f8fafc">STARFALL</text>
+  <text x="600" y="600" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="22" font-weight="bold" letter-spacing="10" fill="#7dd3fc">SPACE COMBAT</text>
+
+  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="3"/>
+</svg>

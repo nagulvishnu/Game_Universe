@@ -1,0 +1,14 @@
+{
+  "id": "starfall",
+  "title": "Starfall",
+  "description": "A 3D space shooter. Fly with WASD, aim with the mouse, charge your primary, cycle weapons and burn abilities as you cut through enemy waves and multi-phase bosses.",
+  "genre": "Shooter",
+  "category": "3D",
+  "entry": "dist/index.html",
+  "version": "0.1.0",
+  "developer": "Game Universe",
+  "tags": ["Space", "Shooter", "Flight", "Bosses", "Waves", "3D"],
+  "controls": ["WASD", "Mouse", "LMB", "RMB", "Q", "E", "Space"],
+  "featured": false,
+  "status": "playable"
+}

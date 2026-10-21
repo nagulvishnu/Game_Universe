@@ -1,0 +1,14 @@
+{
+  "id": "shadowstrike",
+  "title": "ShadowStrike",
+  "description": "A 2D shadow-combat fighter. Play the stickman campaign against AI rivals, chain combos and charged attacks, unleash supernatural skills, train in the lab, or go local versus.",
+  "genre": "Fighting",
+  "category": "2D",
+  "entry": "dist/index.html",
+  "version": "1.0.0",
+  "developer": "Game Universe",
+  "tags": ["Fighting", "Stickman", "Combos", "Shadow", "Versus", "2D"],
+  "controls": ["A/D", "W", "S", "F", "E", "R", "V"],
+  "featured": false,
+  "status": "playable"
+}

@@ -270,6 +270,78 @@
       "launchUrl": "/play/multi-level-interactive-strategy-game/dist/index.html",
       "thumbnailUrl": "/play/multi-level-interactive-strategy-game/thumbnail.svg",
       "bannerUrl": null
+    },
+    {
+      "id": "shadowstrike",
+      "title": "ShadowStrike",
+      "description": "A 2D shadow-combat fighter. Play the stickman campaign against AI rivals, chain combos and charged attacks, unleash supernatural skills, train in the lab, or go local versus.",
+      "genre": "Fighting",
+      "category": "2D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Fighting",
+        "Stickman",
+        "Combos",
+        "Shadow",
+        "Versus",
+        "2D"
+      ],
+      "controls": [
+        "A/D",
+        "W",
+        "S",
+        "F",
+        "E",
+        "R",
+        "V"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "flagship": false,
+      "folder": "shadowstrike-2d-combat-game",
+      "external": false,
+      "launchUrl": "/play/shadowstrike-2d-combat-game/dist/index.html",
+      "thumbnailUrl": "/play/shadowstrike-2d-combat-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "starfall",
+      "title": "Starfall",
+      "description": "A 3D space shooter. Fly with WASD, aim with the mouse, charge your primary, cycle weapons and burn abilities as you cut through enemy waves and multi-phase bosses.",
+      "genre": "Shooter",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "0.1.0",
+      "tags": [
+        "Space",
+        "Shooter",
+        "Flight",
+        "Bosses",
+        "Waves",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "LMB",
+        "RMB",
+        "Q",
+        "E",
+        "Space"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "flagship": false,
+      "folder": "starfall-space-shooter-development",
+      "external": false,
+      "launchUrl": "/play/starfall-space-shooter-development/dist/index.html",
+      "thumbnailUrl": "/play/starfall-space-shooter-development/thumbnail.svg",
+      "bannerUrl": null
     }
   ],
   "diagnostics": [
@@ -326,6 +398,20 @@
       "folder": "multi-level-interactive-strategy-game",
       "id": "bastion-defense",
       "title": "Bastion Defense",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "shadowstrike-2d-combat-game",
+      "id": "shadowstrike",
+      "title": "ShadowStrike",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "starfall-space-shooter-development",
+      "id": "starfall",
+      "title": "Starfall",
       "level": "ok",
       "messages": []
     }
