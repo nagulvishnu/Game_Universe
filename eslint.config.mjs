@@ -9,8 +9,12 @@ export default defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Game sources + built copies are not hub code.
+    // Games are self-contained: each folder carries its own eslint.config.mjs and is
+    // linted by its own `npm run lint` (run from inside that folder). ESLint resolves
+    // the config from the working directory, not per file, so they cannot be merged
+    // here. `npm run check:games` runs every game's gate.
     "games/**",
+    // Built copies of games, published by discovery into /public/play.
     "public/play/**",
   ]),
 ]);

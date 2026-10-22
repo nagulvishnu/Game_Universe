@@ -1,17 +1,12 @@
 import { create } from 'zustand';
-import { loadSave, persistSave, defaultSave, type SaveData, levelFromXp } from './engine';
+import { loadSave, persistSave, defaultSave, sanitizeSettings, DEFAULT_SETTINGS, type SaveData, type Settings, levelFromXp } from './engine';
 import { SHIPS, WEAPONS, ACHIEVEMENTS, type EnvId } from '../data/gameData';
 import { audio } from './audio';
 
 export type Screen = 'menu' | 'hangar' | 'arsenal' | 'campaign' | 'modes' | 'briefing' | 'playing' | 'paused' | 'complete' | 'failed' | 'settings' | 'achievements' | 'codex';
 export type GamePhase = 'intro' | 'combat' | 'boss-intro' | 'victory' | 'defeat';
 
-export interface Settings {
-  quality: 'low' | 'medium' | 'high';
-  sensitivity: number; invertY: boolean;
-  masterVol: number; musicVol: number; sfxVol: number; uiVol: number;
-  cameraShake: number; screenEffects: boolean; showFps: boolean;
-}
+export type { Settings };
 
 export interface MissionConfig {
   kind: 'campaign' | 'quick' | 'survival' | 'endless' | 'bossrush' | 'timeattack' | 'escort' | 'defense' | 'asteroid';
@@ -87,9 +82,11 @@ interface Store {
 }
 
 const SETTINGS_KEY = 'starfall-settings';
+
 function loadSettings(): Settings {
-  const def: Settings = { quality: 'high', sensitivity: 1, invertY: false, masterVol: 0.8, musicVol: 0.5, sfxVol: 0.85, uiVol: 0.6, cameraShake: 0.7, screenEffects: true, showFps: false };
-  try { return { ...def, ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') }; } catch { return def; }
+  try {
+    return sanitizeSettings(JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'));
+  } catch { return { ...DEFAULT_SETTINGS }; }
 }
 
 let notifId = 0;
@@ -180,7 +177,8 @@ export const useStore = create<Store>((set, get) => ({
     get().updateSave(prev => ({ ...prev, credits: prev.credits - cost, upgrades: { ...prev.upgrades, [id]: lvl + 1 } }));
   },
   setSettings: (s) => {
-    const next = { ...get().settings, ...s };
+    const cur = get().settings;
+    const next = sanitizeSettings({ ...cur, ...s }, cur);
     try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(next)); } catch { /* noop */ }
     audio.setVolumes({ master: next.masterVol, music: next.musicVol, sfx: next.sfxVol, ui: next.uiVol });
     set({ settings: next });

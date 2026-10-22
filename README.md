@@ -25,6 +25,13 @@ A personal 3D game launcher. Every folder in `/games` becomes a world you can fl
 | `npm run discover-games` | run discovery alone and print the report |
 | `npm run typecheck` | strict TypeScript check |
 | `npm run test` | unit + UI tests |
+| `npm run check` | full gate: lint → typecheck → test → every game's own gate |
+| `npm run check:games` | run each game's `npm run check` (lint · typecheck · test) |
+
+Games are self-contained: each folder under `/games` owns its `package.json`, its ESLint
+config and its tests, and is checked from inside its own folder. CI (`.github/workflows/ci.yml`)
+runs the hub gate, every game gate, every game build, and fails if a committed
+`games/*/dist` bundle is out of date with its source.
 
 ## Adding a game
 

@@ -32,13 +32,13 @@ export default function HUD() {
   const lowHull = hullFrac < 0.3;
   const mins = Math.floor(hud.elapsed / 60), secs = Math.floor(hud.elapsed % 60);
   const lockPct = hud.lockProgress;
-  void now;
+  const pulse = 0.55 + 0.3 * Math.sin(now / 220);
 
   return (
     <div className="absolute inset-0 pointer-events-none select-none overflow-hidden font-mono">
       {/* damage vignette */}
       {settings.screenEffects && (
-        <div className="absolute inset-0 transition-opacity duration-200" style={{ opacity: dmgActive ? 1 : lowHull ? 0.55 + 0.3 * Math.sin(performance.now() / 220) : 0, background: 'radial-gradient(ellipse at center, transparent 52%, rgba(220,38,38,0.5) 100%)' }} />
+        <div className="absolute inset-0 transition-opacity duration-200" style={{ opacity: dmgActive ? 1 : lowHull ? pulse : 0, background: 'radial-gradient(ellipse at center, transparent 52%, rgba(220,38,38,0.5) 100%)' }} />
       )}
       {/* cockpit frame accents */}
       <div className="absolute top-0 left-0 w-56 h-10 border-b border-r border-cyan-400/25 bg-slate-950/30 [clip-path:polygon(0_0,100%_0,82%_100%,0_100%)]" />

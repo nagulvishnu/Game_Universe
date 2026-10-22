@@ -4,7 +4,7 @@ import { Stars } from '@react-three/drei';
 import * as THREE from 'three';
 import { useStore, effectiveStats, type MissionConfig } from './store';
 import { WEAPONS, ENEMIES, BOSSES, ABILITY_INFO, ENVIRONMENTS, MISSIONS, type WeaponDef, type EnemyDef, type BossDef } from '../data/gameData';
-import { applyDamage, homeVelocity, bossPhase, missionRating, clamp, rand, type HealthState } from './engine';
+import { applyDamage, homeVelocity, bossPhase, missionRating, resolveObjective, chargeCap, chargeShot, clamp, rand, type HealthState } from './engine';
 import { audio } from './audio';
 import { PlayerShipModel, EnemyShipModel, BossModel, StationModel, TransportModel, DroneModel } from './ShipModels';
 
@@ -20,7 +20,10 @@ interface Proj {
   active: boolean; friendly: boolean; pos: THREE.Vector3; vel: THREE.Vector3; life: number;
   damage: number; color: string; size: number; aoe: number; homing: number; targetId: number;
   shieldMult: number; hullMult: number; kind: string; bounces: number; speed: number; emp: boolean; lastHitId: number;
+  range?: number;
 }
+/** Everything a projectile needs to be spawned; the rest falls back to sane defaults. */
+type ProjSpec = Partial<Proj> & { damage: number; speed: number; color: string };
 interface Particle { pos: THREE.Vector3; vel: THREE.Vector3; life: number; maxLife: number; color: THREE.Color; size: number; }
 interface Pickup { id: number; kind: 'repair' | 'energy' | 'ammo' | 'credits' | 'ult'; pos: THREE.Vector3; }
 interface Asteroid { pos: THREE.Vector3; scale: number; hp: number; rotAxis: THREE.Vector3; rotSpeed: number; alive: boolean; }
@@ -91,7 +94,7 @@ function Scene() {
     const ammo: Record<string, number> = {};
     WEAPONS.forEach(w => { ammo[w.id] = w.ammo; });
     W.current = {
-      t: 0, phase: 'intro', phaseT: 0, ended: false,
+      t: 0, phase: 'intro', phaseT: 0, ended: false, disposed: false,
       player: {
         pos: new THREE.Vector3(0, 0, 60), vel: V3(), yaw: 0, pitch: 0, roll: 0,
         hp: { hull: stats.hull, maxHull: stats.hull, shield: stats.shield, maxShield: stats.shield, armor: stats.armor } as HealthState,
@@ -147,6 +150,7 @@ function Scene() {
 
   useEffect(() => {
     audio.init(); audio.startEngine(); audio.setMusic('combat');
+    w.disposed = false;
     const kd = (e: KeyboardEvent) => {
       if (['Space', 'Tab', 'ControlLeft'].includes(e.code)) e.preventDefault();
       w.keys.add(e.code);
@@ -183,6 +187,9 @@ function Scene() {
     document.addEventListener('pointerlockchange', plc);
     lockPointer();
     return () => {
+      // Mark the world dead so any pending deferred effect bails out instead of
+      // firing into a stale mission. Reset on (re)mount for StrictMode double-invoke.
+      w.disposed = true;
       window.removeEventListener('keydown', kd); window.removeEventListener('keyup', ku);
       window.removeEventListener('mousedown', md); window.removeEventListener('mouseup', mu);
       window.removeEventListener('mousemove', mm); window.removeEventListener('contextmenu', ctx);
@@ -196,7 +203,21 @@ function Scene() {
   // ───────────── helpers ─────────────
   function notify(text: string, color = '#38bdf8') { useStore.getState().pushNotification(text, color); }
 
+  /**
+   * Deferred effects (setTimeout callbacks) keep firing while the game is paused.
+   * Anything that can damage the player must re-check this before it lands.
+   */
+  function simRunning(): boolean {
+    return !w.disposed && !w.ended && useStore.getState().screen === 'playing';
+  }
+
+  /** True while the mission still exists — projectiles may be spawned even while paused. */
+  function worldAlive(): boolean {
+    return !w.disposed && !w.ended;
+  }
+
   function cycleWeapon(slot: 'primary' | 'secondary') {
+    if (useStore.getState().screen !== 'playing' || w.ended) return;
     const p = w.player;
     const list = slot === 'primary' ? p.primaries : p.secondaries;
     if (list.length < 2) return;
@@ -221,10 +242,10 @@ function Scene() {
     if (flashRef.current) { flashRef.current.position.copy(pos); flashRef.current.color.set(color); flashRef.current.intensity = 160; }
   }
 
-  function fireProj(friendly: boolean, from: THREE.Vector3, dir: THREE.Vector3, def: Partial<Proj> & { damage: number; speed: number; color: string }) {
+  function fireProj(friendly: boolean, from: THREE.Vector3, dir: THREE.Vector3, def: ProjSpec) {
     w.projs.push({
       active: true, friendly, pos: from.clone(), vel: dir.clone().normalize().multiplyScalar(def.speed),
-      life: (def as any).range ? (def as any).range / def.speed : 4, damage: def.damage, color: def.color,
+      life: def.range ? def.range / def.speed : 4, damage: def.damage, color: def.color,
       size: def.size ?? 0.35, aoe: def.aoe ?? 0, homing: def.homing ?? 0, targetId: def.targetId ?? -1,
       shieldMult: def.shieldMult ?? 1, hullMult: def.hullMult ?? 1, kind: def.kind ?? 'projectile',
       bounces: def.bounces ?? 0, speed: def.speed, emp: def.emp ?? false, lastHitId: -1,
@@ -380,7 +401,10 @@ function Scene() {
     const comp = waveComposition(w.wave);
     comp.forEach(id => spawnEnemy(id));
     w.waveState = 'active';
-    notify(config.kind === 'survival' || config.kind === 'endless' || w.wave > config.waves ? `WAVE ${w.wave} — ${comp.length} hostiles` : `Wave ${w.wave} of ${config.waves} — ${comp.length} hostiles`, '#f97316');
+    const waveLabel = (config.kind === 'survival' || config.kind === 'endless' || config.type === 'survival-time' || w.wave > config.waves)
+      ? `WAVE ${w.wave} — ${comp.length} hostiles`
+      : `Wave ${w.wave} of ${config.waves} — ${comp.length} hostiles`;
+    notify(waveLabel, '#f97316');
     // mid-mission comms (campaign, second wave)
     if (config.kind === 'campaign' && w.wave === 2 && config.missionId) {
       const dlg = MISSIONS.find(mm => mm.id === config.missionId)?.dialogue?.[1];
@@ -412,7 +436,12 @@ function Scene() {
     p.fireCd -= dt;
     const rate = def.fireRate * (p.overdrive > 0 ? 1.6 : 1);
     if (def.kind === 'charge') {
-      if (w.mouseL && p.energy >= 4) { p.charging = true; p.charge = clamp(p.charge + dt / (def.chargeTime ?? 1), 0, 1); }
+      // A charge can only ever grow to what the pilot can actually pay for —
+      // otherwise a full-power shot could be released for a fraction of its cost.
+      if (w.mouseL && p.energy >= 1) {
+        p.charging = true;
+        p.charge = clamp(p.charge + dt / (def.chargeTime ?? 1), 0, chargeCap(p.energy, def.energyCost));
+      }
       return;
     }
     if (!w.mouseL || p.fireCd > 0) { if (!w.mouseL) w.beam = null; return; }
@@ -488,7 +517,7 @@ function Scene() {
         damage: def.damage * stats.damageMult, speed: def.speed, color: def.color, size: def.size,
         aoe: def.aoe, shieldMult: def.shieldMult, hullMult: def.hullMult, kind: def.kind,
         bounces: def.kind === 'ricochet' ? 2 : 0, range: def.range,
-      } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+      });
       p.shots++;
     }
     audio.shoot(def.kind);
@@ -498,13 +527,21 @@ function Scene() {
   function releaseCharge() {
     const p = w.player;
     const def = WEAPON_BY_ID[p.primaryId];
+    // Releasing the mouse must never fire while the game is paused or the mission is over.
+    if (useStore.getState().screen !== 'playing' || w.ended) {
+      p.charging = false; p.charge = 0;
+      return;
+    }
     if (def.kind !== 'charge' || !p.charging) return;
     p.charging = false;
     if (p.charge < 0.15) { p.charge = 0; return; }
-    const dmg = def.damage * stats.damageMult * (0.3 + p.charge * 1.1);
-    p.energy = Math.max(0, p.energy - def.energyCost * p.charge);
+    // Damage and cost both scale linearly with the charge, so a partial charge can never
+    // be more energy-efficient than a full one. The charge time is the weapon's rate of fire.
+    const shot = chargeShot(def, p.charge, stats.damageMult);
+    const dmg = shot.damage;
+    p.energy = Math.max(0, p.energy - shot.energyCost);
     const fwd = playerForward();
-    fireProj(true, p.pos.clone().add(fwd.clone().multiplyScalar(3)), fwd, { damage: dmg, speed: def.speed, color: def.color, size: def.size * (0.8 + p.charge), aoe: def.aoe, shieldMult: def.shieldMult, hullMult: def.hullMult, kind: 'charge', range: def.range } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+    fireProj(true, p.pos.clone().add(fwd.clone().multiplyScalar(3)), fwd, { damage: dmg, speed: def.speed, color: def.color, size: def.size * (0.8 + p.charge), aoe: def.aoe, shieldMult: def.shieldMult, hullMult: def.hullMult, kind: 'charge', range: def.range });
     p.shots++; p.charge = 0;
     audio.shoot('charge'); w.shake = Math.min(1.2, w.shake + 0.3);
   }
@@ -557,7 +594,7 @@ function Scene() {
         damage: def.damage * stats.damageMult, speed: def.speed, color: def.color, size: def.size,
         aoe: def.aoe, homing: def.homing, targetId: locked, shieldMult: def.shieldMult, hullMult: def.hullMult,
         kind: def.kind, range: def.range, emp: def.id === 'emp-missile',
-      } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+      });
       p.shots++;
     }
     audio.missile();
@@ -604,7 +641,7 @@ function Scene() {
         const center = target ? target.pos.clone() : p.pos.clone().add(fwd.clone().multiplyScalar(130));
         for (let i = 0; i < 8; i++) {
           setTimeout(() => {
-            if (w.ended) return;
+            if (!simRunning()) return;
             const at = center.clone().add(new THREE.Vector3(rand(-40, 40), rand(-15, 15), rand(-40, 40)));
             spawnExplosion(at, '#fb923c', 34, 34, 1.8); audio.explosion(true);
             w.enemies.forEach((e: Ent) => { if (e.pos.distanceTo(at) < 46) damageEnemy(e, 90 * stats.damageMult, 1, 1.2, e.pos); });
@@ -647,13 +684,13 @@ function Scene() {
     const targets = [...w.enemies.values()] as Ent[];
     targets.slice(0, 14).forEach((e, i) => {
       setTimeout(() => {
-        if (w.ended) return;
+        if (!worldAlive()) return;
         const dir = new THREE.Vector3(rand(-1, 1), rand(0.4, 1), rand(-1, 1)).normalize();
-        fireProj(true, p.pos.clone(), dir, { damage: 65 * stats.damageMult, speed: 180, color: '#facc15', size: 0.55, aoe: 12, homing: 4.2, targetId: e.id, shieldMult: 1.1, hullMult: 1.2, kind: 'homing', range: 1200 } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+        fireProj(true, p.pos.clone(), dir, { damage: 65 * stats.damageMult, speed: 180, color: '#facc15', size: 0.55, aoe: 12, homing: 4.2, targetId: e.id, shieldMult: 1.1, hullMult: 1.2, kind: 'homing', range: 1200 });
         audio.missile();
       }, i * 110);
     });
-    if (w.boss) for (let i = 0; i < 5; i++) setTimeout(() => { if (!w.ended) fireProj(true, p.pos.clone(), new THREE.Vector3(rand(-1, 1), rand(-0.5, 1), rand(-1, 1)).normalize(), { damage: 80 * stats.damageMult, speed: 180, color: '#facc15', size: 0.6, aoe: 14, homing: 3.6, targetId: -999, shieldMult: 1.1, hullMult: 1.25, kind: 'homing', range: 1400 } as any); }, i * 130); // eslint-disable-line @typescript-eslint/no-explicit-any
+    if (w.boss) for (let i = 0; i < 5; i++) setTimeout(() => { if (worldAlive()) fireProj(true, p.pos.clone(), new THREE.Vector3(rand(-1, 1), rand(-0.5, 1), rand(-1, 1)).normalize(), { damage: 80 * stats.damageMult, speed: 180, color: '#facc15', size: 0.6, aoe: 14, homing: 3.6, targetId: -999, shieldMult: 1.1, hullMult: 1.25, kind: 'homing', range: 1400 }); }, i * 130);
     w.shake = Math.min(1.4, w.shake + 0.5);
   }
 
@@ -681,32 +718,38 @@ function Scene() {
 
   function checkObjectives(dt: number) {
     if (w.ended) return;
-    const alive = w.enemies.size;
-    // wave flow for wave-based configs
-    if (w.phase === 'combat' && !w.boss) {
-      if (w.waveState === 'pending' || (w.waveState === 'active' && alive === 0)) {
-        if (config.kind === 'survival' || config.kind === 'endless' || config.kind === 'asteroid' || config.kind === 'timeattack') {
-          if (w.wave >= 1) { w.creditsEarned += 120 + w.wave * 30; w.player.hp.hull = Math.min(w.player.hp.maxHull, w.player.hp.hull + 8); }
-          startNextWave();
-        } else if (config.kind === 'bossrush') {
-          if (w.bossQueue.length > 0) { spawnBoss(w.bossQueue.shift()!); }
-        } else if (w.wave < config.waves || (config.type === 'survival-time' && w.t < config.timeLimit)) {
-          startNextWave();
-        } else if (config.bossId) {
-          w.waveState = 'boss'; spawnBoss(config.bossId);
-        } else if (config.type !== 'survival-time') {
-          endMission(true); return;
-        }
+
+    const outcome = resolveObjective(config, {
+      t: w.t, kills: w.kills, asteroidsDestroyed: w.asteroidsDestroyed, wave: w.wave,
+      waveState: w.waveState, alive: w.enemies.size, bossAlive: !!w.boss,
+      bossQueueLeft: w.bossQueue.length, inCombat: w.phase === 'combat',
+    });
+
+    if (outcome === 'next-wave') {
+      // Survival-style modes pay out a wave bonus before the next wave arrives.
+      if (config.kind === 'survival' || config.kind === 'endless' || config.kind === 'asteroid' || config.kind === 'timeattack') {
+        if (w.wave >= 1) { w.creditsEarned += 120 + w.wave * 30; w.player.hp.hull = Math.min(w.player.hp.maxHull, w.player.hp.hull + 8); }
       }
+      startNextWave();
+      return;
     }
-    // type-specific success/fail
-    if (config.type === 'destroy' && config.kind !== 'campaign' && w.kills >= config.killTarget && config.killTarget > 0) { endMission(true); return; }
-    if (config.kind === 'timeattack') {
-      if (w.kills >= config.killTarget) { endMission(true); return; }
-      if (w.t > config.timeLimit) { endMission(false); return; }
+    if (outcome === 'spawn-boss') {
+      if (config.kind === 'bossrush') {
+        if (w.bossQueue.length > 0) spawnBoss(w.bossQueue.shift()!);
+        else endMission(true);
+      } else {
+        w.waveState = 'boss';
+        spawnBoss(config.bossId!);
+      }
+      return;
     }
-    if (config.type === 'survival-time' && w.t >= config.timeLimit && w.kills >= config.killTarget) { endMission(true); return; }
-    if (config.kind === 'asteroid' && (w.kills + w.asteroidsDestroyed) >= config.killTarget) { endMission(true); return; }
+    if (outcome === 'win') { endMission(true); return; }
+    if (outcome === 'lose-timeout') {
+      notify('MISSION CLOCK EXPIRED — ABORTING', '#f87171');
+      endMission(false); return;
+    }
+
+    // Objectives that depend on protecting something.
     if (w.ally && w.ally.hp.hull <= 0) { notify('Transport destroyed!', '#f87171'); endMission(false); return; }
     if (w.station && w.station.hp.hull <= 0) { notify('Station destroyed!', '#f87171'); endMission(false); return; }
     void dt;
@@ -839,7 +882,7 @@ function Scene() {
       d.fireCd -= dt;
       if (d.fireCd <= 0) {
         const tgt = nearestEnemyTo(d.pos, 240);
-        if (tgt) { fireProj(true, d.pos.clone(), tgt.pos.clone().sub(d.pos).normalize(), { damage: 7 * stats.damageMult, speed: 300, color: '#34d399', size: 0.3, range: 300 } as any); d.fireCd = 0.55; } // eslint-disable-line @typescript-eslint/no-explicit-any
+        if (tgt) { fireProj(true, d.pos.clone(), tgt.pos.clone().sub(d.pos).normalize(), { damage: 7 * stats.damageMult, speed: 300, color: '#34d399', size: 0.3, range: 300 }); d.fireCd = 0.55; }
         else d.fireCd = 0.3;
       }
     });
@@ -859,7 +902,7 @@ function Scene() {
       const dist = toT.length();
       const dirT = toT.clone().normalize();
       const weave = new THREE.Vector3(Math.sin(w.t * 1.7 + e.seed), Math.sin(w.t * 2.3 + e.seed * 1.7) * 0.5, Math.cos(w.t * 1.4 + e.seed)).multiplyScalar(e.def.behavior === 'swarm' ? 0.85 : 0.45);
-      let desired = dirT.clone();
+      const desired = dirT.clone();
       const beh = e.def.behavior;
       const standoff = beh === 'sniper' ? 240 : beh === 'heavy' || beh === 'carrier' ? 130 : beh === 'kamikaze' ? 0 : 62;
       if (dist < standoff * 0.7) desired.addScaledVector(dirT, -1.4); // back off / orbit
@@ -924,9 +967,9 @@ function Scene() {
             color: e.def.color, size: isMissile ? 0.55 : 0.34, aoe: isMissile ? 10 : 0,
             homing: isMissile ? 1.7 : 0, targetId: isMissile ? -1 : -2, // -1 = seek player for enemy missiles
             range: 800, kind: isMissile ? 'homing' : 'projectile',
-          } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+          });
           if (beh === 'heavy') { // burst
-            for (let i = 0; i < 2; i++) { const d2 = shotDir.clone(); d2.x += rand(-0.06, 0.06); d2.y += rand(-0.06, 0.06); fireProj(false, e.pos.clone(), d2, { damage: e.def.damage * 0.7, speed: 250, color: e.def.color, size: 0.3, range: 700 } as any); } // eslint-disable-line @typescript-eslint/no-explicit-any
+            for (let i = 0; i < 2; i++) { const d2 = shotDir.clone(); d2.x += rand(-0.06, 0.06); d2.y += rand(-0.06, 0.06); fireProj(false, e.pos.clone(), d2, { damage: e.def.damage * 0.7, speed: 250, color: e.def.color, size: 0.3, range: 700 }); }
           }
           if (dist < 300) audio.shoot();
         } else e.fireCd = 0.3;
@@ -962,7 +1005,7 @@ function Scene() {
           b.fireT = 0.55 * rateMult;
           const dir = p.pos.clone().addScaledVector(p.vel, distP / 300 * 0.5).sub(b.pos).normalize();
           dir.x += rand(-0.03, 0.03); dir.y += rand(-0.03, 0.03);
-          fireProj(false, b.pos.clone().add(new THREE.Vector3(rand(-10, 10), rand(-3, 5), rand(-8, 8))), dir, { damage: 9 + config.difficulty, speed: 270, color: b.def.color, size: 0.5, range: 1200 } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+          fireProj(false, b.pos.clone().add(new THREE.Vector3(rand(-10, 10), rand(-3, 5), rand(-8, 8))), dir, { damage: 9 + config.difficulty, speed: 270, color: b.def.color, size: 0.5, range: 1200 });
         }
         if (b.patternT <= 0) {
           b.patternIdx = (b.patternIdx + 1) % b.def.patterns.length;
@@ -971,7 +1014,7 @@ function Scene() {
           b.currentPattern = pattern; b.currentPatternT = 0;
           if (pattern === 'missiles') {
             notify('⚠ Incoming missile volley', '#fb923c');
-            for (let i = 0; i < 4 + b.phase * 2; i++) setTimeout(() => { if (w.boss && !w.ended) fireProj(false, b.pos.clone(), new THREE.Vector3(rand(-1, 1), rand(0.2, 1), rand(-1, 1)).normalize(), { damage: 20, speed: 130, color: '#fb923c', size: 0.6, aoe: 12, homing: 2.0, targetId: -1, range: 1400, kind: 'homing' } as any); }, i * 180); // eslint-disable-line @typescript-eslint/no-explicit-any
+            for (let i = 0; i < 4 + b.phase * 2; i++) setTimeout(() => { if (worldAlive() && w.boss) fireProj(false, b.pos.clone(), new THREE.Vector3(rand(-1, 1), rand(0.2, 1), rand(-1, 1)).normalize(), { damage: 20, speed: 130, color: '#fb923c', size: 0.6, aoe: 12, homing: 2.0, targetId: -1, range: 1400, kind: 'homing' }); }, i * 180);
             audio.missile();
           } else if (pattern === 'spawn' || pattern === 'drones') {
             notify('Boss deploying reinforcements', '#f472b6');
@@ -990,9 +1033,9 @@ function Scene() {
             notify('⚠ It\'s charging you!', '#f87171');
           } else if (pattern === 'broadside' || pattern === 'barrage') {
             for (let i = 0; i < 14; i++) setTimeout(() => {
-              if (!w.boss || w.ended) return;
+              if (!worldAlive() || !w.boss) return;
               const dir = p.pos.clone().sub(b.pos).normalize(); dir.x += rand(-0.09, 0.09); dir.y += rand(-0.09, 0.09); dir.z += rand(-0.09, 0.09);
-              fireProj(false, b.pos.clone().add(new THREE.Vector3(rand(-14, 14), rand(-4, 6), rand(-10, 10))), dir, { damage: 8, speed: 300, color: b.def.color, size: 0.45, range: 1200 } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+              fireProj(false, b.pos.clone().add(new THREE.Vector3(rand(-14, 14), rand(-4, 6), rand(-10, 10))), dir, { damage: 8, speed: 300, color: b.def.color, size: 0.45, range: 1200 });
             }, i * 90);
           }
         }
@@ -1003,7 +1046,7 @@ function Scene() {
             const base = b.currentPatternT * 2.4;
             for (let k = 0; k < 3; k++) {
               const a = base + (k * Math.PI * 2) / 3;
-              fireProj(false, b.pos.clone(), new THREE.Vector3(Math.cos(a), Math.sin(a * 1.3) * 0.35, Math.sin(a)), { damage: 8, speed: 150, color: b.def.color, size: 0.5, range: 1100 } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+              fireProj(false, b.pos.clone(), new THREE.Vector3(Math.cos(a), Math.sin(a * 1.3) * 0.35, Math.sin(a)), { damage: 8, speed: 150, color: b.def.color, size: 0.5, range: 1100 });
             }
           }
         }
@@ -1013,7 +1056,7 @@ function Scene() {
           if (b.telegraph <= 0) {
             const dir = p.pos.clone().sub(b.pos).normalize();
             if (b.currentPattern === 'siegecannon') {
-              fireProj(false, b.pos.clone().addScaledVector(dir, 16), dir, { damage: 65, speed: 420, color: '#fef08a', size: 2.2, aoe: 22, range: 1600 } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+              fireProj(false, b.pos.clone().addScaledVector(dir, 16), dir, { damage: 65, speed: 420, color: '#fef08a', size: 2.2, aoe: 22, range: 1600 });
               audio.shoot('charge'); w.shake = Math.min(1.4, w.shake + 0.4);
             } else if (b.currentPattern === 'beam') {
               // beam hits if player roughly in the line
