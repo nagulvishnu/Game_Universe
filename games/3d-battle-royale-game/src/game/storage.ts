@@ -100,3 +100,32 @@ export function setName(n: string) {
     /* ignore */
   }
 }
+
+export interface Settings {
+  sens: number;   // 0.3 – 3.0, default 1.0
+  vol: number;    // 0 – 1, default 0.5
+  fov: number;    // 60 – 100, default 72
+}
+
+const SETTINGS_KEY = 'dropzone50.settings.v1';
+
+export function getSettings(): Settings {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) {
+      const s = JSON.parse(raw) as Partial<Settings>;
+      return {
+        sens: typeof s.sens === 'number' ? Math.max(0.3, Math.min(3, s.sens)) : 1,
+        vol: typeof s.vol === 'number' ? Math.max(0, Math.min(1, s.vol)) : 0.5,
+        fov: typeof s.fov === 'number' ? Math.max(60, Math.min(100, s.fov)) : 72,
+      };
+    }
+  } catch { /* ignore */ }
+  return { sens: 1, vol: 0.5, fov: 72 };
+}
+
+export function saveSettings(s: Settings) {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  } catch { /* ignore */ }
+}

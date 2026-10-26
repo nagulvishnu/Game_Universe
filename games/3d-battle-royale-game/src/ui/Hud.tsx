@@ -92,6 +92,22 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
         </div>
       )}
 
+      {/* death recap */}
+      {!hud.alive && hud.deathRecap.length > 0 && (
+        <div className="absolute left-1/2 top-[45%] -translate-x-1/2 pointer-events-none">
+          <div className="panel px-4 py-3 border-red-500/40 min-w-[220px]">
+            <div className="text-[10px] tracking-[0.3em] text-red-400 font-bold mb-2 text-center">DAMAGE TAKEN</div>
+            {hud.deathRecap.slice(-5).reverse().map((d, i) => (
+              <div key={i} className="flex items-center justify-between text-[12px] py-0.5">
+                <span className="text-slate-300 truncate max-w-[120px]">{d.src}</span>
+                <span className="text-slate-500 text-[10px] mx-2">{d.wp}{d.head ? ' 🎯' : ''}</span>
+                <span className={`font-display font-bold ${d.head ? 'text-red-400' : 'text-white'}`}>{d.dmg}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* top-left stats */}
       <div className="absolute left-3 top-3 flex flex-col gap-2" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="flex gap-2">
@@ -167,6 +183,7 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
       {/* top-right minimap + buttons */}
       <div className="absolute right-3 top-3 flex flex-col items-end gap-2" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="flex gap-2 pointer-events-auto">
+          <button className="panel w-9 h-9 text-lg" onClick={() => game?.toggleMap()} aria-label="map">🗺</button>
           <button className="panel w-9 h-9 text-lg" onClick={onMute} aria-label="mute">{muted ? '🔇' : '🔊'}</button>
           <button className="panel w-9 h-9 text-lg" onClick={onPause} aria-label="pause">⏸</button>
         </div>

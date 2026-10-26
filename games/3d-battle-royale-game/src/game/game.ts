@@ -7,9 +7,10 @@ import {
 import { Actor, Vehicle, type Loot, type Phase } from './actor';
 import { World, rayCyl } from './world';
 import { FX } from './fx';
-import { makeHuman, setHumanWeapon, makePlane, makeVehicle, weaponModel, bx, basic, makeLootBox, mat } from './models';
-import { sfx, setEngine } from './audio';
+import { makeHuman, setHumanWeapon, setHumanTag, makePlane, makeVehicle, weaponModel, bx, basic, makeLootBox, mat } from './models';
+import { sfx, setEngine, setVolume } from './audio';
 import { updateBot, initBot } from './bots';
+import { getSettings, saveSettings, type Settings } from './storage';
 
 export type GameState = 'menu' | 'playing' | 'paused' | 'over';
 
@@ -35,6 +36,7 @@ export interface Hud {
   respawnLeft: number;
   spectating: boolean;
   overtimeHint: boolean;
+  deathRecap: { src: string; wp: string; dmg: number; head: boolean; t: number }[];
 }
 export interface Result {
   win: boolean; place: number; total: number; kills: number; dmg: number; time: number; score: number; mode: string; map: string; hs: number;
@@ -124,6 +126,10 @@ export class Game {
   locked = false;
   noLock = false;
   lastLook = 0;
+  mapOpen = false;
+  fullmap: HTMLCanvasElement | null = null;
+  deathRecap: { src: string; wp: string; dmg: number; head: boolean; t: number }[] = [];
+  settings: Settings = getSettings();
 
   camYaw = 0;
   camPitch = 0;
@@ -154,6 +160,7 @@ export class Game {
     this.overlay = overlay;
     this.ui = ui;
     this.isTouch = isTouch;
+    setVolume(this.settings.vol);
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: !isTouch, powerPreference: 'high-performance' });
     this.maxPr = Math.min(window.devicePixelRatio || 1, isTouch ? 1.5 : 2);
     this.pr = this.maxPr;
@@ -435,12 +442,13 @@ export class Game {
     if (i > 0) this.ui.onToast('SAFE ZONE SET', `Next shrink in ${ph.wait}s`, 'info');
   }
 
-  addLoot(kind: Loot['kind'], x: number, z: number, opts: { wid?: WeaponId; ammo?: AmmoType; amount?: number; rarity?: number; b?: number } = {}) {
+  addLoot(kind: Loot['kind'], x: number, z: number, opts: { wid?: WeaponId; ammo?: AmmoType; amount?: number; rarity?: number; b?: number; y?: number } = {}) {
     let rarity = opts.rarity ?? 0;
     if (kind === 'weapon' && opts.wid) rarity = opts.rarity ?? WEAPONS[opts.wid].rarity;
     if (kind === 'bomb') rarity = 3;
     if (kind === 'shield') rarity = 2;
-    const l: Loot = { id: this.lootId++, kind, wid: opts.wid, ammo: opts.ammo, amount: opts.amount ?? 1, x, z, rarity, b: opts.b ?? -1, mesh: new THREE.Group(), taken: false, phase: Math.random() * 6 };
+    const y = opts.y ?? 0;
+    const l: Loot = { id: this.lootId++, kind, wid: opts.wid, ammo: opts.ammo, amount: opts.amount ?? 1, x, z, y, rarity, b: opts.b ?? -1, mesh: new THREE.Group(), taken: false, phase: Math.random() * 6 };
     const col = RARITY_COLORS[rarity];
     const ring = new THREE.Mesh(RING, new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.8, depthWrite: false }));
     ring.position.y = 0.08;
@@ -476,40 +484,41 @@ export class Game {
       const beam = new THREE.Mesh(BEAM, new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.28, depthWrite: false, side: THREE.DoubleSide, fog: false }));
       l.mesh.add(beam);
     }
-    l.mesh.position.set(x, 0, z);
+    l.mesh.position.set(x, y, z);
     this.worldGroup.add(l.mesh);
     this.loot.push(l);
     return l;
   }
 
   spawnLoot(mode: ModeDef) {
-    const spots = this.world.spots.slice().sort(() => Math.random() - 0.5);
-    const table: { w: number; f: (x: number, z: number, b: number) => void }[] = [];
+    const spots = this.world.spots.slice().sort((a, b) => b.y - a.y || Math.random() - 0.5);
+    const table: { w: number; f: (x: number, z: number, b: number, y: number) => void }[] = [];
     const wp = (id: WeaponId, w: number) => {
       if (mode.meleeOnly && WEAPONS[id].kind === 'gun') return;
-      table.push({ w, f: (x, z, b) => this.addLoot('weapon', x, z, { wid: id, b }) });
+      table.push({ w, f: (x, z, b, y) => this.addLoot('weapon', x, z, { wid: id, b, y }) });
     };
     const am = (t: AmmoType, w: number) => {
       if (mode.meleeOnly) return;
-      table.push({ w, f: (x, z, b) => this.addLoot('ammo', x, z, { ammo: t, amount: t === 'light' ? 30 : t === 'rifle' ? 24 : 8, b }) });
+      table.push({ w, f: (x, z, b, y) => this.addLoot('ammo', x, z, { ammo: t, amount: t === 'light' ? 30 : t === 'rifle' ? 24 : 8, b, y }) });
     };
     wp('pistol', 4); wp('smg', 6); wp('shotgun', 5); wp('ar', 5.5); wp('sniper', 1.8);
     wp('lmg', 1.6); wp('burst', 2.4); wp('revolver', 2.4);
     wp('axe', mode.meleeOnly ? 14 : 3);
     wp('knife', 0);
     am('light', 8); am('rifle', 6); am('shell', 4);
-    table.push({ w: 9, f: (x, z, b) => this.addLoot('medkit', x, z, { b }) });
-    table.push({ w: 6, f: (x, z, b) => this.addLoot('shield', x, z, { b }) });
-    table.push({ w: mode.meleeOnly ? 12 : 6, f: (x, z, b) => this.addLoot('grenade', x, z, { b }) });
-    table.push({ w: mode.meleeOnly ? 6 : 1.5, f: (x, z, b) => this.addLoot('bomb', x, z, { b }) });
+    table.push({ w: 9, f: (x, z, b, y) => this.addLoot('medkit', x, z, { b, y }) });
+    table.push({ w: 6, f: (x, z, b, y) => this.addLoot('shield', x, z, { b, y }) });
+    table.push({ w: mode.meleeOnly ? 12 : 6, f: (x, z, b, y) => this.addLoot('grenade', x, z, { b, y }) });
+    table.push({ w: mode.meleeOnly ? 6 : 1.5, f: (x, z, b, y) => this.addLoot('bomb', x, z, { b, y }) });
     const total = table.reduce((s, t) => s + t.w, 0);
     const n = Math.min(mode.loot, spots.length);
     for (let i = 0; i < n; i++) {
       const s = spots[i];
-      let r = Math.random() * total;
+      const heightBonus = s.y > 0 ? 1.3 : 1.0;
+      let r = Math.random() * total * heightBonus;
       for (const t of table) {
         r -= t.w;
-        if (r <= 0) { t.f(s.x, s.z, s.b); break; }
+        if (r <= 0) { t.f(s.x, s.z, s.b, s.y); break; }
       }
     }
   }
@@ -576,9 +585,9 @@ export class Game {
       const isP = i === 0;
       const color = isP ? 0xf59e0b : SHIRTS[i % SHIRTS.length];
       const a = new Actor(i, isP ? this.playerName : names[i % names.length], isP, makeHuman(color, isP ? -1 : i), color);
+      // arena: player + allies on team 0, everyone else on team 1
       if (ts <= 1) a.team = i;
-      else if (i < ts) a.team = 0;
-      else a.team = 1 + Math.floor((i - ts) / ts);
+      else a.team = i < ts ? 0 : 1;
       // team 0 on the west edge, rivals on the east edge, facing arena center
       const side = a.team === 0 ? -1 : 1;
       a.x = side * h * 0.38 + rnd(-5, 5);
@@ -610,7 +619,8 @@ export class Game {
   /** Combine a mode's size with the selected map: scales world half, zone, loot and vehicles together. */
   scaleMode(base: ModeDef, mapId: string): ModeDef {
     this.mapDef = getMap(mapId);
-    const half = Math.round(this.mapDef.half * (base.half / 300));
+    const mapScale = this.mapDef.half / 355;
+    const half = Math.round(base.half * mapScale);
     const k = half / base.half;
     const v = (n: number) => Math.max(n > 0 ? 1 : 0, Math.round(n * k));
     return {
@@ -628,9 +638,9 @@ export class Game {
   applySky() {
     const s = BIOME_SKY[this.mapDef.biome];
     const rain = this.weather === 'rain';
-    const sizeK = Math.max(1, this.mode.half / 300);
+    const sizeK = Math.max(1, this.mode.half / 350);
     const fog = rain ? 0x8aa0b0 : s.fog;
-    this.scene.fog = new THREE.Fog(fog, (rain ? 80 : 110) * sizeK, (rain ? 380 : 470) * sizeK);
+    this.scene.fog = new THREE.Fog(fog, (rain ? 100 : 140) * sizeK, (rain ? 500 : 650) * sizeK);
     this.scene.background = new THREE.Color(fog);
     this.sun.intensity = rain ? 0.7 : s.sunI;
     this.sun.color.set(rain ? 0xc8d8e8 : s.sun);
@@ -664,6 +674,7 @@ export class Game {
     this.slow = 0;
     this.shake = 0;
     this.dmgTaken = 0;
+    this.deathRecap = [];
     this.input.fire = false;
     this.input.ads = false;
     this.keys.clear();
@@ -693,6 +704,8 @@ export class Game {
   toMenu() {
     setEngine(false);
     this.exitLock();
+    this.mapOpen = false;
+    if (this.fullmap) this.fullmap.style.display = 'none';
     this.weather = 'clear';
     if (this.rain) this.rain.visible = false;
     this.buildWorld(this.scaleMode(MODES[0], this.lastCfg.map), false);
@@ -738,6 +751,8 @@ export class Game {
     if (this.finished) return;
     this.finished = true;
     this.state = 'over';
+    this.mapOpen = false;
+    if (this.fullmap) this.fullmap.style.display = 'none';
     const p = this.player;
     this.input.fire = false;
     setEngine(false);
@@ -787,6 +802,7 @@ export class Game {
       case 'KeyG': this.throwPlayer('grenade'); break;
       case 'KeyB': this.throwPlayer('bomb'); break;
       case 'KeyH': this.useMedkit(); break;
+      case 'KeyM': this.toggleMap(); break;
     }
   };
   onKeyUp = (e: KeyboardEvent) => {
@@ -916,6 +932,7 @@ export class Game {
       const def = WEAPONS[l.wid];
       if (def.kind === 'melee' && WEAPONS[p.melee].tier >= def.tier) continue;
       if (def.kind === 'gun' && (!p.guns[0] || !p.guns[1])) continue;
+      if (Math.abs(l.y - p.y) > 1.5) continue;
       const d = Math.hypot(l.x - p.x, l.z - p.z);
       if (d < 3 && d < bd) { bd = d; best = l; }
     }
@@ -1292,6 +1309,10 @@ export class Game {
       t.healT = 0;
       this.shake = Math.min(1, this.shake + 0.25 + dmg / 120);
       this.dmgTaken += d;
+      if (src && src !== t) {
+        this.deathRecap.push({ src: src.name, wp: wp || 'Weapon', dmg: Math.round(d), head, t: this.time });
+        if (this.deathRecap.length > 8) this.deathRecap.shift();
+      }
       let from: number | undefined;
       if (src && src !== t) {
         const vx = src.x - t.x, vz = src.z - t.z;
@@ -1718,7 +1739,7 @@ export class Game {
     const inp = this.input;
     if (!p.alive) { inp.lookX = inp.lookY = 0; inp.jump = false; return; }
     // look
-    const sens = 0.0022 * (inp.ads ? 0.55 : 1);
+    const sens = 0.0022 * this.settings.sens * (inp.ads ? 0.55 : 1);
     if (inp.lookX || inp.lookY) this.lastLook = this.time;
     this.camYaw -= inp.lookX * sens;
     this.camPitch -= inp.lookY * sens;
@@ -1804,7 +1825,8 @@ export class Game {
     if (jumpPressed && p.onGround) { p.vy = 7.2; p.onGround = false; }
     p.vy -= 24 * dt;
     p.y += p.vy * dt;
-    if (p.y <= 0) { p.y = 0; p.vy = 0; p.onGround = true; }
+    const floorY = this.world.getFloorY(p.x, p.z, p.y);
+    if (p.y <= floorY) { p.y = floorY; p.vy = 0; p.onGround = true; }
     p.x += p.vx * dt;
     p.z += p.vz * dt;
     const pp = { x: p.x, z: p.z };
@@ -1927,6 +1949,16 @@ export class Game {
   updateZone(dt: number) {
     const z = this.zone;
     if (!z || this.mode.respawn) return;
+    // hold the countdown while the drop plane is still flying — match time starts once you're out
+    if (this.plane && this.plane.p < 1.1) {
+      if (this.zoneMesh) {
+        this.zoneMesh.scale.set(z.r, 1, z.r);
+        this.zoneMesh.position.x = z.cx;
+        this.zoneMesh.position.z = z.cz;
+        if (this.zoneTex) this.zoneTex.offset.y -= dt * 0.25;
+      }
+      return;
+    }
     z.t += dt;
     if (z.stage === 'wait') {
       if (z.t >= z.dur) {
@@ -1975,10 +2007,12 @@ export class Game {
 
   updateLoot(dt: number) {
     const cam = this.camera.position;
+    const visRange = Math.max(120, this.mode.half * 0.35);
+    const visRange2 = visRange * visRange;
     for (const l of this.loot) {
       if (l.taken) continue;
       const dx = l.x - cam.x, dz = l.z - cam.z;
-      const vis = dx * dx + dz * dz < 120 * 120;
+      const vis = dx * dx + dz * dz < visRange2;
       l.mesh.visible = vis;
       if (!vis) continue;
       l.phase += dt * 2;
@@ -1998,12 +2032,14 @@ export class Game {
 
   animateActors(dt: number) {
     const cam = this.camera.position;
+    const visRange = Math.max(160, this.mode.half * 0.45);
+    const visRange2 = visRange * visRange;
     for (const a of this.actors) {
       const h = a.human;
       a.squash = Math.max(0, a.squash - dt * 6);
       if (a.phase === 'plane') { h.root.visible = false; continue; }
       const dx = a.x - cam.x, dz = a.z - cam.z;
-      if (dx * dx + dz * dz > 160 * 160 && a.phase !== 'fall') { h.root.visible = false; continue; }
+      if (dx * dx + dz * dz > visRange2 && a.phase !== 'fall') { h.root.visible = false; continue; }
       const inCar = a.phase === 'vehicle' && a.vehicle && a.vehicle.type !== 'bike';
       h.root.visible = !inCar;
       if (inCar) continue;
@@ -2024,40 +2060,113 @@ export class Game {
       h.body.position.y = by;
       // legs
       let sw = 0;
+      let moveAmt = 0;
       if (a.alive && a.phase === 'ground') {
         const sp = a.isPlayer ? a.speed : (a.ai?.speed ?? 0);
-        sw = Math.sin(a.walkT) * Math.min(1, sp / 6) * 0.9;
+        moveAmt = Math.min(1, sp / 6);
+        sw = Math.sin(a.walkT) * moveAmt * 0.9;
         if (!a.isPlayer) a.walkT += sp * dt * 1.1;
       } else if (a.phase === 'fall') sw = Math.sin(this.time * 18 + a.id) * 0.4;
       h.legL.rotation.x = sw;
       h.legR.rotation.x = -sw;
       if (a.phase === 'chute') { h.legL.rotation.x = 0.3; h.legR.rotation.x = 0.3; }
-      // weapon holder
+      // ---- arm animation ----
       const def = WEAPONS[a.weaponId];
-      let hx = a.alive ? Math.max(-0.7, Math.min(0.9, a.pitch)) : 0;
-      if (a.swing > 0 && def.kind === 'melee') {
-        const s = a.swing;
-        hx += Math.sin(s * Math.PI) * -1.5 + (s > 0.5 ? 0.9 * (s - 0.5) : 0);
-        h.holder.position.z = -0.1 - Math.sin(s * Math.PI) * 0.35;
+      const isGun = def.kind === 'gun';
+      const isMelee = def.kind === 'melee';
+      const onBike = a.phase === 'vehicle' && a.vehicle?.type === 'bike';
+      // base pitch angle for aiming (positive = looking up)
+      let aim = a.alive ? Math.max(-0.7, Math.min(0.9, a.pitch)) : 0;
+      let swingAmt = 0;
+      if (a.swing > 0 && isMelee) swingAmt = Math.sin(a.swing * Math.PI);
+      if (a.phase === 'fall') aim = 1.1;
+      if (a.reload > 0) aim -= 0.4;
+      // walk bob for arms + idle breathing
+      const armBob = Math.sin(a.walkT) * moveAmt * 0.35;
+      const armBob2 = Math.sin(a.walkT + Math.PI) * moveAmt * 0.35;
+      const breathe = Math.sin(this.time * 1.8 + a.id * 1.7) * 0.03 * (1 - moveAmt);
+      // name tags for teammates + nearby enemies
+      const ts0 = this.mode.teamSize ?? 1;
+      if (a.alive && ts0 > 1) {
+        const ally = a.team === this.player.team;
+        const dist = Math.hypot(a.x - this.player.x, a.z - this.player.z);
+        if (ally || dist < 40) {
+          setHumanTag(h, a.name, ally ? '#4ade80' : '#f87171');
+          if (h.tag) h.tag.visible = true;
+        } else if (h.tag) h.tag.visible = false;
+      } else if (h.tag) h.tag.visible = false;
+      // bike riding pose: lean forward, arms on handlebars
+      if (onBike) {
+        h.holder.rotation.x = 1.05;
+        h.holder.rotation.z = -0.15;
+        h.holder.position.z = -0.08;
+        h.armL.rotation.x = 1.05;
+        h.armL.rotation.z = 0.15;
+        h.legL.rotation.x = 0.6;
+        h.legR.rotation.x = 0.6;
+        h.body.rotation.x = -0.35; // lean forward
+        h.head.rotation.x = 0.3;
       } else {
-        h.holder.position.z = -0.1 + a.recoil * 0.12;
-        hx += a.recoil * 0.08;
-      }
-      if (a.phase === 'fall') hx = 1.1;
-      if (a.reload > 0) hx -= 0.4;
-      h.holder.rotation.x = hx;
-      // left arm: supports gun aim, swings opposite legs otherwise
+      // RIGHT ARM (holder — grips the weapon)
       if (!a.alive) {
-        h.armL.rotation.x = 0.3;
+        h.holder.rotation.x = 0.15;
+        h.holder.rotation.z = 0.1;
+        h.holder.position.z = -0.02;
       } else if (a.phase === 'fall' || a.phase === 'chute') {
-        h.armL.rotation.x = 1.1;
-      } else if (def.kind === 'gun') {
-        h.armL.rotation.x = hx;
+        h.holder.rotation.x = 1.0 + armBob * 0.5;
+        h.holder.rotation.z = 0.15;
+        h.holder.position.z = -0.04;
+      } else if (isGun) {
+        // gun ready pose: arm raised forward, elbow bent
+        h.holder.rotation.x = 1.25 + aim * 0.55 + a.recoil * 0.15 + armBob * 0.25 + breathe;
+        h.holder.rotation.z = -0.13 + armBob * 0.1;
+        h.holder.position.z = -0.05 + a.recoil * 0.12;
+      } else if (isMelee) {
+        // melee: arm ready, swings on attack
+        h.holder.rotation.x = 1.55 + aim * 0.3 + armBob * 0.2 + breathe - swingAmt * 0.95;
+        h.holder.rotation.z = -0.1 + armBob * 0.15;
+        h.holder.position.z = -0.05 - swingAmt * 0.25;
       } else {
-        h.armL.rotation.x = -sw * 0.8;
+        // unarmed: natural swing + idle sway
+        h.holder.rotation.x = armBob2 + breathe;
+        h.holder.rotation.z = 0.05;
+        h.holder.position.z = -0.02;
       }
-      // head glances toward aim
-      h.head.rotation.x = -hx * 0.35;
+      // LEFT ARM (support / free swing)
+      if (!a.alive) {
+        h.armL.rotation.x = 0.2;
+        h.armL.rotation.z = -0.1;
+      } else if (a.phase === 'fall' || a.phase === 'chute') {
+        h.armL.rotation.x = 1.0 + armBob2 * 0.5;
+        h.armL.rotation.z = -0.15;
+      } else if (isGun) {
+        // support hand: reaches across to hold the front of the weapon
+        h.armL.rotation.x = 1.15 + aim * 0.5 + armBob * 0.2 + breathe;
+        h.armL.rotation.z = 0.75 + armBob * 0.08; // angle inward to meet the weapon
+      } else if (isMelee) {
+        // off-hand swings opposite the weapon arm
+        h.armL.rotation.x = 0.3 + armBob2 + breathe - swingAmt * 0.35;
+        h.armL.rotation.z = -0.15;
+      } else {
+        // unarmed: natural opposite swing + idle sway
+        h.armL.rotation.x = armBob + breathe;
+        h.armL.rotation.z = -0.05;
+      }
+      } // end non-bike
+      // weapon orientation: gun barrel follows aim, knife points along the arm
+      if (h.weapon) {
+        if (isGun) {
+          if (!a.alive) h.weapon.rotation.x = -h.holder.rotation.x;
+          else if (a.phase === 'fall' || a.phase === 'chute') h.weapon.rotation.x = -h.holder.rotation.x;
+          else h.weapon.rotation.x = aim + a.recoil * 0.3 - h.holder.rotation.x - h.body.rotation.x;
+        } else if (isMelee) {
+          h.weapon.rotation.x = -Math.PI / 2;
+        } else {
+          h.weapon.rotation.x = 0;
+        }
+      }
+      // head glances toward aim (positive x = look up)
+      h.head.rotation.x = aim * 0.35;
       if (!a.isPlayer) {
         a.swing = Math.max(0, a.swing - dt * 4);
         a.recoil = Math.max(0, a.recoil - dt * 10);
@@ -2076,7 +2185,7 @@ export class Game {
       if (a.reload > 0) { a.reload -= dt; if (a.reload <= 0) this.finishReload(a); }
       updateBot(this, a, dt);
     }
-    // arena respawns + time limit
+    this.world.updateDoors(dt, this.actors);
     if (this.mode.respawn && this.state === 'playing') {
       for (const a of this.actors) {
         if (a.alive || a.respawnT <= 0) continue;
@@ -2104,8 +2213,8 @@ export class Game {
     let dist = 4.1, shoulder = 0.75;
     const ads = this.input.ads && p.phase === 'ground' && p.alive;
     if (ads) { dist = 2.4; shoulder = 0.55; }
-    let baseFov = this.mode ? 72 : 72;
-    if (window.innerWidth < window.innerHeight) baseFov = 82;
+    let baseFov = this.settings.fov;
+    if (window.innerWidth < window.innerHeight) baseFov += 10;
     let tfov = baseFov;
     if (p.phase === 'plane') {
       dist = 26; shoulder = 0; ty = p.y + 5;
@@ -2225,7 +2334,124 @@ export class Game {
       respawnLeft: !p.alive && this.mode.respawn ? Math.max(0, Math.ceil(p.respawnT)) : 0,
       spectating: !p.alive && teamMode && !this.mode.respawn && teamAlive > 0,
       overtimeHint: this.overtime,
+      deathRecap: this.deathRecap,
     });
+  }
+
+  toggleMap() {
+    this.mapOpen = !this.mapOpen;
+    if (this.fullmap) this.fullmap.style.display = this.mapOpen ? 'block' : 'none';
+    if (this.mapOpen) this.drawFullMap();
+  }
+
+  setFullmap(c: HTMLCanvasElement) {
+    this.fullmap = c;
+  }
+
+  updateSettings(s: Partial<Settings>) {
+    this.settings = { ...this.settings, ...s };
+    saveSettings(this.settings);
+    setVolume(this.settings.vol);
+  }
+
+  drawFullMap() {
+    const c = this.fullmap;
+    if (!c || !this.player || !this.zone) return;
+    const ctx = c.getContext('2d');
+    if (!ctx) return;
+    const W = c.width, H = c.height;
+    const p = this.player;
+    const half = this.mode.half + 20;
+    const scale = Math.min(W, H) / (half * 2);
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    ctx.scale(scale, scale);
+    // ground
+    ctx.fillStyle = '#2d4f2a';
+    ctx.fillRect(-half, -half, half * 2, half * 2);
+    // towns
+    ctx.fillStyle = '#3d5a38';
+    for (const t of this.world.towns) {
+      ctx.beginPath();
+      ctx.arc(t.x, t.z, t.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // buildings
+    ctx.fillStyle = '#c9b99a';
+    for (const b of this.world.buildings) {
+      ctx.fillRect(b.x0, b.z0, b.x1 - b.x0, b.z1 - b.z0);
+    }
+    // zone
+    const z = this.zone;
+    if (!this.mode.respawn) {
+      const mapBound = half;
+      ctx.fillStyle = 'rgba(56,189,248,0.25)';
+      ctx.beginPath();
+      ctx.rect(-mapBound, -mapBound, mapBound * 2, mapBound * 2);
+      ctx.arc(z.cx, z.cz, Math.max(0.1, z.r), 0, Math.PI * 2, true);
+      ctx.fill('evenodd');
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2 / scale;
+      ctx.beginPath();
+      ctx.arc(z.cx, z.cz, Math.max(0.1, z.r), 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5 / scale;
+      ctx.beginPath();
+      ctx.arc(z.tx, z.tz, Math.max(0.1, z.tr), 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    // vehicles
+    ctx.fillStyle = '#facc15';
+    for (const v of this.vehicles) {
+      if (v.wreck) continue;
+      ctx.fillRect(v.x - 4, v.z - 4, 8, 8);
+    }
+    // airdrops
+    for (const a of this.airdrops) {
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(a.x, a.z, 8, 0, 6.3);
+      ctx.fill();
+    }
+    // actors
+    const ts = this.mode.teamSize ?? 1;
+    for (const a of this.actors) {
+      if (a === p || !a.alive || a.phase === 'plane') continue;
+      const ally = ts > 1 && a.team === p.team;
+      ctx.fillStyle = ally ? '#4ade80' : '#ef4444';
+      ctx.beginPath();
+      ctx.arc(a.x, a.z, 4, 0, 6.3);
+      ctx.fill();
+    }
+    // player
+    ctx.fillStyle = '#fbbf24';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2 / scale;
+    ctx.beginPath();
+    ctx.arc(p.x, p.z, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    // player heading line
+    const hx = -Math.sin(this.camYaw), hz = -Math.cos(this.camYaw);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.z);
+    ctx.lineTo(p.x + hx * 25, p.z + hz * 25);
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 2.5 / scale;
+    ctx.stroke();
+    ctx.restore();
+    // labels
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px Rajdhani, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`N ↑  ${Math.round((-this.camYaw * 180 / Math.PI) % 360 + 360) % 360}°`, 16, 24);
+    ctx.textAlign = 'right';
+    ctx.fillText(`${this.world.towns.length} towns · ${this.world.buildings.length} buildings`, W - 16, 24);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.fillText('M to close', W / 2, H - 14);
   }
 
   drawMinimap() {
@@ -2262,9 +2488,10 @@ export class Game {
     // zone (not drawn in arena modes)
     const z = this.zone;
     if (!this.mode.respawn) {
+      const mapBound = this.mode.half * 1.5;
       ctx.fillStyle = 'rgba(56,189,248,0.35)';
       ctx.beginPath();
-      ctx.rect(p.x - 600, p.z - 600, 1200, 1200);
+      ctx.rect(p.x - mapBound, p.z - mapBound, mapBound * 2, mapBound * 2);
       ctx.arc(z.cx, z.cz, Math.max(0.1, z.r), 0, Math.PI * 2, true);
       ctx.fill('evenodd');
       ctx.strokeStyle = '#38bdf8';
@@ -2426,6 +2653,7 @@ export class Game {
       if (this.hudT <= 0) { this.hudT = 0.09; this.pushHud(); }
       this.mapT++;
       if (this.mapT % 3 === 0) this.drawMinimap();
+      if (this.mapOpen && this.mapT % 3 === 0) this.drawFullMap();
     } else if (this.state === 'paused') {
       real = 0;
     }

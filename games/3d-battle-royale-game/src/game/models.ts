@@ -101,6 +101,7 @@ export interface Human {
   shadow: THREE.Mesh;
   weapon: THREE.Group | null;
   weaponId: WeaponId | null;
+  tag: THREE.Sprite | null;
 }
 
 /** one arm hanging from a shoulder pivot (pad + upper + forearm + glove) */
@@ -233,13 +234,46 @@ export function makeHuman(shirt: number, variant = 0): Human {
   const shadow = new THREE.Mesh(shadowGeo, shadowMat);
   shadow.position.y = 0.04;
   root.add(shadow);
-  return { root, body, legL, legR, armL, head, holder, canopy, shadow, weapon: null, weaponId: null };
+  return { root, body, legL, legR, armL, head, holder, canopy, shadow, weapon: null, weaponId: null, tag: null };
+}
+
+/** create or update a floating name-tag sprite above an actor */
+export function setHumanTag(h: Human, name: string, color: string) {
+  const key = name + color;
+  if (h.tag && (h.tag.userData as { key?: string }).key === key) return;
+  if (h.tag) h.root.remove(h.tag);
+  const cv = document.createElement('canvas');
+  cv.width = 256; cv.height = 64;
+  const ctx = cv.getContext('2d')!;
+  ctx.font = 'bold 28px Rajdhani, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  // background pill
+  const tw = ctx.measureText(name).width + 20;
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.beginPath();
+  ctx.roundRect(128 - tw / 2, 8, tw, 48, 10);
+  ctx.fill();
+  // text
+  ctx.fillStyle = color;
+  ctx.fillText(name, 128, 34);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true }));
+  sprite.scale.set(2.2, 0.55, 1);
+  sprite.position.y = 2.15;
+  sprite.renderOrder = 999;
+  sprite.userData.key = key;
+  h.tag = sprite;
+  h.root.add(sprite);
 }
 
 export function setHumanWeapon(h: Human, id: WeaponId) {
   if (h.weaponId === id) return;
   if (h.weapon) h.holder.remove(h.weapon);
   h.weapon = weaponModel(id);
+  // grip sits in the gloved hand (arm-local y=-0.6, z=-0.03)
+  h.weapon.position.set(0, -0.62, -0.03);
   h.holder.add(h.weapon);
   h.weaponId = id;
 }

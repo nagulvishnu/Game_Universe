@@ -1,18 +1,65 @@
+import { useState } from 'react';
 import type { Result } from '../game/game';
+import type { Settings } from '../game/storage';
 import { ScoreTable } from './Menu';
 
-export function Pause({ onResume, onRestart, onQuit, muted, onMute, isTouch }: { onResume: () => void; onRestart: () => void; onQuit: () => void; muted: boolean; onMute: () => void; isTouch: boolean }) {
+export function Pause({ onResume, onRestart, onQuit, muted, onMute, isTouch, settings, onSettings }: {
+  onResume: () => void; onRestart: () => void; onQuit: () => void;
+  muted: boolean; onMute: () => void; isTouch: boolean;
+  settings: Settings; onSettings: (s: Partial<Settings>) => void;
+}) {
+  const [showSettings, setShowSettings] = useState(false);
   return (
     <div className="absolute inset-0 bg-black/65 backdrop-blur-sm flex items-center justify-center p-4 z-20">
       <div className="panel p-6 w-full max-w-sm menu-in text-center">
         <div className="font-display font-black text-3xl text-amber-300 mb-1">PAUSED</div>
         <div className="text-xs text-slate-400 tracking-widest mb-5">{isTouch ? 'TAP RESUME TO CONTINUE' : 'CLICK RESUME OR PRESS P / ESC'}</div>
-        <div className="flex flex-col gap-2.5">
-          <button onClick={onResume} className="btn-primary py-3 font-display text-lg">RESUME</button>
-          <button onClick={onRestart} className="btn-ghost py-2.5 rounded">↻ RESTART MATCH</button>
-          <button onClick={onMute} className="btn-ghost py-2.5 rounded">{muted ? '🔇 SOUND OFF' : '🔊 SOUND ON'}</button>
-          <button onClick={onQuit} className="btn-ghost py-2.5 rounded text-red-300">QUIT TO MENU</button>
-        </div>
+        {!showSettings ? (
+          <div className="flex flex-col gap-2.5">
+            <button onClick={onResume} className="btn-primary py-3 font-display text-lg">RESUME</button>
+            <button onClick={onRestart} className="btn-ghost py-2.5 rounded">↻ RESTART MATCH</button>
+            <button onClick={() => setShowSettings(true)} className="btn-ghost py-2.5 rounded">⚙ SETTINGS</button>
+            <button onClick={onMute} className="btn-ghost py-2.5 rounded">{muted ? '🔇 SOUND OFF' : '🔊 SOUND ON'}</button>
+            <button onClick={onQuit} className="btn-ghost py-2.5 rounded text-red-300">QUIT TO MENU</button>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4 text-left">
+            <div>
+              <div className="flex justify-between text-xs tracking-widest text-slate-300 mb-1">
+                <span>SENSITIVITY</span>
+                <span className="text-amber-300 font-display">{settings.sens.toFixed(1)}×</span>
+              </div>
+              <input
+                type="range" min={0.3} max={3} step={0.1} value={settings.sens}
+                onChange={(e) => onSettings({ sens: parseFloat(e.target.value) })}
+                className="w-full accent-amber-400"
+              />
+            </div>
+            <div>
+              <div className="flex justify-between text-xs tracking-widest text-slate-300 mb-1">
+                <span>VOLUME</span>
+                <span className="text-amber-300 font-display">{Math.round(settings.vol * 100)}%</span>
+              </div>
+              <input
+                type="range" min={0} max={1} step={0.05} value={settings.vol}
+                onChange={(e) => onSettings({ vol: parseFloat(e.target.value) })}
+                className="w-full accent-amber-400"
+              />
+            </div>
+            <div>
+              <div className="flex justify-between text-xs tracking-widest text-slate-300 mb-1">
+                <span>FIELD OF VIEW</span>
+                <span className="text-amber-300 font-display">{settings.fov}°</span>
+              </div>
+              <input
+                type="range" min={60} max={100} step={1} value={settings.fov}
+                onChange={(e) => onSettings({ fov: parseInt(e.target.value) })}
+                className="w-full accent-amber-400"
+              />
+            </div>
+            <button onClick={() => setShowSettings(false)} className="btn-primary py-2.5 mt-2">← BACK</button>
+          </div>
+        )}
       </div>
     </div>
   );

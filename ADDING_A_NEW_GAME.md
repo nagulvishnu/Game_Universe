@@ -90,3 +90,5 @@ Games own their own keys (e.g. `abw-*`). Don't use the `gu-` prefix in games.
 * The `/games` folder must be present in the build environment (commit it, or mount it in CI).
 * Games run in a sandboxed same-origin iframe (`allow-scripts allow-same-origin …`). Same-origin is required so games can use `localStorage`/IndexedDB, which means a game *can* technically reach the hub's origin. Only host games you trust there. For untrusted games use a remote `entry` URL on a different origin — the hub then cannot be touched by that game.
 * The hub does not need a database for any of this.
+
+

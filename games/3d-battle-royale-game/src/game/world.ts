@@ -4,11 +4,76 @@ import type { Biome } from './data';
 
 export interface Box { x0: number; z0: number; x1: number; z1: number; h: number }
 export interface Circ { x: number; z: number; r: number; h: number }
+export interface Stair {
+  x: number; z: number;
+  dir: number;
+  len: number;
+  width: number;
+  floorFrom: number;
+  floorTo: number;
+}
 export interface Building {
   x0: number; z0: number; x1: number; z1: number;
   inX: number; inZ: number; outX: number; outZ: number;
+  floors: number;
+  floorH: number;
+  doorSide: number;
+  doorPos: number;
+  stairs: Stair[];
+  boxIdx: number[];
 }
-export interface LootSpot { x: number; z: number; b: number }
+export interface LootSpot { x: number; z: number; y: number; b: number }
+export class Door {
+  x: number; z: number;
+  width: number;
+  height: number;
+  side: number;
+  open = false;
+  openT = 0;
+  closeT = 0;
+  mesh: THREE.Mesh;
+  colliderIdx = -1;
+  buildingIdx: number;
+  constructor(x: number, z: number, width: number, height: number, side: number, buildingIdx: number) {
+    this.x = x; this.z = z;
+    this.width = width; this.height = height;
+    this.side = side; this.buildingIdx = buildingIdx;
+    this.mesh = new THREE.Mesh(
+      new THREE.BoxGeometry(width, height, 0.12),
+      new THREE.MeshLambertMaterial({ color: 0x6b4423 })
+    );
+    this.mesh.position.set(x, height / 2, z);
+    if (side === 0 || side === 1) this.mesh.rotation.y = 0;
+    else this.mesh.rotation.y = Math.PI / 2;
+    this.mesh.userData.own = true;
+  }
+  update(dt: number, actors: { x: number; z: number; y: number; alive: boolean }[]) {
+    let near = false;
+    for (const a of actors) {
+      if (!a.alive) continue;
+      if (a.y > this.height + 0.5) continue;
+      const dx = a.x - this.x, dz = a.z - this.z;
+      if (dx * dx + dz * dz < 22) { near = true; break; }
+    }
+    if (near && !this.open) {
+      this.open = true;
+      this.closeT = 2.5;
+    } else if (near) {
+      this.closeT = 2.5;
+    }
+    if (!near && this.open) {
+      this.closeT -= dt;
+      if (this.closeT <= 0) this.open = false;
+    }
+    const target = this.open ? 1 : 0;
+    this.openT += (target - this.openT) * Math.min(1, 8 * dt);
+    const slide = this.width * this.openT;
+    if (this.side === 0) this.mesh.position.x = this.x - slide;
+    else if (this.side === 1) this.mesh.position.x = this.x + slide;
+    else if (this.side === 2) this.mesh.position.z = this.z - slide;
+    else this.mesh.position.z = this.z + slide;
+  }
+}
 
 export function mulberry(seed: number) {
   let a = seed >>> 0;
@@ -94,6 +159,7 @@ export class World {
   buildings: Building[] = [];
   spots: LootSpot[] = [];
   towns: { x: number; z: number; r: number }[] = [];
+  doors: Door[] = [];
   private cell = 16;
   private grid = new Map<number, { b: number[]; c: number[] }>();
   private rnd: () => number;
@@ -181,17 +247,20 @@ export class World {
 
   private buildTowns(count: number) {
     const h = this.half;
-    const minD = h * 0.62;
-    for (let tries = 0; tries < 400 && this.towns.length < count; tries++) {
+    const minD = Math.min(h * 0.62, 180);
+    const maxR = Math.min(65, h * 0.12);
+    for (let tries = 0; tries < 600 && this.towns.length < count; tries++) {
       const x = this.R(-h + 70, h - 70);
       const z = this.R(-h + 70, h - 70);
-      const r = this.R(28, 38) * Math.min(1, h / 250 + 0.25);
+      const r = this.R(35, maxR);
       let ok = true;
       for (const t of this.towns) if (Math.hypot(t.x - x, t.z - z) < minD) ok = false;
       if (ok) this.towns.push({ x, z, r });
     }
     const walls: Inst[] = [];
     const crates: Inst[] = [];
+    const floors: Inst[] = [];
+    const stairsInst: Inst[] = [];
     const PALETTES: Record<Biome, number[]> = {
       green: [0xd6c7a1, 0xc9b79c, 0xb9c4cf, 0xe0d4c0, 0xcaa98a, 0xa7b8a0, 0xd8b4a0],
       desert: [0xd8b98a, 0xc9a06a, 0xe2c9a0, 0xba8f5f, 0xd9c29a, 0xc4a37a],
@@ -201,70 +270,126 @@ export class World {
     };
     const palette = PALETTES[this.biome];
     const t = 0.45;
-    const WH = 3.4;
-    const wall = (x0: number, z0: number, x1: number, z1: number, c: number) => {
-      if (x1 - x0 < 0.05 || z1 - z0 < 0.05) return;
-      this.addBox(x0, z0, x1, z1, WH);
-      walls.push({ x: (x0 + x1) / 2, y: WH / 2, z: (z0 + z1) / 2, sx: x1 - x0, sy: WH, sz: z1 - z0, ry: 0, c });
-    };
+    const FH = 3.6;
     for (const town of this.towns) {
-      const n = Math.floor(this.R(5, 8.99) * Math.min(1, h / 250 + 0.4));
+      const n = Math.floor(this.R(5, 9) * Math.min(1.5, town.r / 35));
       const placed: Building[] = [];
       for (let k = 0; k < n; k++) {
         for (let tries = 0; tries < 40; tries++) {
-          const w = this.R(8, 14);
-          const d = this.R(8, 13);
+          const w = this.R(9, 16);
+          const d = this.R(9, 15);
           const a = this.rnd() * Math.PI * 2;
           const rr = Math.sqrt(this.rnd()) * town.r;
           const cx = town.x + Math.cos(a) * rr;
           const cz = town.z + Math.sin(a) * rr;
-          const b: Building = { x0: cx - w / 2, z0: cz - d / 2, x1: cx + w / 2, z1: cz + d / 2, inX: 0, inZ: 0, outX: 0, outZ: 0 };
+          const numFloors = this.rnd() < 0.3 ? 3 : this.rnd() < 0.6 ? 2 : 1;
+          const totalH = FH * numFloors;
+          const b: Building = {
+            x0: cx - w / 2, z0: cz - d / 2, x1: cx + w / 2, z1: cz + d / 2,
+            inX: 0, inZ: 0, outX: 0, outZ: 0,
+            floors: numFloors, floorH: FH,
+            doorSide: 0, doorPos: 0,
+            stairs: [], boxIdx: [],
+          };
           let ok = Math.abs(cx) < h - 25 && Math.abs(cz) < h - 25;
           for (const o of placed) {
             if (b.x0 - 5 < o.x1 && b.x1 + 5 > o.x0 && b.z0 - 5 < o.z1 && b.z1 + 5 > o.z0) ok = false;
           }
           if (!ok) continue;
-          // door
           const side = Math.floor(this.rnd() * 4);
           const col = palette[Math.floor(this.rnd() * palette.length)];
           const dw = 1.7;
           const along = (a0: number, a1: number) => this.R(a0 + 2.5, a1 - 2.5);
           let dc = 0;
           if (side < 2) dc = along(b.x0, b.x1); else dc = along(b.z0, b.z1);
-          // north (z0) & south (z1) walls
-          for (let s = 0; s < 2; s++) {
-            const zz0 = s === 0 ? b.z0 : b.z1 - t;
-            if (side === s) {
-              wall(b.x0, zz0, dc - dw, zz0 + t, col);
-              wall(dc + dw, zz0, b.x1, zz0 + t, col);
-            } else wall(b.x0, zz0, b.x1, zz0 + t, col);
-          }
-          // west (x0) & east (x1) walls
-          for (let s = 0; s < 2; s++) {
-            const xx0 = s === 0 ? b.x0 : b.x1 - t;
-            if (side === s + 2) {
-              wall(xx0, b.z0 + t, xx0 + t, dc - dw, col);
-              wall(xx0, dc + dw, xx0 + t, b.z1 - t, col);
-            } else wall(xx0, b.z0 + t, xx0 + t, b.z1 - t, col);
+          b.doorSide = side;
+          b.doorPos = dc;
+          for (let floor = 0; floor < numFloors; floor++) {
+            const yBase = floor * FH;
+            const wallCol = floor === 0 ? col : palette[(palette.indexOf(col) + 2) % palette.length];
+            const addWallBox = floor === 0;
+            for (let s = 0; s < 2; s++) {
+              const zz0 = s === 0 ? b.z0 : b.z1 - t;
+              if (side === s && floor === 0) {
+                if (addWallBox) {
+                  this.addBox(b.x0, zz0, dc - dw, zz0 + t, FH);
+                  this.addBox(dc + dw, zz0, b.x1, zz0 + t, FH);
+                }
+                walls.push({ x: (b.x0 + dc - dw) / 2, y: yBase + FH / 2, z: zz0 + t / 2, sx: dc - dw - b.x0, sy: FH, sz: t, ry: 0, c: wallCol });
+                walls.push({ x: (dc + dw + b.x1) / 2, y: yBase + FH / 2, z: zz0 + t / 2, sx: b.x1 - dc - dw, sy: FH, sz: t, ry: 0, c: wallCol });
+              } else {
+                if (addWallBox) this.addBox(b.x0, zz0, b.x1, zz0 + t, FH);
+                walls.push({ x: cx, y: yBase + FH / 2, z: zz0 + t / 2, sx: w, sy: FH, sz: t, ry: 0, c: wallCol });
+              }
+            }
+            for (let s = 0; s < 2; s++) {
+              const xx0 = s === 0 ? b.x0 : b.x1 - t;
+              if (side === s + 2 && floor === 0) {
+                if (addWallBox) {
+                  this.addBox(xx0, b.z0 + t, xx0 + t, dc - dw, FH);
+                  this.addBox(xx0, dc + dw, xx0 + t, b.z1 - t, FH);
+                }
+                walls.push({ x: xx0 + t / 2, y: yBase + FH / 2, z: (b.z0 + t + dc - dw) / 2, sx: t, sy: FH, sz: dc - dw - b.z0 - t, ry: 0, c: wallCol });
+                walls.push({ x: xx0 + t / 2, y: yBase + FH / 2, z: (dc + dw + b.z1 - t) / 2, sx: t, sy: FH, sz: b.z1 - t - dc - dw, ry: 0, c: wallCol });
+              } else {
+                if (addWallBox) this.addBox(xx0, b.z0 + t, xx0 + t, b.z1 - t, FH);
+                walls.push({ x: xx0 + t / 2, y: yBase + FH / 2, z: cz, sx: t, sy: FH, sz: d - t * 2, ry: 0, c: wallCol });
+              }
+            }
+            if (floor > 0) {
+              floors.push({ x: cx, y: yBase - 0.06, z: cz, sx: w, sy: 0.12, sz: d, ry: 0, c: 0x8d7b68 });
+            }
           }
           if (side === 0) { b.outX = dc; b.outZ = b.z0 - 2.2; b.inX = dc; b.inZ = b.z0 + 1.8; }
           else if (side === 1) { b.outX = dc; b.outZ = b.z1 + 2.2; b.inX = dc; b.inZ = b.z1 - 1.8; }
           else if (side === 2) { b.outX = b.x0 - 2.2; b.outZ = dc; b.inX = b.x0 + 1.8; b.inZ = dc; }
           else { b.outX = b.x1 + 2.2; b.outZ = dc; b.inX = b.x1 - 1.8; b.inZ = dc; }
-          // floor
-          walls.push({ x: cx, y: 0.04, z: cz, sx: w, sy: 0.1, sz: d, ry: 0, c: 0x8d7b68 });
-          // roof corner accents
-          for (const [px, pz] of [[b.x0, b.z0], [b.x1 - 0.6, b.z0], [b.x0, b.z1 - 0.6], [b.x1 - 0.6, b.z1 - 0.6]]) {
-            walls.push({ x: px + 0.3, y: WH + 0.2, z: pz + 0.3, sx: 0.7, sy: 0.5, sz: 0.7, ry: 0, c: 0x6b7280 });
+          floors.push({ x: cx, y: 0.04, z: cz, sx: w, sy: 0.1, sz: d, ry: 0, c: 0x8d7b68 });
+          const doorX = side === 0 || side === 1 ? dc : (side === 2 ? b.x0 : b.x1);
+          const doorZ = side === 0 ? b.z0 : side === 1 ? b.z1 : dc;
+          const door = new Door(doorX, doorZ, dw * 2, 2.6, side, this.buildings.length);
+          this.doors.push(door);
+          this.group.add(door.mesh);
+          for (let floor = 0; floor < numFloors - 1; floor++) {
+            const yBase = floor * FH;
+            const sx = this.rnd() < 0.5 ? b.x0 + 2 : b.x1 - 2;
+            const sz = this.rnd() < 0.5 ? b.z0 + 2 : b.z1 - 2;
+            const stairLen = FH * 1.6;
+            const stair: Stair = {
+              x: sx, z: sz,
+              dir: this.rnd() < 0.5 ? 0 : 1,
+              len: stairLen,
+              width: 1.4,
+              floorFrom: floor,
+              floorTo: floor + 1,
+            };
+            b.stairs.push(stair);
+            for (let i = 0; i < 8; i++) {
+              const stepY = yBase + (FH * i) / 8;
+              const stepZ = sz + (stair.dir === 0 ? (i * stairLen) / 8 : 0);
+              const stepX = sx + (stair.dir === 1 ? (i * stairLen) / 8 : 0);
+              stairsInst.push({ x: stepX, y: stepY + 0.1, z: stepZ, sx: stair.width, sy: 0.2, sz: stairLen / 8, ry: 0, c: 0x7a6a55 });
+            }
           }
-          // crates inside
           const nc = 1 + Math.floor(this.rnd() * 2);
           for (let q = 0; q < nc; q++) {
             const cs = this.R(1.0, 1.5);
-            const kx = this.rnd() < 0.5 ? b.x0 + 1.2 + cs / 2 : b.x1 - 1.2 - cs / 2;
-            const kz = this.rnd() < 0.5 ? b.z0 + 1.2 + cs / 2 : b.z1 - 1.2 - cs / 2;
+            let kx = 0, kz = 0, okCrate = false;
+            for (let ct = 0; ct < 8 && !okCrate; ct++) {
+              kx = this.rnd() < 0.5 ? b.x0 + 1.2 + cs / 2 : b.x1 - 1.2 - cs / 2;
+              kz = this.rnd() < 0.5 ? b.z0 + 1.2 + cs / 2 : b.z1 - 1.2 - cs / 2;
+              const doorDx = side < 2 ? Math.abs(kx - dc) : 0;
+              const doorDz = side >= 2 ? Math.abs(kz - dc) : 0;
+              const nearDoor = (side < 2 && Math.abs(kz - (side === 0 ? b.z0 : b.z1)) < 2.5 && doorDx < dw + cs / 2 + 0.3)
+                            || (side >= 2 && Math.abs(kx - (side === 2 ? b.x0 : b.x1)) < 2.5 && doorDz < dw + cs / 2 + 0.3);
+              if (!nearDoor) okCrate = true;
+            }
+            if (!okCrate) continue;
             this.addBox(kx - cs / 2, kz - cs / 2, kx + cs / 2, kz + cs / 2, cs);
             crates.push({ x: kx, y: cs / 2, z: kz, sx: cs, sy: cs, sz: cs, ry: 0, c: 0x9a6b3a });
+          }
+          for (const [px, pz] of [[b.x0, b.z0], [b.x1 - 0.6, b.z0], [b.x0, b.z1 - 0.6], [b.x1 - 0.6, b.z1 - 0.6]]) {
+            walls.push({ x: px + 0.3, y: totalH + 0.2, z: pz + 0.3, sx: 0.7, sy: 0.5, sz: 0.7, ry: 0, c: 0x6b7280 });
           }
           this.buildings.push(b);
           placed.push(b);
@@ -272,7 +397,6 @@ export class World {
         }
       }
     }
-    // scattered crates outside
     for (let i = 0; i < Math.floor(h / 5); i++) {
       const x = this.R(-h + 15, h - 15), z = this.R(-h + 15, h - 15);
       if (this.buildingAt(x, z, 4) >= 0) continue;
@@ -282,6 +406,8 @@ export class World {
     }
     this.group.add(instanced(BOX, new THREE.MeshLambertMaterial({ color: 0xffffff }), walls));
     this.group.add(instanced(BOX, new THREE.MeshLambertMaterial({ color: 0xffffff }), crates));
+    this.group.add(instanced(BOX, new THREE.MeshLambertMaterial({ color: 0xffffff }), floors));
+    this.group.add(instanced(BOX, new THREE.MeshLambertMaterial({ color: 0xffffff }), stairsInst));
   }
 
   private buildNature() {
@@ -291,7 +417,7 @@ export class World {
     const crB: Inst[] = [];
     const greens = [0x2f7d32, 0x3a8f3e, 0x2a6f3a, 0x4a9a3c, 0x23623a];
     const treeMul = this.biome === 'desert' ? 0.35 : this.biome === 'volcanic' ? 0.6 : 1;
-    const nTrees = Math.floor(h * h * 0.0042 * treeMul);
+    const nTrees = Math.min(3500, Math.floor(h * h * 0.0042 * treeMul));
     const bi = this.biome;
     for (let i = 0; i < nTrees; i++) {
       const x = this.R(-h + 4, h - 4), z = this.R(-h + 4, h - 4);
@@ -351,7 +477,7 @@ export class World {
     };
     const rockMul = this.biome === 'desert' ? 1.8 : this.biome === 'volcanic' ? 1.5 : 1;
     const rocks: Inst[] = [];
-    const nRocks = Math.floor((h / 4) * rockMul);
+    const nRocks = Math.min(400, Math.floor((h / 4) * rockMul));
     for (let i = 0; i < nRocks; i++) {
       const x = this.R(-h + 6, h - 6), z = this.R(-h + 6, h - 6);
       if (this.buildingAt(x, z, 8) >= 0) continue;
@@ -416,16 +542,23 @@ export class World {
 
   private buildSpots() {
     this.buildings.forEach((b, bi) => {
-      const n = 3 + Math.floor(this.rnd() * 2);
-      for (let i = 0; i < n; i++) {
-        this.spots.push({ x: this.R(b.x0 + 1.6, b.x1 - 1.6), z: this.R(b.z0 + 1.6, b.z1 - 1.6), b: bi });
+      for (let floor = 0; floor < b.floors; floor++) {
+        const n = floor === 0 ? 3 + Math.floor(this.rnd() * 2) : 2 + Math.floor(this.rnd() * 2);
+        for (let i = 0; i < n; i++) {
+          this.spots.push({
+            x: this.R(b.x0 + 1.6, b.x1 - 1.6),
+            z: this.R(b.z0 + 1.6, b.z1 - 1.6),
+            y: floor * b.floorH,
+            b: bi,
+          });
+        }
       }
     });
-    const extra = Math.floor(this.half * 0.5);
+    const extra = Math.floor(this.half * 1.2);
     for (let i = 0; i < extra; i++) {
       const x = this.R(-this.half + 10, this.half - 10), z = this.R(-this.half + 10, this.half - 10);
       if (this.buildingAt(x, z, 1.5) >= 0) continue;
-      this.spots.push({ x, z, b: -1 });
+      this.spots.push({ x, z, y: 0, b: -1 });
     }
   }
 
@@ -435,6 +568,34 @@ export class World {
       if (x > b.x0 - margin && x < b.x1 + margin && z > b.z0 - margin && z < b.z1 + margin) return i;
     }
     return -1;
+  }
+
+  updateDoors(dt: number, actors: { x: number; z: number; y: number; alive: boolean }[]) {
+    for (const d of this.doors) {
+      d.update(dt, actors);
+    }
+  }
+
+  getFloorY(x: number, z: number, currentY: number): number {
+    const bi = this.buildingAt(x, z, 0.5);
+    if (bi < 0) return 0;
+    const b = this.buildings[bi];
+    for (const stair of b.stairs) {
+      const dx = x - stair.x, dz = z - stair.z;
+      if (stair.dir === 0) {
+        if (Math.abs(dx) < stair.width / 2 && dz >= -0.5 && dz <= stair.len + 0.5) {
+          const t = Math.max(0, Math.min(1, dz / stair.len));
+          return stair.floorFrom * b.floorH + t * b.floorH;
+        }
+      } else {
+        if (Math.abs(dz) < stair.width / 2 && dx >= -0.5 && dx <= stair.len + 0.5) {
+          const t = Math.max(0, Math.min(1, dx / stair.len));
+          return stair.floorFrom * b.floorH + t * b.floorH;
+        }
+      }
+    }
+    const floorIdx = Math.floor((currentY + 0.5) / b.floorH);
+    return Math.min(floorIdx, b.floors - 1) * b.floorH;
   }
 
   /** push circle (x,z,r) out of static colliders. Returns true if moved. */

@@ -13,6 +13,7 @@ export interface Loot {
   amount: number;
   x: number;
   z: number;
+  y: number;
   rarity: number;
   b: number; // building index
   mesh: THREE.Group;
@@ -21,7 +22,7 @@ export interface Loot {
 }
 
 export interface BotAI {
-  state: 'loot' | 'roam' | 'fight' | 'zone' | 'heal';
+  state: 'loot' | 'roam' | 'fight' | 'zone' | 'heal' | 'cover';
   think: number;
   tx: number; tz: number;
   target: Actor | null;
@@ -43,6 +44,12 @@ export interface BotAI {
   roamT: number;
   healT: number;
   speed: number;
+  slotT: number;
+  jumpT: number;
+  coverT: number;
+  coverX: number; coverZ: number;
+  lastHp: number;
+  dmgT: number;
 }
 
 export class Actor {

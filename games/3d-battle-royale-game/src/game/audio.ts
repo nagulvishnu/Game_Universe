@@ -18,7 +18,7 @@ export function initAudio() {
     if (!AC) return;
     ctx = new AC();
     master = ctx.createGain();
-    master.gain.value = muted ? 0 : 0.5;
+    master.gain.value = muted ? 0 : volume;
     master.connect(ctx.destination);
     noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
     const d = noiseBuf.getChannelData(0);
@@ -29,10 +29,16 @@ export function initAudio() {
 
 export function setMuted(m: boolean) {
   muted = m;
-  if (master) master.gain.value = m ? 0 : 0.5;
+  if (master) master.gain.value = m ? 0 : volume;
 }
 export function isMuted() {
   return muted;
+}
+
+let volume = 0.5;
+export function setVolume(v: number) {
+  volume = Math.max(0, Math.min(1, v));
+  if (master && !muted) master.gain.value = volume;
 }
 
 function tone(f0: number, f1: number, dur: number, type: OscillatorType, vol: number, delay = 0) {

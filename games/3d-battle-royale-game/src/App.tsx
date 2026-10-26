@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Game, type GameState, type Hud as HudData, type Result, type UI } from './game/game';
 import { initAudio, isMuted, setMuted, sfx } from './game/audio';
-import { addScore, getName, setName as saveName, getMapSel, setMapSel } from './game/storage';
+import { addScore, getName, setName as saveName, getMapSel, setMapSel, getSettings } from './game/storage';
+import type { Settings } from './game/storage';
 import type { Difficulty } from './game/data';
 import Hud, { type FeedItem, type PickItem, type ToastItem } from './ui/Hud';
 import Touch from './ui/Touch';
@@ -14,6 +15,7 @@ const EMPTY: HudData = {
   prompt: null, speed: 0, vehicle: null, vehHp: 0, alt: 0, scoped: false, hint: null, touchAct: false, spread: 0,
   heading: 0, streak: 0, streakLeft: 0,
   teamMode: false, teamAlive: 0, foeAlive: 0, myScore: 0, foeScore: 0, scoreLimit: 0, respawnLeft: 0, spectating: false, overtimeHint: false,
+  deathRecap: [],
 };
 
 const coarse = () => typeof window !== 'undefined' && (window.matchMedia?.('(pointer: coarse)').matches ?? false);
@@ -21,6 +23,7 @@ const coarse = () => typeof window !== 'undefined' && (window.matchMedia?.('(poi
 export default function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const miniRef = useRef<HTMLCanvasElement>(null);
+  const fullMapRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const [game, setGame] = useState<Game | null>(null);
   const [isTouch, setIsTouch] = useState(coarse);
@@ -38,6 +41,7 @@ export default function App() {
   const [mode, setMode] = useState('classic');
   const [mapId, setMapId] = useState(() => getMapSel());
   const [diff, setDiff] = useState<Difficulty>('normal');
+  const [settings, setSettingsState] = useState<Settings>(() => getSettings());
   const nameRef = useRef(name);
   const idRef = useRef(1);
   const hurtT = useRef(0);
@@ -72,6 +76,7 @@ export default function App() {
         if (now - hurtT.current < 120) return;
         hurtT.current = now;
         setHurt((h) => ({ k: h.k + 1, ang: from ?? null }));
+        setTimeout(() => setHurt({ k: 0, ang: null }), 900);
       },
       onPick: (text, color) => {
         const id = idRef.current++;
@@ -81,6 +86,7 @@ export default function App() {
     };
     const g = new Game(canvasRef.current!, miniRef.current!, overlayRef.current!, ui, coarse());
     g.previewMap(getMapSel());
+    if (fullMapRef.current) g.setFullmap(fullMapRef.current);
     (window as unknown as { __game?: Game }).__game = g;
     setGame(g);
     return () => {
@@ -142,6 +148,20 @@ export default function App() {
         className="absolute pointer-events-none"
         style={{ right: 12, top: 60, width: 150, height: 150, display: playing ? 'block' : 'none', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.6))' }}
       />
+      <canvas
+        ref={fullMapRef}
+        width={900}
+        height={900}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-lg"
+        style={{
+          width: 'min(85vmin, 700px)',
+          height: 'min(85vmin, 700px)',
+          display: 'none',
+          background: 'rgba(10,14,18,0.92)',
+          border: '2px solid rgba(255,255,255,0.15)',
+          boxShadow: '0 0 40px rgba(0,0,0,0.8)',
+        }}
+      />
       {playing && (
         <Hud
           hud={hud}
@@ -178,7 +198,12 @@ export default function App() {
         />
       )}
       {screen === 'paused' && game && (
-        <Pause onResume={() => game.resume()} onRestart={restart} onQuit={() => game.toMenu()} muted={muted} onMute={toggleMute} isTouch={isTouch} />
+        <Pause
+          onResume={() => game.resume()} onRestart={restart} onQuit={() => game.toMenu()}
+          muted={muted} onMute={toggleMute} isTouch={isTouch}
+          settings={settings}
+          onSettings={(s) => { game.updateSettings(s); setSettingsState({ ...settings, ...s }); }}
+        />
       )}
       {screen === 'over' && result && game && <GameOver r={result} rank={rank} onRestart={restart} onMenu={() => game.toMenu()} />}
     </div>

@@ -208,6 +208,7 @@ export default function Menu({ name, setName, mode, setMode, map, setMap, diff, 
                   <span><b className="text-amber-300">SPACE</b> jump / chute</span><span><b className="text-amber-300">R</b> reload</span>
                   <span><b className="text-amber-300">1 2 3 · Q</b> weapons</span><span><b className="text-amber-300">E</b> drive / swap</span>
                   <span><b className="text-amber-300">G</b> grenade · <b className="text-amber-300">B</b> bomb</span><span><b className="text-amber-300">H</b> medkit · <b className="text-amber-300">P</b> pause</span>
+                  <span><b className="text-amber-300">M</b> full map</span><span></span>
                 </div>
               )}
             </div>
