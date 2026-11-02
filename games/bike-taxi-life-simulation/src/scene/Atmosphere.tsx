@@ -63,7 +63,11 @@ export function Atmosphere() {
     bg.lerp(tmp.set('#e8efff'), rt.lightning * 0.6);
     scene.background = bg;
     const fog = scene.fog as THREE.Fog | null;
-    if (fog) { fog.color.copy(bg); fog.near = 20; fog.far = FOGFAR[w] * (1 - 0.0 * night); }
+    if (fog) {
+      fog.color.copy(bg);
+      fog.near = w === 'fog' ? 8 : w === 'thunderstorm' ? 14 : 20;
+      fog.far = FOGFAR[w];
+    }
     setRain(rt.rainLevel * (g.player.interior ? 0.3 : 1));
     // lights
     const px = rt.mode === 'walk' ? rt.walk.x : rt.bike.x, pz = rt.mode === 'walk' ? rt.walk.z : rt.bike.z;
@@ -109,7 +113,7 @@ export function Atmosphere() {
   return (
     <>
       <hemisphereLight ref={hemi} intensity={1} />
-      <directionalLight ref={sun} intensity={3} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-80} shadow-camera-right={80} shadow-camera-top={80} shadow-camera-bottom={-80} shadow-camera-near={10} shadow-camera-far={400} shadow-bias={-0.0004} />
+      <directionalLight ref={sun} intensity={3} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-80} shadow-camera-right={80} shadow-camera-top={80} shadow-camera-bottom={-80} shadow-camera-near={10} shadow-camera-far={400} shadow-bias={-0.0004} shadow-radius={3} />
       <primitive object={target} />
       <mesh ref={sunDisc}><sphereGeometry args={[34, 16, 12]} /><meshBasicMaterial color="#fff2c4" fog={false} /></mesh>
       <mesh ref={moonDisc}><sphereGeometry args={[22, 16, 12]} /><meshBasicMaterial color="#dfe6f5" fog={false} /></mesh>

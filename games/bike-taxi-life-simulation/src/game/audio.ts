@@ -58,3 +58,19 @@ export function chime(kind: 'good' | 'bad' | 'ding' = 'ding') {
   o.connect(g); g.connect(master); o.start(); o.stop(ctx.currentTime + 0.4);
   if (kind === 'good') { const o2 = ctx.createOscillator(); o2.frequency.value = 1320; o2.connect(g); o2.start(ctx.currentTime + 0.1); o2.stop(ctx.currentTime + 0.4); }
 }
+export function playBoost() {
+  if (!ctx || !master) return;
+  const t = ctx.currentTime;
+  // short rising whoosh + engine crack
+  const buf = ctx.createBuffer(1, ctx.sampleRate * 0.35, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+  const src = ctx.createBufferSource(); src.buffer = buf;
+  const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 1.2;
+  const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.04); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.34);
+  src.connect(bp); bp.connect(g); g.connect(master); src.start();
+  // crack tone
+  const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.setValueAtTime(280, t); o.frequency.exponentialRampToValueAtTime(520, t + 0.12);
+  const og = ctx.createGain(); og.gain.setValueAtTime(0.0001, t); og.gain.exponentialRampToValueAtTime(0.09, t + 0.03); og.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+  o.connect(og); og.connect(master); o.start(t); o.stop(t + 0.2);
+}

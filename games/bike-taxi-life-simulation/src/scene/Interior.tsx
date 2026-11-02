@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import * as THREE from 'three';
 import { useGame } from '../game/store';
 import { poiById } from '../game/world/city';
-import { interiorFor } from './interiorDefs';
+import { Person } from './Models';
+import { interiorFor, interiorPeopleFor } from './interiorDefs';
 import { makeSignTexture } from './City';
 
 /** Lazy-loaded interior: only the building the player is inside is ever built. */
@@ -12,8 +13,10 @@ export function Interior() {
   const company = useGame((s) => s.g?.company);
   const poi = id ? poiById.get(id) : null;
   const def = useMemo(() => (poi ? interiorFor(poi.kind, tier) : null), [poi, tier]);
+  const people = useMemo(() => (poi ? interiorPeopleFor(poi.kind) : []), [poi]);
   const labels = useMemo(() => (def ? def.hotspots.map((h) => makeSignTexture(h.label.split(' — ')[0], '#0f172a', '#fde68a', 384, 80)) : []), [def]);
   const brandTex = useMemo(() => (company && poi && (poi.kind === 'hq' || poi.kind === 'branch') ? makeSignTexture(company.branding.name, company.branding.primary, '#fff', 512, 128) : null), [company, poi]);
+  const titleTex = useMemo(() => (def ? makeSignTexture(def.title, '#1e293b', '#fff', 512, 112) : null), [def]);
   const exitTex = useMemo(() => makeSignTexture('EXIT', '#0369a1', '#fff', 256, 64), []);
   if (!poi || !def) return null;
   const { hw, hd } = def;
@@ -40,6 +43,12 @@ export function Interior() {
           <sprite position={[0, 2.5, 0]} scale={[3.2, 0.67, 1]}><spriteMaterial map={labels[i]} depthTest={false} /></sprite>
         </group>
       ))}
+      {people.map((person, i) => (
+        <group key={i} position={[person.x, 0, person.z]} rotation={[0, person.heading, 0]}>
+          <Person shirt={person.shirt} pose={person.pose} />
+        </group>
+      ))}
+      {titleTex && <mesh position={[0, 3, -hd + 0.16]}><planeGeometry args={[Math.min(7, hw * 1.5), 1.1]} /><meshBasicMaterial map={titleTex} /></mesh>}
       {brandTex && <mesh position={[0, 2.6, -hd + 0.15]}><planeGeometry args={[6, 1.5]} /><meshBasicMaterial map={brandTex} /></mesh>}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, hd - 0.7]}><ringGeometry args={[0.6, 0.85, 24]} /><meshBasicMaterial color="#38bdf8" transparent opacity={0.8} side={THREE.DoubleSide} /></mesh>
       <sprite position={[0, 2.8, hd - 0.7]} scale={[2.4, 0.5, 1]}><spriteMaterial map={exitTex} depthTest={false} /></sprite>

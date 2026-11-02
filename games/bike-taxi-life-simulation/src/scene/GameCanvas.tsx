@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { useGame } from '../game/store';
 import { Atmosphere } from './Atmosphere';
 import { City } from './City';
-import { EmployeeRiders, Markers, ParkedBikes, Pedestrians, Traffic } from './Actors';
+import { CrowdClusters, EmployeeRiders, Markers, ParkedBikes, Pedestrians, StreetProps, Traffic } from './Actors';
 import { Rider } from './Rider';
 import { Interior } from './Interior';
 
@@ -14,8 +14,10 @@ function World() {
       <Atmosphere />
       <group visible={!interior}>
         <City />
+        <StreetProps />
         <Traffic />
         <Pedestrians />
+        <CrowdClusters />
         <ParkedBikes />
         <EmployeeRiders />
         <Markers />

@@ -3,9 +3,19 @@ import type { PoiKind } from '../game/types';
 export interface Hotspot { id: string; label: string; x: number; z: number; action: string; arg?: string }
 export interface Prop { x: number; y: number; z: number; w: number; h: number; d: number; color: string; emissive?: string }
 export interface InteriorDef { hw: number; hd: number; floor: string; wall: string; hotspots: Hotspot[]; props: Prop[]; title: string }
+export interface InteriorNpc { x: number; z: number; heading: number; shirt: string; pose: 'stand' | 'sit' }
 
 const desk = (x: number, z: number, c = '#8b5e3c'): Prop[] => [{ x, y: 0.4, z, w: 2.2, h: 0.8, d: 1, color: c }];
 const shelf = (x: number, z: number, w = 3): Prop => ({ x, y: 1.1, z, w, h: 2.2, d: 0.5, color: '#6b4f3a' });
+const hall = (title: string, floor: string, wall: string, counter: string, width = 8): InteriorDef => ({
+  hw: width, hd: 6, title, floor, wall, hotspots: [],
+  props: [
+    { x: 0, y: 0.5, z: -4.7, w: width * 1.35, h: 1, d: 1.1, color: counter },
+    { x: -width + 1.2, y: 0.35, z: 1.8, w: 2.2, h: 0.7, d: 1.4, color: '#64748b' },
+    { x: width - 1.2, y: 0.35, z: 1.8, w: 2.2, h: 0.7, d: 1.4, color: '#64748b' },
+    { x: 0, y: 1.8, z: -5.35, w: 5.2, h: 1.2, d: 0.1, color: '#fde68a', emissive: '#fbbf24' },
+  ],
+});
 
 export function interiorFor(kind: PoiKind, tier = 0): InteriorDef {
   const base = { hw: 7, hd: 5 };
@@ -65,8 +75,20 @@ export function interiorFor(kind: PoiKind, tier = 0): InteriorDef {
     case 'restaurant':
       return {
         ...base, title: 'Restaurant', floor: '#b88a5b', wall: '#f1d9a8',
-        hotspots: [{ id: 'counter', label: 'Order food & drinks', x: 0, z: -3.2, action: 'menu' }],
-        props: [{ x: 0, y: 0.5, z: -4, w: 6, h: 1, d: 1.2, color: '#7c2d12' }, { x: -4, y: 0.4, z: 1, w: 1.4, h: 0.8, d: 1.4, color: '#a16207' }, { x: 0, y: 0.4, z: 1.5, w: 1.4, h: 0.8, d: 1.4, color: '#a16207' }, { x: 4, y: 0.4, z: 1, w: 1.4, h: 0.8, d: 1.4, color: '#a16207' }, { x: 0, y: 1.8, z: -4.9, w: 5, h: 1.2, d: 0.1, color: '#fde68a', emissive: '#fbbf24' }],
+        hotspots: [
+          { id: 'counter', label: 'Order food & drinks', x: 0, z: -3.2, action: 'menu' },
+          { id: 'dine', label: 'Sit down & order a meal', x: -4, z: 2.2, action: 'dine' },
+        ],
+        props: [
+          { x: 0, y: 0.5, z: -4, w: 6, h: 1, d: 1.2, color: '#7c2d12' },
+          { x: -4, y: 0.4, z: 1, w: 1.4, h: 0.8, d: 1.4, color: '#a16207' },
+          { x: 0, y: 0.4, z: 1.5, w: 1.4, h: 0.8, d: 1.4, color: '#a16207' },
+          { x: 4, y: 0.4, z: 1, w: 1.4, h: 0.8, d: 1.4, color: '#a16207' },
+          { x: -4, y: 0.2, z: 2.15, w: 0.65, h: 0.4, d: 0.65, color: '#78350f' },
+          { x: 0, y: 0.2, z: 2.65, w: 0.65, h: 0.4, d: 0.65, color: '#78350f' },
+          { x: 4, y: 0.2, z: 2.15, w: 0.65, h: 0.4, d: 0.65, color: '#78350f' },
+          { x: 0, y: 1.8, z: -4.9, w: 5, h: 1.2, d: 0.1, color: '#fde68a', emissive: '#fbbf24' },
+        ],
       };
     case 'shop':
       return {
@@ -104,7 +126,80 @@ export function interiorFor(kind: PoiKind, tier = 0): InteriorDef {
         hotspots: [{ id: 'desk', label: 'Duty officer — pay fines', x: 0, z: -3, action: 'police' }],
         props: [{ x: 0, y: 0.5, z: -3.9, w: 5, h: 1, d: 1.2, color: '#1e3a8a' }, { x: -5, y: 0.5, z: 0, w: 1.4, h: 1, d: 3, color: '#475569' }],
       };
+    case 'hotel':
+      return {
+        ...base, hw: 9, title: 'Hotel', floor: '#c8a96e', wall: '#fdf6e3',
+        hotspots: [
+          { id: 'restaurant', label: 'Hotel restaurant — order food & drinks', x: 0, z: -3.5, action: 'menu' },
+          { id: 'dine', label: 'Sit down & order a meal', x: 5, z: 2.2, action: 'dine' },
+          { id: 'rest', label: 'Rest in lobby — restore energy', x: -6, z: 1.5, action: 'shower' },
+        ],
+        props: [
+          { x: 0, y: 0.5, z: -4.4, w: 8, h: 1, d: 1.2, color: '#92400e' },
+          { x: 0, y: 1.8, z: -4.9, w: 7, h: 1.2, d: 0.1, color: '#fde68a', emissive: '#fbbf24' },
+          { x: -5.5, y: 0.4, z: 1.5, w: 2.4, h: 0.8, d: 1.4, color: '#78350f' },
+          { x: -6.5, y: 0.35, z: 3.5, w: 1.2, h: 0.7, d: 2.4, color: '#d97706' },
+          { x: 5, y: 0.4, z: 1, w: 1.4, h: 0.8, d: 1.4, color: '#78350f' },
+          { x: 7, y: 0.4, z: 1, w: 1.4, h: 0.8, d: 1.4, color: '#78350f' },
+          { x: 6, y: 0.4, z: 3, w: 1.4, h: 0.8, d: 1.4, color: '#78350f' },
+        ],
+      };
+    case 'petrol': {
+      const def = hall('Fuel station shop', '#77746a', '#d6d3d1', '#c2410c', 7);
+      def.hotspots = [{ id: 'shop', label: 'Buy snacks & water', x: 0, z: -3, action: 'shop' }];
+      def.props.push(shelf(-5, 0, 3), shelf(5, 0, 3));
+      return def;
+    }
+    case 'railway': return hall('Railway station', '#9ca3af', '#dbeafe', '#1d4ed8', 9);
+    case 'bus': return hall('Bus terminal', '#9ca3af', '#dbeafe', '#0369a1', 9);
+    case 'airport': return hall('Airport terminal', '#cbd5e1', '#e0f2fe', '#0e7490', 10);
+    case 'mall': {
+      const def = hall('Shopping mall', '#d6d3d1', '#fdf2f8', '#be185d', 9);
+      def.hotspots = [{ id: 'foodcourt', label: 'Food court — buy food & drinks', x: 0, z: -3, action: 'menu' }];
+      def.props.push(shelf(-6.5, 0, 3), shelf(6.5, 0, 3));
+      return def;
+    }
+    case 'market': {
+      const def = hall('Local market', '#b88a5b', '#fef3c7', '#b45309', 9);
+      def.hotspots = [{ id: 'stall', label: 'Market stall — buy snacks & water', x: 0, z: -3, action: 'shop' }];
+      def.props.push(shelf(-6.5, 0, 3), shelf(6.5, 0, 3));
+      return def;
+    }
+    case 'itpark': return hall('Technology campus', '#cbd5e1', '#e0f2fe', '#1e40af', 9);
+    case 'school': return hall('School classroom', '#c8b08a', '#fef3c7', '#0f766e', 8);
+    case 'factory': return hall('Factory floor', '#6b7280', '#d1d5db', '#475569', 9);
+    case 'office': return hall('Business office', '#9ca3af', '#e5e7eb', '#334155', 8);
+    case 'apartments': return hall('Apartment lobby', '#c8b08a', '#f3e9d8', '#78350f', 8);
+    case 'park': return hall('Park visitor pavilion', '#8a9b70', '#e7edda', '#166534', 7);
+    case 'beach': return hall('Beach visitor pavilion', '#d8bd8b', '#fff1d6', '#0369a1', 8);
     default:
       return { ...base, title: 'Building', floor: '#9ca3af', wall: '#e5e7eb', hotspots: [], props: [] };
+  }
+}
+
+export function interiorPeopleFor(kind: PoiKind): InteriorNpc[] {
+  const seated = (x: number, z: number, shirt: string): InteriorNpc => ({ x, z, heading: Math.PI, shirt, pose: 'sit' });
+  const standing = (x: number, z: number, shirt: string): InteriorNpc => ({ x, z, heading: 0, shirt, pose: 'stand' });
+  switch (kind) {
+    case 'home': return [];
+    case 'restaurant':
+      return [seated(-4, 2.15, '#2563eb'), seated(0, 2.65, '#a16207'), standing(2.5, -3.5, '#7c2d12')];
+    case 'hotel':
+      return [seated(5, 2.15, '#2563eb'), seated(7, 2.15, '#a16207'), standing(2.5, -3.5, '#7c2d12')];
+    case 'mall':
+      return [seated(-6.5, 2.6, '#2563eb'), seated(6.5, 2.6, '#a16207'), standing(2.5, -3.5, '#7c2d12')];
+    case 'garage': return [standing(1.5, -2.6, '#ea580c')];
+    case 'school': return [seated(-3, 0.6, '#2563eb'), seated(0, 0.6, '#16a34a'), standing(3, -3.4, '#7c2d12')];
+    case 'hospital': return [standing(-3.2, -2.2, '#0e7490'), seated(3.2, 1.5, '#f8fafc')];
+    case 'police': return [standing(1.5, -2.2, '#1e3a8a')];
+    case 'branch':
+    case 'hq':
+    case 'bank':
+    case 'regoffice':
+    case 'office':
+    case 'itpark':
+      return [standing(1.5, -2.3, '#1e3a8a'), seated(4, 1.5, '#64748b')];
+    case 'dealership': return [standing(-3.5, -2.2, '#4338ca')];
+    default: return [seated(-3, 1.5, '#0f766e'), standing(3.5, -2.4, '#475569')];
   }
 }

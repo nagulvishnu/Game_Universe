@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { useFrame, useThree } from '@react-three/fiber';
 import { rt, useHud } from '../game/runtime';
 import { useGame } from '../game/store';
-import { collideLots, computeRoute, districtAt, DISTRICTS, isOnRoadNearIntersection, nearestPoi, P, poiById, signalState, WORLD_D, WORLD_W } from '../game/world/city';
+import { collideLots, computeRoute, districtAt, DISTRICTS, flyoverHeight, nearestPoi, P, poiById, WORLD_D, WORLD_W } from '../game/world/city';
 import { angleDiff, clamp } from '../game/util';
 import { Bike, Person } from './Models';
 import { modelOf } from '../game/data';
@@ -11,8 +11,9 @@ import { activeRide, generateOffer, offerChancePerSec, passengerReady } from '..
 import { issueFine } from '../game/logic/life';
 import { notify, bikeCondition, dayNow } from '../game/state';
 import { arriveAction, boardAction, dropAction, acceptOfferAction, declineOfferAction } from '../game/actions';
-import { chime, setEngine, setHorn, startAudio } from '../game/audio';
+import { chime, setEngine, setHorn, startAudio, playBoost } from '../game/audio';
 import { interiorFor } from './interiorDefs';
+import { watchInputFocus } from '../game/inputSafety';
 
 const CHECKPOINTS = [
   { id: 'cp1', x: 2 * P, z: 3.5 * P }, { id: 'cp2', x: 5 * P, z: 5.5 * P }, { id: 'cp3', x: 6.5 * P, z: 4 * P }, { id: 'cp4', x: 4 * P, z: 7.5 * P }, { id: 'cp5', x: 3 * P, z: 1.5 * P },
@@ -44,8 +45,10 @@ export function Rider() {
   const company = useGame((s) => s.g?.company);
   const wearUniform = useGame((s) => s.g?.player.wearUniform);
   const boarded = useGame((s) => { const g = s.g; if (!g) return false; const r = activeRide(g); return !!r && r.status === 'inprogress'; });
+  const ridePassenger = useGame((s) => s.g ? activeRide(s.g)?.passenger : undefined);
   const interior = useGame((s) => s.g?.player.interior ?? null);
   const [cam, setCam] = useState<'third' | 'first'>('third');
+  const [seated, setSeated] = useState(false);
   const pend = useRef({ fuel: 0, oil: 0, tyres: 0, brakes: 0, dmg: 0, odo: 0, dist: 0 });
   const acc = useRef({ sync: 0, hud: 0, route: 0, offer: 0, clock: 0, prompt: 0, auto: 0, hard: 0, fine: 0, col: 0, blend: 0, fall: 0 });
   const camState = useRef({ pos: new THREE.Vector3(), tgt: new THREE.Vector3(), init: false, fov: 62, drag: false, lastX: 0 });
@@ -66,8 +69,8 @@ export function Rider() {
       if (e.code === 'KeyF') { if (!s.ui.panel) s.setPhone(!s.ui.phone, null); return; }
       if (e.code === 'KeyM') { if (s.ui.panel === 'map') s.closePanel(); else if (!s.ui.panel) s.openPanel('map'); return; }
       if (s.ui.panel) return;
-      rt.keys.add(e.code);
       if (e.repeat) return;
+      rt.keys.add(e.code);
       if (e.code === 'KeyC') { rt.camera = rt.camera === 'third' ? 'first' : 'third'; setCam(rt.camera); }
       if (e.code === 'KeyL') { rt.headlights = !rt.headlights; s.toast(rt.headlights ? 'Headlights ON' : 'Headlights OFF'); }
       if (e.code === 'KeyE') { if (rt.nearAction) rt.nearAction(); }
@@ -82,9 +85,14 @@ export function Rider() {
     const md = (e: MouseEvent) => { if ((e.target as HTMLElement)?.tagName === 'CANVAS') { dragRef.current.down = true; dragRef.current.x = e.clientX; } };
     const mu = () => { dragRef.current.down = false; };
     const mm = (e: MouseEvent) => { if (dragRef.current.down) { rt.camYawOff += (e.clientX - dragRef.current.x) * 0.006 * (st().g?.settings.invertCam ? -1 : 1); dragRef.current.x = e.clientX; } };
+    const release = () => { rt.keys.clear(); dragRef.current.down = false; setHorn(false); setEngine(0, 0, false); };
+    const stopWatchingFocus = watchInputFocus(release);
+    const unsubscribe = useGame.subscribe((state, previous) => {
+      if (state.ui.panel && !previous.ui.panel) release();
+    });
     window.addEventListener('keydown', kd); window.addEventListener('keyup', ku); window.addEventListener('wheel', wheel);
     window.addEventListener('mousedown', md); window.addEventListener('mouseup', mu); window.addEventListener('mousemove', mm);
-    return () => { window.removeEventListener('keydown', kd); window.removeEventListener('keyup', ku); window.removeEventListener('wheel', wheel); window.removeEventListener('mousedown', md); window.removeEventListener('mouseup', mu); window.removeEventListener('mousemove', mm); rt.keys.clear(); };
+    return () => { window.removeEventListener('keydown', kd); window.removeEventListener('keyup', ku); window.removeEventListener('wheel', wheel); window.removeEventListener('mousedown', md); window.removeEventListener('mouseup', mu); window.removeEventListener('mousemove', mm); stopWatchingFocus(); unsubscribe(); release(); };
   }, []);
 
   // ---------- helpers ----------
@@ -160,6 +168,7 @@ export function Rider() {
         const def = interiorFor(poi.kind, g.player.homeTier);
         const w = rt.int;
         const sprint = k('ShiftLeft') || k('ShiftRight');
+        if (seated && (throttle || braking || left || right)) setSeated(false);
         const sp = (throttle ? 1 : braking ? -0.6 : 0) * (sprint ? 4.2 : 2.3);
         w.heading -= steerIn * 2.6 * dt;
         w.speed += (sp - w.speed) * Math.min(1, dt * 10);
@@ -177,7 +186,22 @@ export function Rider() {
         if (a.prompt > 0.1) {
           a.prompt = 0;
           let best: { label: string; act: () => void } | null = null, bd = 2.2;
-          for (const h of def.hotspots) { const d = Math.hypot(h.x - w.x, h.z - w.z); if (d < bd) { bd = d; best = { label: h.label, act: () => s.openPanel(h.action, h.arg ?? poi.id) }; } }
+          for (const h of def.hotspots) {
+            const d = Math.hypot(h.x - w.x, h.z - w.z);
+            if (d < bd) {
+              bd = d;
+              best = {
+                label: h.label,
+                act: () => {
+                  if (h.action === 'dine') {
+                    setSeated(true);
+                    rt.int.heading = Math.PI;
+                    s.openPanel('menu', poi.id);
+                  } else s.openPanel(h.action, h.arg ?? poi.id);
+                },
+              };
+            }
+          }
           if (!best && w.z > def.hd - 1.1) best = { label: 'Exit building', act: () => exitInterior() };
           rt.nearPrompt = best ? `E — ${best.label}` : null; rt.nearAction = best ? best.act : null;
         }
@@ -207,41 +231,114 @@ export function Rider() {
             const v = b.speed;
             let acc2 = 0;
             const noFuel = fuelNow <= 0;
+
+            // ---- boost (Space) ----
+            const boostKey = k('Space');
+            // charge boost while riding (not boosting)
+            if (rt.boostActive <= 0) rt.boost = Math.min(1, rt.boost + dt * 0.18);
+            if (boostKey && rt.boost >= 0.25 && rt.boostActive <= 0 && v > 2 && !noFuel) {
+              rt.boostActive = 2.2;   // 2.2 s burst
+              rt.boost = 0;
+              playBoost();
+            }
+            if (rt.boostActive > 0) {
+              rt.boostActive -= dt;
+              const boostForce = stats.accel * 1.55 * Math.pow(Math.max(0, 1 - Math.max(0, v) / (stats.maxSpeed * 1.35)), 1.0);
+              acc2 += boostForce;
+            }
+
             if (throttle && !noFuel) acc2 += stats.accel * Math.pow(Math.max(0, 1 - Math.max(0, v) / stats.maxSpeed), 1.2) * Math.min(1, 0.55 + 0.45 * wetGrip) * (1 - Math.min(0.5, Math.abs(b.steer) * 0.25));
             if (braking) { if (v > 0.5) acc2 -= stats.brake * wetGrip; else acc2 -= 2.5; }
-            const hb = k('Space');
-            if (hb && v > 0) acc2 -= 12 * wetGrip;
             acc2 -= Math.sign(v) * (0.35 + 0.0016 * v * v);
-            if (!throttle && !braking) acc2 -= Math.sign(v) * 0.9;
+            if (!throttle && !braking && rt.boostActive <= 0) acc2 -= Math.sign(v) * 0.9;
             let nv = v + acc2 * dt;
-            if (!braking && ((v > 0 && nv < 0) || (v < 0 && nv > 0))) nv = 0;
+            if (!braking && rt.boostActive <= 0 && ((v > 0 && nv < 0) || (v < 0 && nv > 0))) nv = 0;
             if (braking && v > 0.5 && nv < 0) nv = 0;
-            if (hb && v > 0 && nv < 0) nv = 0;
-            nv = clamp(nv, -3, stats.maxSpeed * 1.02);
+            nv = clamp(nv, -3, stats.maxSpeed * (rt.boostActive > 0 ? 1.38 : 1.02));
+
             // brake / hard events
             if (acc2 < -8 && v > 6 && a.hard < NOW() - 1.5) { a.hard = NOW(); if (rt.passengerBoarded) rt.tel.hardEvents += 1; }
-            // steering
+
+            // ---- steering & drift ----
+            // steer input smoothing — fast in, slow out
             let sIn = steerIn;
             if (g.needs.energy < 15) sIn += (Math.random() - 0.5) * 0.25;
-            b.steer += (sIn - b.steer) * Math.min(1, dt * (sIn === 0 ? 9 : 6));
-            const maxS = (0.62 / (1 + Math.abs(nv) * 0.12)) * stats.handling;
-            let yaw = (nv / 1.35) * Math.tan(b.steer * maxS);
-            const aLat = Math.abs(yaw * nv), aMax = 10.5 * stats.grip * wetGrip * (hb ? 0.55 : 1);
-            b.slide = false;
-            if (aLat > aMax) { yaw *= aMax / aLat; b.slide = true; nv *= 1 - 0.25 * dt; }
-            b.yawRate = yaw;
-            b.heading -= yaw * dt;
-            b.lean += (clamp(yaw * nv * 0.075, -0.65, 0.65) - b.lean) * Math.min(1, dt * 6);
-            b.pitch += (clamp(-acc2 * 0.011 * (1 - sb.upgrades.suspension * 0.12), -0.1, 0.12) - b.pitch) * Math.min(1, dt * 5);
-            b.speed = nv;
-            if (b.slide && Math.abs(nv) > 14 && wetGrip < 0.85 && Math.abs(b.lean) > 0.52 && Math.random() < dt * 0.7) startFall();
-            // move
+            const steerRate = sIn === 0 ? 10 : 8;
+            b.steer += (sIn - b.steer) * Math.min(1, dt * steerRate);
+
+            // how much the heading wants to turn this frame
+            const speedAbs = Math.abs(nv);
+            const maxSteerAngle = (0.58 / (1 + speedAbs * 0.10)) * stats.handling;
+            const desiredYaw = (nv / 1.4) * Math.tan(b.steer * maxSteerAngle);
+
+            // rotate heading
+            b.heading -= desiredYaw * dt;
+
+            // velocity angle lags behind heading — the gap IS the slip angle
+            // grip determines how fast velocity catches up to heading
+            const gripFactor = stats.grip * wetGrip * (rt.boostActive > 0 ? 0.78 : 1.0);
+            // at low speed velocity snaps to heading instantly (no drift below ~10 km/h)
+            const driftBlend = clamp((speedAbs - 2.8) / 6.0, 0, 1);
+            const velCatchRate = (18 - driftBlend * 10) * gripFactor; // high = grippy, low = drifty
+            const headingVelDiff = angleDiff(rt.velAngle, b.heading);
+            rt.velAngle += headingVelDiff * Math.min(1, dt * velCatchRate);
+
+            // slip angle = difference between velocity direction and heading
+            const slipAngle = angleDiff(rt.velAngle, b.heading);
+            const slipAbs = Math.abs(slipAngle);
+
+            // drift kicks in when slip exceeds grip threshold
+            const gripThreshold = 0.18 / gripFactor;
+            const isDrifting = slipAbs > gripThreshold && speedAbs > 4;
+            b.slide = isDrifting;
+
+            // when drifting, velocity angle resists snapping — feels like sliding
+            if (isDrifting) {
+              // counterforce: velocity slowly pulls back toward heading but fights it
+              const driftResist = 3.5 * gripFactor;
+              rt.velAngle += headingVelDiff * Math.min(1, dt * driftResist);
+              // speed bleeds off during hard drift
+              nv *= 1 - slipAbs * 0.18 * dt;
+            }
+
+            // drift amount for visuals (0..1)
+            rt.driftAmt += (clamp(slipAbs / 0.55, 0, 1) - rt.driftAmt) * Math.min(1, dt * 12);
+
+            // move along velocity direction (not heading)
             const dist = nv * dt;
-            b.x += Math.sin(b.heading) * dist; b.z += Math.cos(b.heading) * dist;
+            b.x += Math.sin(rt.velAngle) * dist;
+            b.z += Math.cos(rt.velAngle) * dist;
+
+            // lean: follows yaw rate + extra lean into drift
+            const targetLean = clamp(
+              desiredYaw * nv * 0.072
+              + slipAngle * 0.35 * driftBlend   // lean into the slide
+              + (rt.boostActive > 0 ? -b.pitch * 0.28 : 0),
+              -0.82, 0.82
+            );
+            b.lean += (targetLean - b.lean) * Math.min(1, dt * (isDrifting ? 10 : 8));
+
+            // pitch — nose dips on brake, lifts on boost/accel
+            const targetPitch = clamp(-acc2 * 0.013 * (1 - sb.upgrades.suspension * 0.12), -0.13, 0.15);
+            b.pitch += (targetPitch - b.pitch) * Math.min(1, dt * 7);
+
+            b.speed = nv;
+
+            // fall only on extreme wet slides
+            if (isDrifting && slipAbs > 0.62 && wetGrip < 0.75 && speedAbs > 14 && Math.random() < dt * 0.5) startFall();
+
+            // road vibration — spikes during drift
+            const speedNorm = speedAbs / stats.maxSpeed;
+            const targetBump = speedNorm * 0.012 + (rt.boostActive > 0 ? 0.022 : 0) + rt.driftAmt * 0.025 + rt.wet * speedNorm * 0.008;
+            rt.roadBump += (targetBump - rt.roadBump) * Math.min(1, dt * 14);
+
             const p = pend.current, ad = Math.abs(dist);
-            p.fuel += ad / (m.tank * m.kmpl * 1600) * (1 + (throttle ? 0.2 : 0)); p.odo += ad / 1000; p.dist += ad;
-            p.oil += (ad / 1000) * 0.9; p.tyres += (ad / 1000) * 0.7 * (b.slide ? 3 : 1) / (1 + up.tyre * 0.15); p.brakes += braking ? ad / 1000 * 2.2 : ad / 1000 * 0.3;
-            if (rt.passengerBoarded) { rt.tel.distanceM += ad; rt.tel.elapsedSec += dt; if (Math.abs(nv) > 22) rt.tel.speedingSec += dt; }
+            p.fuel += ad / (m.tank * m.kmpl * 1600) * (1 + (throttle ? 0.2 : 0) + (rt.boostActive > 0 ? 0.45 : 0));
+            p.odo += ad / 1000; p.dist += ad;
+            p.oil += (ad / 1000) * 0.9;
+            p.tyres += (ad / 1000) * 0.7 * (1 + rt.driftAmt * 2.5) / (1 + up.tyre * 0.15);
+            p.brakes += braking ? ad / 1000 * 2.2 : ad / 1000 * 0.3;
+            if (rt.passengerBoarded) { rt.tel.distanceM += ad; rt.tel.elapsedSec += dt; if (speedAbs > 22) rt.tel.speedingSec += dt; }
           }
           // building collision
           for (let it = 0; it < 3; it++) {
@@ -264,6 +361,7 @@ export function Rider() {
               const off = (q - (n - 1) / 2) * 2.6;
               const cx = v.x + Math.sin(v.heading) * off, cz = v.z + Math.cos(v.heading) * off;
               const dx = b.x - cx, dz = b.z - cz, dd = Math.hypot(dx, dz), rr = 0.75 + v.wid / 2;
+              if (Math.abs(flyoverHeight(b.x, b.z) - flyoverHeight(v.x, v.z)) > 2.5) continue;
               if (dd < rr && dd > 0.001) {
                 b.x += (dx / dd) * (rr - dd); b.z += (dz / dd) * (rr - dd);
                 const rel = Math.abs(b.speed - v.speed * Math.cos(v.heading - b.heading));
@@ -275,6 +373,7 @@ export function Rider() {
           // pedestrians
           for (const pd of rt.peds) {
             if (!pd.alive || pd.hidden > 0) continue;
+            if (flyoverHeight(b.x, b.z) > 1.5) continue;
             if (Math.abs(pd.x - b.x) > 2 || Math.abs(pd.z - b.z) > 2) continue;
             if (Math.hypot(pd.x - b.x, pd.z - b.z) < 0.9 && Math.abs(b.speed) > 2.5) {
               pd.hidden = 25; registerCollision(Math.abs(b.speed) * 0.5, 'a pedestrian'); b.speed *= 0.6;
@@ -344,12 +443,12 @@ export function Rider() {
 
     // ---- visuals & camera (also while paused) ----
     const riding = !inInterior && (rt.mode === 'ride' || rt.mode === 'fallen');
-    if (bikeG.current) { bikeG.current.visible = riding; if (riding) { bikeG.current.position.set(rt.bike.x, 0, rt.bike.z); bikeG.current.rotation.y = rt.bike.heading; } }
+    if (bikeG.current) { bikeG.current.visible = riding; if (riding) { bikeG.current.position.set(rt.bike.x, flyoverHeight(rt.bike.x, rt.bike.z), rt.bike.z); bikeG.current.rotation.y = rt.bike.heading; } }
     if (walkG.current) {
       const vis = !inInterior && rt.mode === 'walk';
       walkG.current.visible = vis || inInterior;
       if (inInterior) { walkG.current.position.set(rt.int.x, 0, rt.int.z); walkG.current.rotation.y = rt.int.heading; }
-      else if (vis) { walkG.current.position.set(rt.walk.x, 0, rt.walk.z); walkG.current.rotation.y = rt.walk.heading; }
+      else if (vis) { walkG.current.position.set(rt.walk.x, flyoverHeight(rt.walk.x, rt.walk.z), rt.walk.z); walkG.current.rotation.y = rt.walk.heading; }
       if (cam === 'first') walkG.current.visible = false;
     }
     // camera
@@ -362,32 +461,41 @@ export function Rider() {
     if (inInterior) { fx = rt.int.x; fz = rt.int.z; fh = rt.int.heading; eyeH = 1.6; camHeightBase = 1; }
     else if (riding) { fx = rt.bike.x; fz = rt.bike.z; fh = rt.bike.heading; fv = Math.abs(rt.bike.speed); lean = rt.bike.lean; eyeH = 1.5; }
     else { fx = rt.walk.x; fz = rt.walk.z; fh = rt.walk.heading; eyeH = 1.68; }
+    const elevation = inInterior ? 0 : flyoverHeight(fx, fz);
     if (!cs.init) { cs.init = true; cs.pos.set(fx, 4, fz - 6); }
-    rt.camYaw += angleDiff(rt.camYaw, fh) * Math.min(1, dt * (fv > 1 || rt.walk.speed > 0.5 ? 3.2 : 1.1));
+    // yaw tracking — snappier at speed, blends toward velAngle during drift
+    const yawSnap = fv > 1 || rt.walk.speed > 0.5 ? 4.5 + fv * 0.12 : 1.4;
+    const camHeadingTarget = riding
+      ? fh + angleDiff(fh, rt.velAngle) * rt.driftAmt * 0.45
+      : fh;
+    rt.camYaw += angleDiff(rt.camYaw, camHeadingTarget) * Math.min(1, dt * yawSnap);
     const yaw = rt.camYaw + rt.camYawOff;
     let tp: THREE.Vector3, tl: THREE.Vector3;
     if (inInterior) {
       const poi = poiById.get(g.player.interior!)!; void poi;
       tp = new THREE.Vector3(fx * 0.9, 6.8, fz + 6.8); tl = new THREE.Vector3(fx, 0.8, fz - 0.5);
     } else {
-      const d = rt.camDist * (riding ? 1 : 0.8);
-      tp = new THREE.Vector3(fx - Math.sin(yaw) * d, camHeightBase + d * 0.22 + (riding ? 0.2 : 0), fz - Math.cos(yaw) * d);
-      tl = new THREE.Vector3(fx + Math.sin(fh) * fv * 0.08, 1.2, fz + Math.cos(fh) * fv * 0.08);
+      const speedPull = riding ? fv * 0.09 : 0;
+      const d = (rt.camDist + speedPull) * (riding ? 1 : 0.8);
+      const bumpY = riding ? Math.sin(performance.now() * 0.018) * rt.roadBump * 0.55 : 0;
+      tp = new THREE.Vector3(fx - Math.sin(yaw) * d, camHeightBase + elevation + d * 0.22 + (riding ? 0.2 : 0) + bumpY, fz - Math.cos(yaw) * d);
+      tl = new THREE.Vector3(fx + Math.sin(fh) * (fv * 0.14 + 1.5), elevation + 1.1 + (riding ? rt.bike.pitch * -1.5 : 0), fz + Math.cos(fh) * (fv * 0.14 + 1.5));
     }
-    cs.pos.lerp(tp, 1 - Math.exp(-dt * (inInterior ? 6 : 9)));
-    const fpPos = new THREE.Vector3(fx + Math.sin(fh) * (riding ? 0.2 : 0.1), eyeH, fz + Math.cos(fh) * (riding ? 0.2 : 0.1));
-    const fpLook = new THREE.Vector3(fx + Math.sin(fh + (rt.camYawOff * 0.7)) * 10, eyeH - 0.15 + (riding ? -rt.bike.pitch * 6 : 0), fz + Math.cos(fh + rt.camYawOff * 0.7) * 10);
-    const fpv = inInterior ? fpPos : fpPos;
-    const finalPos = cs.pos.clone().lerp(fpv, ease);
+    const camSpring = inInterior ? 6 : (riding ? 10 + fv * 0.4 : 9);
+    cs.pos.lerp(tp, 1 - Math.exp(-dt * camSpring));
+    const fpPos = new THREE.Vector3(fx + Math.sin(fh) * (riding ? 0.2 : 0.1), elevation + eyeH + (riding ? Math.sin(performance.now() * 0.018) * rt.roadBump * 0.3 : 0), fz + Math.cos(fh) * (riding ? 0.2 : 0.1));
+    const fpLook = new THREE.Vector3(fx + Math.sin(fh + rt.camYawOff * 0.7) * 10, elevation + eyeH - 0.15 + (riding ? -rt.bike.pitch * 7 : 0), fz + Math.cos(fh + rt.camYawOff * 0.7) * 10);
+    const finalPos = cs.pos.clone().lerp(fpPos, ease);
     const finalLook = tl.clone().lerp(fpLook, ease);
-    if (rt.shake > 0) { finalPos.x += (Math.random() - 0.5) * rt.shake * 0.4; finalPos.y += (Math.random() - 0.5) * rt.shake * 0.4; rt.shake = Math.max(0, rt.shake - dt * 2.5); }
+    if (rt.shake > 0) { finalPos.x += (Math.random() - 0.5) * rt.shake * 0.45; finalPos.y += (Math.random() - 0.5) * rt.shake * 0.45; rt.shake = Math.max(0, rt.shake - dt * 2.8); }
     if (rt.rainLevel > 0.3 && ease > 0.5) { finalPos.y += Math.sin(performance.now() * 0.03) * 0.004 * rt.rainLevel; }
     camera.position.copy(finalPos);
     camera.lookAt(finalLook);
-    if (ease > 0.01 && riding) camera.rotateZ(lean * 0.5 * ease);
+    // lean roll — stronger during drift and boost
+    if (ease > 0.01 && riding) camera.rotateZ(lean * (0.55 + rt.driftAmt * 0.25 + (rt.boostActive > 0 ? 0.15 : 0)) * ease);
     const persp = camera as THREE.PerspectiveCamera;
-    const wantFov = (wantFP ? 72 : 62) + Math.min(14, fv * 0.45);
-    cs.fov += (wantFov - cs.fov) * Math.min(1, dt * 4);
+    const wantFov = (wantFP ? 72 : 62) + Math.min(16, fv * 0.5) + (rt.boostActive > 0 ? 8 : 0) + rt.driftAmt * 5;
+    cs.fov += (wantFov - cs.fov) * Math.min(1, dt * (rt.boostActive > 0 ? 7 : 4));
     if (Math.abs(persp.fov - cs.fov) > 0.05) { persp.fov = cs.fov; persp.updateProjectionMatrix(); }
     void camHeightBase;
   });
@@ -401,6 +509,7 @@ export function Rider() {
     rt.walk.x = poi.x; rt.walk.z = poi.z + (poi.z % P < P / 2 ? 2.2 : -2.2); rt.walk.heading = poi.z % P < P / 2 ? 0 : Math.PI;
     rt.walk.speed = 0;
     s.act((q) => { q.player.interior = null; });
+    setSeated(false);
     rt.nearAction = null; rt.nearPrompt = null;
   }
 
@@ -411,6 +520,7 @@ export function Rider() {
     if ((poi.kind === 'hq') && !g.company) { s.toast('Locked: register your company at the City Registrar first'); return; }
     if (poi.kind === 'branch' && !g.company?.branches.some((b) => b.poiId === poi.id)) { s.toast('You have no branch in this district yet'); return; }
     s.act((q) => { q.player.interior = id; });
+    setSeated(false);
     rt.int.x = 0; rt.int.z = interiorFor(poi.kind, g.player.homeTier).hd - 1.4; rt.int.heading = Math.PI; rt.int.speed = 0;
     rt.nearAction = null; rt.nearPrompt = null;
     setEngine(0, 0, false);
@@ -435,6 +545,7 @@ export function Rider() {
     const g = st().g!;
     const bk = g.bikes.find((x) => x.id === id)!;
     rt.bike.id = bk.id; rt.bike.x = bk.x; rt.bike.z = bk.z; rt.bike.heading = bk.heading; rt.bike.speed = 0; rt.bike.lean = 0; rt.bike.steer = 0;
+    rt.velAngle = bk.heading; rt.driftAmt = 0;
     rt.mode = 'ride';
     st().act((q) => { q.player.onBike = true; q.player.bikeId = id; });
     pend.current = { fuel: 0, oil: 0, tyres: 0, brakes: 0, dmg: 0, odo: 0, dist: 0 };
@@ -491,21 +602,6 @@ export function Rider() {
     const now = NOW();
     const cd = rt.cooldowns;
     const sp = Math.abs(b.speed);
-    // signal violation
-    const ix = isOnRoadNearIntersection(b.x, b.z);
-    const key = ix ? `${ix.i},${ix.j}` : '';
-    if (key !== rt.lastIx) {
-      if (ix && sp > 6 && rt.mode === 'ride') {
-        const axis = Math.abs(Math.sin(b.heading)) > Math.abs(Math.cos(b.heading)) ? 'x' : 'z';
-        const sig = signalState(ix.i, ix.j, axis, rt.simTimeSec);
-        if (sig === 'red' && (cd.signal ?? 0) < now - 15) {
-          cd.signal = now;
-          if (rt.passengerBoarded) rt.tel.hardEvents += 1;
-          if (policeNear(b.x, b.z, 110)) st().act((s) => issueFine(s, 1000, 'Jumped a red signal')); else st().toast('You ran a red light — no police saw it.');
-        }
-      }
-      rt.lastIx = key;
-    }
     // speeding near police
     if (sp > 27 && (cd.speed ?? 0) < now - 60 && policeNear(b.x, b.z, 80)) { cd.speed = now; st().act((s) => issueFine(s, 700, `Over-speeding (${Math.round(sp * 3.6)} km/h)`)); }
     // checkpoints
@@ -529,7 +625,7 @@ export function Rider() {
     void dt; void vmax;
   }
 
-  const passenger = boarded ? { shirt: '#f97316' } : null;
+  const passenger = boarded && ridePassenger ? { shirt: ridePassenger.shirt, skin: ridePassenger.skin } : null;
   const shirt = wearUniform && company ? company.branding.primary : '#2563eb';
   return (
     <>
@@ -540,7 +636,7 @@ export function Rider() {
           getVis={() => ({ lean: rt.bike.lean, steer: rt.bike.steer, speed: rt.bike.speed, pitch: rt.bike.pitch, indicator: rt.bike.indicator, fallen: (rt.bike as { fall?: number }).fall ?? 0 })}
         />
       </group>
-      <group ref={walkG} visible={false}><Person shirt={shirt} pose="walk" /></group>
+      <group ref={walkG} visible={false}><Person shirt={shirt} pose={interior && seated ? 'sit' : 'walk'} /></group>
       <Checkpoints />
       <KeyedBikeId id={bikeId} interior={interior} />
     </>

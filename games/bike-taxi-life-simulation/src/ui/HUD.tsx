@@ -9,6 +9,34 @@ import { dayName, dayOf, fmtTime } from '../game/util';
 import { SAVINGS_TARGET } from '../game/data';
 import { bikeCondition } from '../game/state';
 
+function BoostBar() {
+  const [val, setVal] = useState(0);
+  const [active, setActive] = useState(false);
+  useEffect(() => {
+    const id = setInterval(() => {
+      setVal(Math.round(rt.boost * 100));
+      setActive(rt.boostActive > 0);
+    }, 80);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <div className="flex items-center gap-2">
+      <span className="w-16 shrink-0 text-[10px] text-slate-400">⚡ Boost</span>
+      <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-white/10">
+        <div
+          className={`h-full rounded-full transition-all duration-75 ${
+            active ? 'bg-cyan-300 shadow-[0_0_6px_2px_rgba(103,232,249,0.7)]' : val >= 100 ? 'bg-cyan-400' : 'bg-sky-500'
+          }`}
+          style={{ width: active ? '100%' : `${val}%` }}
+        />
+      </div>
+      <span className={`w-8 text-right text-[10px] font-bold ${
+        active ? 'text-cyan-300' : val >= 100 ? 'text-cyan-400' : 'text-slate-400'
+      }`}>{active ? 'ON!' : `${val}%`}</span>
+    </div>
+  );
+}
+
 let cityImg: HTMLCanvasElement | null = null;
 const S = 0.55; // px per metre in the cached city image
 const PAD = 70;
@@ -215,6 +243,7 @@ export function HUD() {
           <div className="mt-1 space-y-1">
             <Bar value={hud.fuel * 100} color={hud.fuel < 0.15 ? 'bg-rose-500' : 'bg-amber-400'} label="⛽ Fuel" />
             <Bar value={hud.cond} color={hud.cond < 40 ? 'bg-rose-500' : 'bg-emerald-400'} label="🛠 Bike condition" />
+            <BoostBar />
           </div>
           <div className="mt-1 flex justify-between text-[10px] text-slate-400"><span>{hud.headlights ? '💡 Lights ON' : 'Lights off'}</span><span>{hud.indicator === 1 ? '⬅ Indicator' : hud.indicator === 2 ? 'Indicator ➡' : ''}</span><span>{bike?.plate}</span></div>
         </div>

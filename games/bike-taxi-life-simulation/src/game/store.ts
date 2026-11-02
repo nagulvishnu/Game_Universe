@@ -17,6 +17,7 @@ export interface UI {
   phone: boolean;
   phoneApp: string | null;
   offerExpiresAt: number;
+  offerPausedAt: number | null;
   saveStatus: string;
   toast: string | null;
   adminTab: string;
@@ -43,7 +44,7 @@ interface Store {
 export const useGame = create<Store>()((set, get) => ({
   g: null,
   hasSave: LocalSaveRepository.exists(),
-  ui: { screen: 'menu', panel: null, phone: false, phoneApp: null, offerExpiresAt: 0, saveStatus: '', toast: null, adminTab: 'overview' },
+  ui: { screen: 'menu', panel: null, phone: false, phoneApp: null, offerExpiresAt: 0, offerPausedAt: null, saveStatus: '', toast: null, adminTab: 'overview' },
   act: (fn) => {
     let out!: ReturnType<typeof fn>;
     set((st) => ({ g: produce(st.g!, (d) => { out = fn(d as GameState); }) }));
@@ -58,7 +59,7 @@ export const useGame = create<Store>()((set, get) => ({
   newGame: () => {
     const g = newGameState();
     syncRuntimeFromState(g);
-    set((st) => ({ g, ui: { ...st.ui, screen: 'game', panel: null, phone: false } }));
+    set((st) => ({ g, ui: { ...st.ui, screen: 'game', panel: null, phone: false, offerExpiresAt: 0, offerPausedAt: null } }));
     get().save('new game');
   },
   continueGame: () => {
@@ -66,17 +67,28 @@ export const useGame = create<Store>()((set, get) => ({
     if (!res.state) return false;
     const g = res.state;
     const away = Date.now() - (g.lastSavedReal || Date.now());
+    const beforeOffline = g.time;
     const rep = simulateOffline(g, away);
+    // Company simulation may advance time while the player is away. Do not
+    // count that time against a personal pickup or its passenger's waiting time.
+    const ride = g.rides.find((r) => r.id === g.activeRideId);
+    const elapsed = g.time - beforeOffline;
+    if (ride && elapsed > 0) {
+      if (ride.assignedAt !== undefined) ride.assignedAt += elapsed;
+      if (ride.arrivedAt !== undefined) ride.arrivedAt += elapsed;
+      if (ride.startedAt !== undefined) ride.startedAt += elapsed;
+    }
     if (rep) { g.offlineReport = rep; }
     else if (away > 0) { /* short absence */ }
     if (res.source === 'backup') notify(g, 'Primary save was damaged — recovered from backup.', 'warn');
     syncRuntimeFromState(g);
-    set((st) => ({ g, ui: { ...st.ui, screen: 'game', panel: rep ? 'offline' : null, phone: false, saveStatus: res.source === 'backup' ? 'Recovered from backup' : 'Loaded' } }));
+    const now = Date.now();
+    set((st) => ({ g, ui: { ...st.ui, screen: 'game', panel: rep ? 'offline' : null, phone: false, offerExpiresAt: 0, offerPausedAt: rep ? now : null, saveStatus: res.source === 'backup' ? 'Recovered from backup' : 'Loaded' } }));
     return true;
   },
   toMenu: () => { get().save('menu'); set((st) => ({ hasSave: LocalSaveRepository.exists(), ui: { ...st.ui, screen: 'menu', panel: null, phone: false } })); },
-  openPanel: (name, arg) => set((st) => ({ ui: { ...st.ui, panel: name, panelArg: arg } })),
-  closePanel: () => set((st) => ({ ui: { ...st.ui, panel: null, panelArg: undefined } })),
+  openPanel: (name, arg) => set((st) => ({ ui: { ...st.ui, panel: name, panelArg: arg, offerPausedAt: st.ui.panel ? st.ui.offerPausedAt : Date.now() } })),
+  closePanel: () => set((st) => ({ ui: { ...st.ui, panel: null, panelArg: undefined, offerExpiresAt: st.g?.offer && st.ui.offerPausedAt !== null ? st.ui.offerExpiresAt + Date.now() - st.ui.offerPausedAt : st.ui.offerExpiresAt, offerPausedAt: null } })),
   setPhone: (open, app = null) => set((st) => ({ ui: { ...st.ui, phone: open, phoneApp: open ? app : null } })),
   setUI: (p) => set((st) => ({ ui: { ...st.ui, ...p } })),
   save: () => {
@@ -100,6 +112,8 @@ function captureRuntime(g: GameState): GameState {
   const snap = structuredClone(g);
   snap.lastSavedReal = Date.now();
   snap.time = g.time;
+  const ride = snap.rides.find((r) => r.id === snap.activeRideId && r.driverType === 'player' && r.status === 'inprogress');
+  if (ride) ride.telemetry = { ...rt.tel };
   if (!snap.player.interior) {
     if (rt.mode === 'ride' || rt.mode === 'fallen') { snap.player.x = rt.bike.x; snap.player.z = rt.bike.z; snap.player.heading = rt.bike.heading; }
     else { snap.player.x = rt.walk.x; snap.player.z = rt.walk.z; snap.player.heading = rt.walk.heading; }
@@ -119,7 +133,13 @@ export function syncRuntimeFromState(g: GameState) {
   if (b) { rt.bike.id = b.id; rt.bike.x = b.x; rt.bike.z = b.z; rt.bike.heading = b.heading; }
   else if (p.onBike) { p.onBike = false; rt.mode = 'walk'; }
   rt.bike.speed = 0; rt.bike.steer = 0; rt.bike.lean = 0; rt.bike.fallenT = 0;
-  rt.target = null; rt.route = null; rt.tel = { distanceM: 0, elapsedSec: 0, collisions: 0, hardEvents: 0, speedingSec: 0 };
+  const ride = g.rides.find((r) => r.id === g.activeRideId && r.driverType === 'player');
+  rt.passengerBoarded = ride?.status === 'inprogress';
+  const saved = rt.passengerBoarded ? ride?.telemetry : undefined;
+  const safe = (v: number | undefined) => typeof v === 'number' && Number.isFinite(v) && v >= 0 ? v : 0;
+  rt.tel = { distanceM: safe(saved?.distanceM), elapsedSec: safe(saved?.elapsedSec), collisions: safe(saved?.collisions), hardEvents: safe(saved?.hardEvents), speedingSec: safe(saved?.speedingSec) };
+  rt.target = ride?.status === 'enroute' ? { x: ride.pickup.x, z: ride.pickup.z, kind: 'pickup' } : ride?.status === 'inprogress' ? { x: ride.dest.x, z: ride.dest.z, kind: 'dest' } : null;
+  rt.route = null; rt.clockPartial = 0; rt.nearPrompt = null; rt.nearAction = null;
   const h = poiById.get('home')!;
   if (p.interior) { rt.int.x = 0; rt.int.z = 3; rt.int.heading = Math.PI; }
   void h;

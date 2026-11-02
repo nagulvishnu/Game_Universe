@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useGame } from '../game/store';
 import { rt } from '../game/runtime';
 import { Bar, Btn, inr, Modal, Stat, Table, Tabs, Logo } from './common';
@@ -17,6 +17,7 @@ import { CustomerPortal, EmployeePortal } from './Portals';
 import { fmtTime } from '../game/util';
 import { Tshirt } from './common';
 import { LocalSaveRepository } from '../game/persistence';
+import { BikeArtwork, FoodArtwork } from './ShopArtwork';
 
 function useRes() {
   const toast = useGame((s) => s.toast);
@@ -118,12 +119,40 @@ function Menu({ where }: { where: 'restaurant' | 'shop' }) {
   const res = useRes();
   const items = FOOD.filter((f) => f.where.includes(where));
   return (
-    <Modal title={where === 'restaurant' ? 'Restaurant menu' : 'Store'} icon={where === 'restaurant' ? '🍛' : '🛒'}>
-      <div className="mb-2 flex gap-3 text-xs"><span>Wallet <b className="text-emerald-300">{inr(g.wallet)}</b></span></div>
-      <div className="mb-3 grid grid-cols-2 gap-2"><Bar value={g.needs.hunger} color="bg-orange-400" label="Hunger" /><Bar value={g.needs.thirst} color="bg-sky-400" label="Thirst" /></div>
-      <div className="space-y-1.5">{items.map((f) => (
-        <div key={f.id} className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-sm"><div><b>{f.name}</b><div className="text-[11px] text-slate-400">{f.hunger ? `+${f.hunger} hunger ` : ''}{f.thirst ? `+${f.thirst} thirst ` : ''}{f.energy ? `+${f.energy} energy` : ''}</div></div>
-          <Btn small onClick={() => res(act((s) => eat(s, f.id)))}>{inr(f.price)}</Btn></div>))}</div>
+    <Modal title={where === 'restaurant' ? 'Chennai Tiffin House' : 'Street-side Provisions'} icon={where === 'restaurant' ? '🍛' : '🛒'} wide>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/[0.08] bg-gradient-to-r from-orange-400/[0.08] to-slate-800/40 p-3">
+        <div>
+          <div className="text-[9px] font-black uppercase tracking-[0.2em] text-orange-200">{where === 'restaurant' ? 'MADE FRESH · SERVED HOT' : 'QUICK STOPS FOR THE ROAD'}</div>
+          <div className="mt-1 text-xs text-slate-300">{where === 'restaurant' ? 'A proper meal before your next ride.' : 'Essentials to keep you moving.'}</div>
+        </div>
+        <div className="rounded-lg border border-emerald-300/15 bg-emerald-300/[0.06] px-3 py-2 text-right">
+          <div className="text-[8px] font-bold uppercase tracking-[0.16em] text-slate-400">Your wallet</div>
+          <b className="text-sm text-emerald-300">{inr(g.wallet)}</b>
+        </div>
+      </div>
+      <div className="mb-4 grid grid-cols-2 gap-3 rounded-xl border border-white/[0.07] bg-black/15 p-3">
+        <Bar value={g.needs.hunger} color="bg-gradient-to-r from-orange-500 to-amber-300" label="Hunger" />
+        <Bar value={g.needs.thirst} color="bg-gradient-to-r from-sky-500 to-cyan-300" label="Thirst" />
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((f) => (
+          <article key={f.id} className="group overflow-hidden rounded-xl border border-white/[0.09] bg-slate-800/65 transition duration-200 hover:-translate-y-0.5 hover:border-orange-200/30 hover:bg-slate-800">
+            <FoodArtwork id={f.id} name={f.name} />
+            <div className="p-3">
+              <div className="flex min-h-10 items-start justify-between gap-2">
+                <h3 className="text-sm font-bold leading-5 text-white">{f.name}</h3>
+                <span className="shrink-0 rounded-md bg-white/[0.07] px-1.5 py-1 text-[10px] font-bold text-amber-200">{inr(f.price)}</span>
+              </div>
+              <div className="mt-2 flex min-h-6 flex-wrap gap-1">
+                {f.hunger > 0 && <span className="rounded-full bg-orange-400/10 px-2 py-1 text-[9px] font-semibold text-orange-200">🍚 +{f.hunger}</span>}
+                {f.thirst > 0 && <span className="rounded-full bg-sky-400/10 px-2 py-1 text-[9px] font-semibold text-sky-200">💧 +{f.thirst}</span>}
+                {f.energy > 0 && <span className="rounded-full bg-yellow-300/10 px-2 py-1 text-[9px] font-semibold text-yellow-100">⚡ +{f.energy}</span>}
+              </div>
+              <Btn className="mt-3 w-full" small onClick={() => res(act((s) => eat(s, f.id)))}>{where === 'restaurant' ? 'Order & eat' : 'Buy item'} · {inr(f.price)}</Btn>
+            </div>
+          </article>
+        ))}
+      </div>
     </Modal>
   );
 }
@@ -160,10 +189,23 @@ function Dealer() {
     <Modal title="RoyalWheels Motorcycles" icon="🏍️" wide>
       <Tabs value={tab} onChange={setTab} tabs={[{ id: 'buy', label: 'Buy personal bike' }, { id: 'mine', label: 'My bikes' }]} />
       <p className="mb-2 text-xs text-slate-400">Personal bikes are paid from your personal wallet ({inr(g.wallet)}). Company fleet bikes are bought by the company account in the Admin portal.</p>
-      {tab === 'buy' && <div className="grid gap-2 md:grid-cols-2">{BIKE_MODELS.map((m) => (
-        <div key={m.id} className="rounded-xl border border-white/10 bg-white/5 p-3"><div className="flex items-center justify-between"><b>{m.name}</b><span className="rounded bg-white/10 px-2 text-[10px] uppercase">{m.category}</span></div>
-          <div className="mt-1 grid grid-cols-4 gap-1 text-[10px] text-slate-300"><span>Top {Math.round(m.maxSpeed * 3.6)} km/h</span><span>Accel {m.accel}</span><span>Brake {m.brake}</span><span>Handling {m.handling}</span></div>
-          <div className="mt-2 flex items-center justify-between"><b className="text-amber-300">{inr(m.price)}</b><Btn small onClick={() => res(act((s) => buyPersonalBike(s, m.id)))}>Buy</Btn></div></div>))}</div>}
+      {tab === 'buy' && <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{BIKE_MODELS.map((m) => (
+        <article key={m.id} className="group overflow-hidden rounded-xl border border-white/[0.09] bg-slate-800/60 transition duration-200 hover:-translate-y-0.5 hover:border-amber-200/30 hover:bg-slate-800">
+          <BikeArtwork model={m} />
+          <div className="p-3">
+            <div className="flex items-start justify-between gap-2">
+              <div><h3 className="text-sm font-bold text-white">{m.name}</h3><span className="mt-1 inline-block text-[9px] font-semibold uppercase tracking-[0.15em] text-slate-400">{m.category} class</span></div>
+              <span className="shrink-0 text-sm font-black text-amber-200">{inr(m.price)}</span>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 rounded-lg bg-black/20 p-2.5 text-[10px]">
+              <span className="text-slate-400">Top speed <b className="float-right text-slate-100">{Math.round(m.maxSpeed * 3.6)} km/h</b></span>
+              <span className="text-slate-400">Handling <b className="float-right text-slate-100">{m.handling.toFixed(2)}</b></span>
+              <span className="text-slate-400">Acceleration <b className="float-right text-slate-100">{m.accel.toFixed(1)}</b></span>
+              <span className="text-slate-400">Braking <b className="float-right text-slate-100">{m.brake.toFixed(1)}</b></span>
+            </div>
+            <Btn className="mt-3 w-full" small onClick={() => res(act((s) => buyPersonalBike(s, m.id)))}>Choose this bike · {inr(m.price)}</Btn>
+          </div>
+        </article>))}</div>}
       {tab === 'mine' && <Table head={['Bike', 'Plate', 'Condition', 'Location', '']} rows={g.bikes.filter((b) => b.owner === 'player').map((b) => [modelOf(b.modelId).name, b.plate, `${bikeCondition(b)}%`, `${Math.round(b.x)}, ${Math.round(b.z)}${g.player.bikeId === b.id ? ' (riding)' : ' (parked)'}`, <Btn key={b.id} small tone="red" onClick={() => res(act((s) => sellPersonalBike(s, b.id)))}>Sell</Btn>])} />}
     </Modal>
   );
@@ -289,20 +331,98 @@ function Pause() {
   );
 }
 export function Controls() {
-  const rows = [['W / S', 'Accelerate / brake (walk forward / back)'], ['A / D', 'Steer left / right (turn when walking)'], ['Space', 'Handbrake'], ['E', 'Interact · mount / dismount · enter / exit'], ['C', 'Switch first / third person camera'], ['H', 'Horn (hold)'], ['L', 'Headlights'], ['Z / X', 'Left / right indicator'], ['F', 'Smartphone'], ['M', 'Full map (click to navigate)'], ['Shift', 'Sprint (on foot)'], ['Y / N', 'Accept / reject ride request'], ['Mouse drag / wheel', 'Orbit camera / zoom'], ['Esc', 'Pause / close']];
+  const rows = [['W / S', 'Accelerate / brake (walk forward / back)'], ['A / D', 'Steer left / right (turn when walking)'], ['Space', 'Nitro boost (charges automatically, needs speed > 7 km/h)'], ['E', 'Interact · mount / dismount · enter / exit'], ['C', 'Switch first / third person camera'], ['H', 'Horn (hold)'], ['L', 'Headlights'], ['Z / X', 'Left / right indicator'], ['F', 'Smartphone'], ['M', 'Full map (click to navigate)'], ['Shift', 'Sprint (on foot)'], ['Y / N', 'Accept / reject ride request'], ['Mouse drag / wheel', 'Orbit camera / zoom'], ['Esc', 'Pause / close']];
   return <div className="grid grid-cols-1 gap-1 text-sm">{rows.map(([k, v]) => <div key={k} className="flex gap-3 rounded bg-white/5 px-3 py-1"><b className="w-36 text-amber-300">{k}</b><span>{v}</span></div>)}</div>;
 }
 
 function FullMap() {
   const toast = useGame((s) => s.toast);
   const close = useGame((s) => s.closePanel);
+  const [query, setQuery] = useState('');
+  const [filter, setFilter] = useState<string | null>(null);
+
+  const CATEGORIES = [
+    { key: 'restaurant', label: '🍛 Restaurant' },
+    { key: 'hotel', label: '🏨 Hotel' },
+    { key: 'shop', label: '🛒 Shop' },
+    { key: 'hospital', label: '🏥 Hospital' },
+    { key: 'petrol', label: '⛽ Petrol' },
+    { key: 'bank', label: '🏦 Bank' },
+    { key: 'garage', label: '🔧 Garage' },
+    { key: 'dealership', label: '🏍️ Dealer' },
+    { key: 'police', label: '🚓 Police' },
+    { key: 'railway', label: '🚂 Railway' },
+    { key: 'airport', label: '✈️ Airport' },
+  ];
+
+  const px = rt.mode === 'walk' ? rt.walk.x : rt.bike.x;
+  const pz = rt.mode === 'walk' ? rt.walk.z : rt.bike.z;
+
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return [...poiById.values()]
+      .filter((p) => {
+        if (filter && p.kind !== filter) return false;
+        if (q && !p.name.toLowerCase().includes(q) && !p.kind.includes(q)) return false;
+        return true;
+      })
+      .map((p) => ({ ...p, dist: Math.round(Math.hypot(p.x - px, p.z - pz)) }))
+      .sort((a, b) => a.dist - b.dist)
+      .slice(0, 12);
+  }, [query, filter, px, pz]);
+
   return (
     <Modal title="City map" icon="🗺️" wide>
-      <div className="flex flex-col items-center gap-2"><MapCanvas size={640} full onPick={(x, z) => {
-        let best: string | null = null, bd = 60;
-        for (const p of [...poiById.values()]) { const d = Math.hypot(p.x - x, p.z - z); if (d < bd) { bd = d; best = p.id; } }
-        if (best) { startNavigation(best); close(); } else toast('Click near a place to navigate there');
-      }} /><p className="text-xs text-slate-400">Click a place to start GPS navigation. Blue squares are police patrols; checkpoints are on the roads.</p></div>
+      <div className="flex flex-col gap-3">
+        {/* search + filter */}
+        <div className="flex flex-col gap-2">
+          <input
+            type="text" placeholder="Search places… (hotel, hospital, Amma Mess…)"
+            value={query} onChange={(e) => setQuery(e.target.value)}
+            className="w-full rounded-lg bg-white/10 px-3 py-2 text-sm text-white placeholder-slate-400 outline-none focus:ring-2 focus:ring-sky-400"
+          />
+          <div className="flex flex-wrap gap-1.5">
+            {CATEGORIES.map((c) => (
+              <button key={c.key}
+                onClick={() => setFilter(filter === c.key ? null : c.key)}
+                className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                  filter === c.key ? 'bg-sky-500 text-white' : 'bg-white/10 text-slate-300 hover:bg-white/20'
+                }`}
+              >{c.label}</button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          {/* map */}
+          <MapCanvas size={480} full onPick={(x, z) => {
+            let best: string | null = null, bd = 60;
+            for (const p of [...poiById.values()]) {
+              if (filter && p.kind !== filter) continue;
+              const d = Math.hypot(p.x - x, p.z - z); if (d < bd) { bd = d; best = p.id; }
+            }
+            if (best) { startNavigation(best); close(); } else toast('Click near a place to navigate there');
+          }} />
+
+          {/* results list */}
+          {(query || filter) && (
+            <div className="flex w-56 flex-col gap-1.5 overflow-y-auto" style={{ maxHeight: 480 }}>
+              {results.length === 0 && <p className="text-xs text-slate-400">No places found.</p>}
+              {results.map((p) => (
+                <button key={p.id}
+                  onClick={() => { startNavigation(p.id); close(); }}
+                  className="rounded-lg bg-white/8 px-3 py-2 text-left text-xs hover:bg-white/15 transition"
+                >
+                  <div className="font-semibold text-white">{p.name}</div>
+                  <div className="text-slate-400">{p.kind} · {p.dist} m away</div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <p className="text-xs text-slate-400">Click a place on the map or a result to start GPS navigation.</p>
+      </div>
     </Modal>
   );
 }

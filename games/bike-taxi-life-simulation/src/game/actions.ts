@@ -8,8 +8,11 @@ import { notify } from './state';
 const st = () => useGame.getState();
 
 export function acceptOfferAction() {
-  const r = st().act((s) => acceptOffer(s));
-  if (r) { chime('ding'); rt.target = { x: r.pickup.x, z: r.pickup.z, kind: 'pickup' }; }
+  const pickup = st().act((s) => {
+    const r = acceptOffer(s);
+    return r ? { x: r.pickup.x, z: r.pickup.z } : null;
+  });
+  if (pickup) { chime('ding'); rt.target = { ...pickup, kind: 'pickup' }; }
 }
 export function declineOfferAction() { st().act((s) => declineOffer(s)); }
 export function cancelRideAction() { st().act((s) => cancelPersonalRide(s)); rt.target = null; rt.route = null; }
@@ -29,8 +32,8 @@ export function boardAction() {
   }
 }
 export function dropAction() {
-  const r = st().act((s) => completePersonalRide(s, { ...rt.tel }));
-  if (r) { chime('good'); rt.passengerBoarded = false; rt.target = null; rt.route = null; st().openPanel('ridesummary', r.id); }
+  const id = st().act((s) => completePersonalRide(s, { ...rt.tel })?.id ?? null);
+  if (id) { chime('good'); rt.passengerBoarded = false; rt.target = null; rt.route = null; st().openPanel('ridesummary', id); }
 }
 export function arriveAction() { st().act((s) => arriveAtPickup(s)); }
 

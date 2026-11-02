@@ -3,16 +3,16 @@ import { neighbors, nodeId, nodePos, NXN, NZN, P, RW, signalState } from './city
 import { clamp, mulberry32 } from '../util';
 
 const rnd = mulberry32(4242);
-const CAR_COLORS = ['#e5e7eb', '#9ca3af', '#1f2937', '#b91c1c', '#1d4ed8', '#f8fafc', '#a16207', '#0f766e'];
-const SHIRTS = ['#2563eb', '#f1f5f9', '#16a34a', '#f59e0b', '#db2777', '#7c3aed', '#0ea5e9', '#ef4444'];
+const CAR_COLORS = ['#e5e7eb', '#9ca3af', '#1f2937', '#b91c1c', '#1d4ed8', '#f8fafc', '#a16207', '#0f766e', '#d97706', '#065f46', '#7c3aed', '#be123c'];
+const SHIRTS = ['#2563eb', '#f1f5f9', '#16a34a', '#f59e0b', '#db2777', '#7c3aed', '#0ea5e9', '#ef4444', '#84cc16', '#f97316', '#e2e8f0', '#78350f'];
 
 const KINDS: { kind: TrafficVehicle['kind']; w: number; len: number; wid: number; v: number }[] = [
-  { kind: 'car', w: 38, len: 4.2, wid: 1.8, v: 13 },
-  { kind: 'bike', w: 20, len: 2, wid: 0.8, v: 12 },
-  { kind: 'auto', w: 12, len: 2.6, wid: 1.4, v: 8.5 },
-  { kind: 'bus', w: 7, len: 10, wid: 2.5, v: 9 },
-  { kind: 'truck', w: 7, len: 7, wid: 2.4, v: 9 },
-  { kind: 'taxi', w: 12, len: 4.2, wid: 1.8, v: 12 },
+  { kind: 'car',   w: 32, len: 4.2, wid: 1.8, v: 13 },
+  { kind: 'bike',  w: 28, len: 2,   wid: 0.8, v: 12 },
+  { kind: 'auto',  w: 22, len: 2.6, wid: 1.4, v: 8.5 },
+  { kind: 'bus',   w: 8,  len: 10,  wid: 2.5, v: 9 },
+  { kind: 'truck', w: 5,  len: 7,   wid: 2.4, v: 9 },
+  { kind: 'taxi',  w: 14, len: 4.2, wid: 1.8, v: 12 },
 ];
 
 function edgeDir(a: number, b: number): [number, number] {
@@ -20,7 +20,7 @@ function edgeDir(a: number, b: number): [number, number] {
   return [Math.sign(bx - ax), Math.sign(bz - az)];
 }
 
-export function initTraffic(count = 56) {
+export function initTraffic(count = 90) {
   rt.traffic = [];
   const total = KINDS.reduce((a, k) => a + k.w, 0);
   for (let n = 0; n < count; n++) {
@@ -39,9 +39,9 @@ export function initTraffic(count = 56) {
   }
 }
 
-export function initPeds(count = 90) {
+export function initPeds(count = 160) {
   rt.peds = [];
-  const kinds = ['office', 'student', 'shopkeeper', 'tourist', 'resident', 'mechanic', 'police'];
+  const kinds = ['office', 'student', 'shopkeeper', 'tourist', 'resident', 'mechanic', 'police', 'vendor', 'chai', 'construction', 'schoolkid', 'delivery'];
   for (let n = 0; n < count; n++) {
     const i = Math.floor(rnd() * NXN), j = Math.floor(rnd() * NZN);
     const nb = neighbors(i, j);
@@ -49,7 +49,9 @@ export function initPeds(count = 90) {
     const kind = kinds[Math.floor(rnd() * kinds.length)];
     rt.peds.push({
       id: n, a: nodeId(i, j), b: nodeId(nxt.i, nxt.j), s: rnd() * P, side: rnd() < 0.5 ? 1 : -1, sideNow: 1, speed: 1.1 + rnd() * 0.7, x: 0, z: 0, heading: 0, hidden: 0,
-      kind, shirt: kind === 'police' ? '#1e3a8a' : kind === 'student' ? '#f8fafc' : kind === 'mechanic' ? '#ea580c' : SHIRTS[Math.floor(rnd() * SHIRTS.length)], phase: rnd() * 6, alive: 1,
+      kind,
+      shirt: kind === 'police' ? '#1e3a8a' : kind === 'student' ? '#f8fafc' : kind === 'mechanic' ? '#ea580c' : kind === 'vendor' ? '#f59e0b' : kind === 'chai' ? '#78350f' : kind === 'construction' ? '#f97316' : kind === 'schoolkid' ? '#1d4ed8' : kind === 'delivery' ? '#16a34a' : SHIRTS[Math.floor(rnd() * SHIRTS.length)],
+      phase: rnd() * 6, alive: 1, moving: true,
     });
   }
 }
@@ -57,7 +59,6 @@ export function initPeds(count = 90) {
 const speedFactor = (w: string) => (w === 'heavyRain' || w === 'thunderstorm' ? 0.72 : w === 'lightRain' || w === 'fog' ? 0.85 : 1);
 
 export function updateTraffic(dt: number, weather: string, hour: number, px: number, pz: number, pHeading: number, pOnRoad: boolean) {
-  const t = rt.simTimeSec;
   const vs = rt.traffic;
   const night = hour >= 23 || hour < 5;
   const sf = speedFactor(weather) * (night ? 1.05 : 1);
@@ -68,16 +69,6 @@ export function updateTraffic(dt: number, weather: string, hour: number, px: num
     if (v.hit > 0) v.hit -= dt;
     // desired speed
     let target = v.maxV * sf;
-    // traffic signal ahead
-    const ahead = len - v.s;
-    const bi = v.b % NXN, bj = Math.floor(v.b / NXN);
-    const axis: 'x' | 'z' = dx !== 0 ? 'x' : 'z';
-    const sig = signalState(bi, bj, axis, t);
-    const stopLine = RW / 2 + 2.5 + v.len / 2;
-    if (sig !== 'green' && ahead > stopLine - 0.5) {
-      const gap = ahead - stopLine;
-      if (sig === 'red' || gap > v.speed * 1.6) target = Math.min(target, Math.max(0, gap) * 1.3);
-    }
     // following + overtaking
     let blocker: TrafficVehicle | null = null, bgap = 1e9;
     for (const o of vs) {
@@ -87,6 +78,7 @@ export function updateTraffic(dt: number, weather: string, hour: number, px: num
         if (g < bgap && (v.overtake <= 0 || Math.abs(o.lane - v.lane) < 1)) { bgap = g; blocker = o; }
       } else if (o.a === v.b && o.b !== v.a) {
         const [ox, oz] = edgeDir(o.a, o.b);
+        const ahead = len - v.s;
         if (ox === dx && oz === dz) { const g = ahead + o.s - (o.len + v.len) / 2; if (g < bgap && g > -1) { bgap = g; blocker = o; } }
       }
     }
@@ -135,14 +127,14 @@ export function updateTraffic(dt: number, weather: string, hour: number, px: num
     const [ax, az] = nodePos(p.a), [bx, bz] = nodePos(p.b);
     const dx = Math.sign(bx - ax);
     const len = Math.hypot(bx - ax, bz - az);
-    // wait at red signals before crossing
     const near = len - p.s;
     let go = true;
     if (near < 9 && near > 6) {
       const bi = p.b % NXN, bj = Math.floor(p.b / NXN);
-      const axis: 'x' | 'z' = dx !== 0 ? 'z' : 'x'; // crossing traffic axis
+      const axis: 'x' | 'z' = dx !== 0 ? 'z' : 'x';
       if (signalState(bi, bj, axis, rt.simTimeSec) === 'green') go = false;
     }
+    p.moving = go;
     if (go) p.s += p.speed * dt * (weather === 'heavyRain' || weather === 'thunderstorm' ? 1.35 : 1);
     if (p.s >= len) {
       p.s -= len;
@@ -158,22 +150,25 @@ export function updateTraffic(dt: number, weather: string, hour: number, px: num
     const off = (RW / 2 + 1.8) * p.sideNow;
     p.x = sx + ndx * p.s + ndz * off; p.z = sz + ndz * p.s - ndx * off;
     p.heading = Math.atan2(ndx, ndz);
-    p.phase += dt * 6;
+    if (go) p.phase += dt * p.speed * 4.2 * (weather === 'heavyRain' || weather === 'thunderstorm' ? 1.35 : 1);
   }
 }
 
 export function pedActivity(hour: number) {
-  if (hour >= 8 && hour < 11) return 1;
-  if (hour >= 17 && hour < 21) return 1;
-  if (hour >= 11 && hour < 17) return 0.8;
-  if (hour >= 6 && hour < 8) return 0.6;
-  if (hour >= 21 && hour < 24) return 0.45;
-  return 0.12;
+  if (hour >= 8 && hour < 11) return 1;       // morning rush
+  if (hour >= 17 && hour < 21) return 1;      // evening rush
+  if (hour >= 11 && hour < 14) return 0.85;   // lunch crowd
+  if (hour >= 14 && hour < 17) return 0.75;
+  if (hour >= 6 && hour < 8) return 0.65;
+  if (hour >= 21 && hour < 23) return 0.5;    // night market
+  if (hour >= 23 || hour < 5) return 0.1;
+  return 0.3;
 }
 export function trafficDensity(hour: number) {
   if ((hour >= 8 && hour < 11) || (hour >= 17 && hour < 20)) return 1;
-  if (hour >= 11 && hour < 17) return 0.8;
-  if (hour >= 5 && hour < 8) return 0.6;
-  if (hour >= 20 && hour < 24) return 0.5;
-  return 0.22;
+  if (hour >= 11 && hour < 14) return 0.88;   // lunch traffic
+  if (hour >= 14 && hour < 17) return 0.78;
+  if (hour >= 5 && hour < 8) return 0.65;
+  if (hour >= 20 && hour < 23) return 0.6;
+  return 0.2;
 }

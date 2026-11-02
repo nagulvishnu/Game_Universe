@@ -33,8 +33,13 @@ export function migrate(raw: Partial<GameState> & { version?: number }): GameSta
   s.unlocks = s.unlocks ?? ['taxiPlatform', 'maps', 'bank', 'contacts'];
   s.personalRides = s.personalRides ?? [];
   s.companyIncomeDay = s.companyIncomeDay ?? {};
-  s.rides = (s.rides ?? []).filter((r) => r.driverType === 'employee' || ['completed', 'cancelled', 'expired'].includes(r.status));
-  s.activeRideId = null; s.offer = null; s.offlineReport = null;
+  // Keep the player's current ride as well as employee rides and completed history.
+  // Old saves may have a stale activeRideId, so validate it before restoring it.
+  const rides = s.rides ?? [];
+  const active = rides.find((r) => r.id === s.activeRideId && r.driverType === 'player' && r.source === 'personal' && ['enroute', 'arrived', 'inprogress'].includes(r.status));
+  s.activeRideId = active?.id ?? null;
+  s.rides = rides.filter((r) => r.id === s.activeRideId || r.driverType === 'employee' || ['completed', 'cancelled', 'expired'].includes(r.status));
+  s.offer = null; s.offlineReport = null;
   if (s.myBooking && !s.rides.find((r) => r.id === s.myBooking && r.status !== 'completed' && r.status !== 'cancelled' && r.status !== 'expired')) s.myBooking = null;
   if (s.company) s.company.employees.forEach((e) => { e.earnings = e.earnings ?? []; e.history = e.history ?? []; });
   s.version = SAVE_VERSION;

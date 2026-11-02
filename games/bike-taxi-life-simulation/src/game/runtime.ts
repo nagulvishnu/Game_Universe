@@ -28,6 +28,11 @@ export const rt = {
   simTimeSec: 0,
   shake: 0,
   mapOpen: false,
+  boost: 0,        // 0..1 charge level
+  boostActive: 0,  // seconds remaining on active boost
+  roadBump: 0,     // current bump intensity for feel
+  velAngle: 0,     // velocity direction (world angle) — lags heading during drift
+  driftAmt: 0,     // 0..1 current drift intensity for visuals/audio
 };
 
 export interface TrafficVehicle {
@@ -35,7 +40,7 @@ export interface TrafficVehicle {
   x: number; z: number; heading: number; speed: number;
   a: number; b: number; s: number; len: number; color: string; maxV: number; lane: number; hit: number; blockedT: number; overtake: number; wid: number;
 }
-export interface Ped { id: number; a: number; b: number; s: number; side: number; sideNow: number; speed: number; x: number; z: number; heading: number; hidden: number; shirt: string; kind: string; phase: number; alive: number }
+export interface Ped { id: number; a: number; b: number; s: number; side: number; sideNow: number; speed: number; x: number; z: number; heading: number; hidden: number; shirt: string; kind: string; phase: number; alive: number; moving: boolean }
 
 export interface HudState {
   speedKmh: number; fuel: number; cond: number; prompt: string | null; mode: string; signal: string; district: string; gear: number;

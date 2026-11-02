@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { DISTRICTS, lots, lotsByBlock, neighbors, NXB, NXN, NZB, NZN, P, PARKS, pois, RW, signalState, WORLD_D, WORLD_W, districtOfBlock, type Lot } from '../game/world/city';
+import { DISTRICTS, FLYOVER, flyoverHeight, lots, lotsByBlock, neighbors, NXB, NXN, NZB, NZN, P, PARKS, pois, RW, WORLD_D, WORLD_W, districtOfBlock, type Lot } from '../game/world/city';
+import type { PoiKind } from '../game/types';
 import { mulberry32 } from '../game/util';
 import { rt } from '../game/runtime';
 import { useGame } from '../game/store';
@@ -53,13 +54,21 @@ function solidGeo(g: THREE.BufferGeometry, color: THREE.Color): THREE.BufferGeom
   const uv = new Float32Array(n * 2), col = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) { uv[i * 2] = 0.012; uv[i * 2 + 1] = 0.988; col[i * 3] = color.r; col[i * 3 + 1] = color.g; col[i * 3 + 2] = color.b; }
   g.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
-  return g.index ? g.toNonIndexed() : g;
+  if (!g.index) return g;
+  const converted = g.toNonIndexed();
+  g.dispose();
+  return converted;
 }
 
 function lotGeometries(l: Lot, rnd: () => number): THREE.BufferGeometry[] {
   const col = new THREE.Color(l.color);
   const out: THREE.BufferGeometry[] = [];
-  const nonIdx = (g: THREE.BufferGeometry) => (g.index ? g.toNonIndexed() : g);
+  const nonIdx = (g: THREE.BufferGeometry) => {
+    if (!g.index) return g;
+    const converted = g.toNonIndexed();
+    g.dispose();
+    return converted;
+  };
   if (l.open) return out;
   const stepped = l.h > 40 && l.district !== 'airport';
   if (stepped) {
@@ -84,6 +93,24 @@ function lotGeometries(l: Lot, rnd: () => number): THREE.BufferGeometry[] {
   const north = l.k < 2 && l.district !== 'airport';
   const az0 = north ? l.z0 - 1.6 : l.z1, az1 = north ? l.z0 : l.z1 + 1.6;
   if (l.district !== 'industrial' && l.district !== 'airport') out.push(nonIdx(boxGeo(l.x0 + 3, az0, l.x1 - 3, az1, 0.5, new THREE.Color([0xd9534f, 0x2e86de, 0xf39c12, 0x27ae60][Math.floor(rnd() * 4)]), 3.3)));
+  if (l.district === 'residential' && l.h > 14) {
+    const front = north ? l.z0 - 1.25 : l.z1 + 0.25;
+    const back = north ? l.z0 - 0.25 : l.z1 + 1.25;
+    const balcony = new THREE.Color(0xe5ded2);
+    for (let y = 5; y < Math.min(l.h - 2, 24); y += 6) {
+      out.push(nonIdx(boxGeo(l.x0 + 5, front, l.x1 - 5, back, 0.18, balcony, y)));
+      const railZ0 = north ? front : back - 0.12;
+      const railZ1 = north ? railZ0 + 0.12 : back;
+      out.push(nonIdx(boxGeo(l.x0 + 5, railZ0, l.x1 - 5, railZ1, 0.72, balcony.clone().multiplyScalar(0.9), y + 0.18)));
+      out.push(nonIdx(boxGeo(l.x0 + 5, front, l.x0 + 5.12, back, 0.75, balcony, y + 0.18)));
+      out.push(nonIdx(boxGeo(l.x1 - 5.12, front, l.x1 - 5, back, 0.75, balcony, y + 0.18)));
+    }
+    if (l.h > 20) {
+      const tank = new THREE.CylinderGeometry(1.1, 1.1, 2.4, 10);
+      tank.translate(l.x1 - 6, l.h + 1.2, l.z1 - 6);
+      out.push(solidGeo(tank, new THREE.Color(0x64748b)));
+    }
+  }
   return out;
 }
 
@@ -104,10 +131,17 @@ export function makeSignTexture(text: string, bg: string, fg = '#fff', w = 512, 
 function asphaltTexture(dashes: boolean) {
   const c = document.createElement('canvas'); c.width = 128; c.height = 64;
   const g = c.getContext('2d')!;
+  const rnd = mulberry32(dashes ? 8061 : 4187);
   g.fillStyle = '#3a3d42'; g.fillRect(0, 0, 128, 64);
-  for (let i = 0; i < 400; i++) { g.fillStyle = `rgba(${Math.random() < 0.5 ? 255 : 0},${Math.random() < 0.5 ? 255 : 0},${Math.random() < 0.5 ? 255 : 0},0.035)`; g.fillRect(Math.random() * 128, Math.random() * 64, 2, 2); }
+  for (let i = 0; i < 600; i++) {
+    const shade = Math.floor(45 + rnd() * 45);
+    g.fillStyle = `rgba(${shade},${shade},${shade},${0.04 + rnd() * 0.05})`;
+    g.fillRect(rnd() * 128, rnd() * 64, 1 + rnd() * 2, 1 + rnd() * 2);
+  }
+  g.fillStyle = 'rgba(20,22,25,.22)';
+  g.fillRect(0, 10, 128, 1); g.fillRect(0, 53, 128, 1);
   g.fillStyle = '#e8e8e8'; g.fillRect(0, 2, 128, 2); g.fillRect(0, 60, 128, 2);
-  if (dashes) { g.fillStyle = '#f2c94c'; g.fillRect(8, 30, 56, 4); }
+  if (dashes) { g.fillStyle = '#e8bd49'; g.fillRect(8, 30, 38, 3); }
   const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
   return t;
 }
@@ -133,10 +167,31 @@ export function City() {
     return arr;
   }, []);
 
+  useEffect(() => () => {
+    blockMeshes.forEach(({ geo }) => geo.dispose());
+    map.dispose(); emissive.dispose(); roadTex.dispose();
+    bMat.dispose(); roadMat.dispose(); plainRoad.dispose(); lampMat.dispose(); poolMat.dispose();
+  }, [blockMeshes, map, emissive, roadTex, bMat, roadMat, plainRoad, lampMat, poolMat]);
+
   // slabs
   const slabRef = useRef<THREE.InstancedMesh>(null);
+  const sidewalkRef = useRef<THREE.InstancedMesh>(null);
   const roadsH = useMemo(() => Array.from({ length: NZN }, (_, j) => j), []);
   const roadsV = useMemo(() => Array.from({ length: NXN }, (_, i) => i), []);
+  const sidewalks = useMemo(() => {
+    const out: { x: number; z: number; horizontal: boolean; district: string }[] = [];
+    for (let j = 0; j < NZB; j++) for (let i = 0; i < NXB; i++) {
+      const district = districtOfBlock(i, j);
+      const cx = i * P + P / 2, cz = j * P + P / 2;
+      out.push(
+        { x: cx, z: j * P + RW / 2 + 1.7, horizontal: true, district },
+        { x: cx, z: (j + 1) * P - RW / 2 - 1.7, horizontal: true, district },
+        { x: i * P + RW / 2 + 1.7, z: cz, horizontal: false, district },
+        { x: (i + 1) * P - RW / 2 - 1.7, z: cz, horizontal: false, district },
+      );
+    }
+    return out;
+  }, []);
   const interRef = useRef<THREE.InstancedMesh>(null);
   const zebraRef = useRef<THREE.InstancedMesh>(null);
   const trunkRef = useRef<THREE.InstancedMesh>(null);
@@ -144,8 +199,7 @@ export function City() {
   const poleRef = useRef<THREE.InstancedMesh>(null);
   const lampRef = useRef<THREE.InstancedMesh>(null);
   const poolRef = useRef<THREE.InstancedMesh>(null);
-  const sigPoleRef = useRef<THREE.InstancedMesh>(null);
-  const sigHeadRef = useRef<THREE.InstancedMesh>(null);
+  const puddleRef = useRef<THREE.InstancedMesh>(null);
 
   const props = useMemo(() => {
     const rnd = mulberry32(31);
@@ -173,6 +227,20 @@ export function City() {
     // coastal palms along the beach
     for (let z = 20; z < WORLD_D - 10; z += 16) trees.push({ x: WORLD_W + 16 + rnd() * 20, z, s: 1.2 + rnd() * 0.5, palm: true, c: rnd() });
     return { trees, lamps };
+  }, []);
+  const puddles = useMemo(() => {
+    const rnd = mulberry32(9182);
+    return Array.from({ length: 240 }, () => {
+      const horizontal = rnd() < 0.5;
+      const road = horizontal ? Math.floor(rnd() * NZN) : Math.floor(rnd() * NXN);
+      return {
+        x: horizontal ? rnd() * WORLD_W : road * P + (rnd() - 0.5) * 5,
+        z: horizontal ? road * P + (rnd() - 0.5) * 5 : rnd() * WORLD_D,
+        sx: 0.8 + rnd() * 2.2,
+        sz: 0.35 + rnd() * 0.8,
+        horizontal,
+      };
+    });
   }, []);
 
   const [zebra] = useState(() => {
@@ -203,6 +271,15 @@ export function City() {
       sl.setColorAt(n, col); n++;
     }
     sl.instanceMatrix.needsUpdate = true; if (sl.instanceColor) sl.instanceColor.needsUpdate = true;
+    const sw = sidewalkRef.current!;
+    sidewalks.forEach((s, i) => {
+      m.position.set(s.x, 0.31, s.z);
+      m.scale.set(s.horizontal ? P - RW : 3.2, 0.14, s.horizontal ? 3.2 : P - RW);
+      m.rotation.set(0, 0, 0); m.updateMatrix(); sw.setMatrixAt(i, m.matrix);
+      col.set(s.district === 'coastal' ? '#d9c9a6' : s.district === 'industrial' ? '#aaa69e' : '#c5c0b5');
+      sw.setColorAt(i, col);
+    });
+    sw.instanceMatrix.needsUpdate = true; if (sw.instanceColor) sw.instanceColor.needsUpdate = true;
     const ir = interRef.current!; n = 0;
     for (let j = 0; j < NZN; j++) for (let i = 0; i < NXN; i++) { m.position.set(i * P, 0.035, j * P); m.scale.set(RW, 1, RW); m.rotation.set(-Math.PI / 2, 0, 0); m.updateMatrix(); ir.setMatrixAt(n++, m.matrix); }
     ir.instanceMatrix.needsUpdate = true;
@@ -224,36 +301,26 @@ export function City() {
       m.position.set(l.x, 0.3, l.z); m.scale.set(1, 1, 1); m.rotation.set(-Math.PI / 2, 0, 0); m.updateMatrix(); pl.setMatrixAt(k, m.matrix);
     });
     po.instanceMatrix.needsUpdate = true; la.instanceMatrix.needsUpdate = true; pl.instanceMatrix.needsUpdate = true;
-    const sp = sigPoleRef.current!, sh = sigHeadRef.current!; n = 0;
-    for (let j = 0; j < NZN; j++) for (let i = 0; i < NXN; i++) for (let c = 0; c < 4; c++) {
-      const sx = c % 2 === 0 ? 1 : -1, sz = c < 2 ? 1 : -1;
-      const x = i * P + sx * (RW / 2 + 0.8), zz = j * P + sz * (RW / 2 + 0.8);
-      m.position.set(x, 2.5, zz); m.scale.set(1, 1, 1); m.rotation.set(0, 0, 0); m.updateMatrix(); sp.setMatrixAt(n, m.matrix);
-      m.position.set(x, 5.4, zz); m.updateMatrix(); sh.setMatrixAt(n, m.matrix); sh.setColorAt(n, col.set('#ef4444')); n++;
-    }
-    sp.instanceMatrix.needsUpdate = true; sh.instanceMatrix.needsUpdate = true; if (sh.instanceColor) sh.instanceColor.needsUpdate = true;
-  }, [props, zebra]);
+    const puddleMesh = puddleRef.current!;
+    puddles.forEach((puddle, i) => {
+      m.position.set(puddle.x, 0.052, puddle.z);
+      m.scale.set(puddle.horizontal ? puddle.sx : puddle.sz, 1, puddle.horizontal ? puddle.sz : puddle.sx);
+      m.rotation.set(-Math.PI / 2, 0, 0); m.updateMatrix();
+      puddleMesh.setMatrixAt(i, m.matrix);
+    });
+    puddleMesh.instanceMatrix.needsUpdate = true;
 
-  const lastSig = useRef(-1);
-  const colG = useMemo(() => [new THREE.Color('#22c55e'), new THREE.Color('#facc15'), new THREE.Color('#ef4444')], []);
+  }, [props, zebra, sidewalks, puddles]);
+
   useFrame(() => {
     const night = rt.night;
     bMat.emissiveIntensity = night * 0.95;
     lampMat.emissiveIntensity = night * 2.2;
     poolMat.opacity = night * (0.1 + rt.wet * 0.12);
+    if (puddleRef.current) (puddleRef.current.material as THREE.MeshStandardMaterial).opacity = rt.wet * 0.3;
     roadMat.roughness = 0.92 - rt.wet * 0.6; roadMat.metalness = rt.wet * 0.25;
     roadMat.color.setScalar(1 - rt.wet * 0.35); plainRoad.roughness = roadMat.roughness; plainRoad.metalness = roadMat.metalness;
     plainRoad.color.set('#3a3d42').multiplyScalar(1 - rt.wet * 0.35);
-    const tk = Math.floor(rt.simTimeSec * 2);
-    if (tk !== lastSig.current && sigHeadRef.current) {
-      lastSig.current = tk;
-      const sh = sigHeadRef.current; let n = 0;
-      for (let j = 0; j < NZN; j++) for (let i = 0; i < NXN; i++) for (let c = 0; c < 4; c++) {
-        const st = signalState(i, j, c % 2 === 0 ? 'x' : 'z', rt.simTimeSec);
-        sh.setColorAt(n++, st === 'green' ? colG[0] : st === 'yellow' ? colG[1] : colG[2]);
-      }
-      if (sh.instanceColor) sh.instanceColor.needsUpdate = true;
-    }
   });
 
   const hqLot = lots.find((l) => l.special === 'hq');
@@ -276,6 +343,7 @@ export function City() {
       ))}
       <RoadTexRepeat tex={roadTex} />
       <instancedMesh ref={interRef} args={[undefined, undefined, NXN * NZN]} receiveShadow><planeGeometry args={[1, 1]} /><primitive object={plainRoad} attach="material" /></instancedMesh>
+      <instancedMesh ref={sidewalkRef} args={[undefined, undefined, sidewalks.length]} receiveShadow><boxGeometry args={[1, 1, 1]} /><meshStandardMaterial roughness={0.96} /></instancedMesh>
       <instancedMesh ref={zebraRef} args={[undefined, undefined, zebra.length]}><planeGeometry args={[1, 1]} /><meshBasicMaterial color="#f1f1f1" /></instancedMesh>
       <instancedMesh ref={slabRef} args={[undefined, undefined, NXB * NZB]} receiveShadow><boxGeometry args={[1, 1, 1]} /><meshStandardMaterial roughness={0.95} /></instancedMesh>
       {/* buildings */}
@@ -286,14 +354,149 @@ export function City() {
       <instancedMesh ref={poleRef} args={[undefined, undefined, props.lamps.length]}><cylinderGeometry args={[0.07, 0.1, 7, 6]} /><meshStandardMaterial color="#4b5563" /></instancedMesh>
       <instancedMesh ref={lampRef} args={[undefined, undefined, props.lamps.length]}><boxGeometry args={[0.9, 0.15, 0.4]} /><primitive object={lampMat} attach="material" /></instancedMesh>
       <instancedMesh ref={poolRef} args={[undefined, undefined, props.lamps.length]}><circleGeometry args={[7, 12]} /><primitive object={poolMat} attach="material" /></instancedMesh>
-      <instancedMesh ref={sigPoleRef} args={[undefined, undefined, NXN * NZN * 4]}><cylinderGeometry args={[0.07, 0.09, 5, 6]} /><meshStandardMaterial color="#374151" /></instancedMesh>
-      <instancedMesh ref={sigHeadRef} args={[undefined, undefined, NXN * NZN * 4]}><boxGeometry args={[0.45, 0.9, 0.45]} /><meshBasicMaterial /></instancedMesh>
+      <instancedMesh ref={puddleRef} args={[undefined, undefined, puddles.length]} frustumCulled={false}>
+        <circleGeometry args={[0.5, 10]} />
+        <meshStandardMaterial color="#506577" roughness={0.13} metalness={0.28} transparent opacity={0} depthWrite={false} />
+      </instancedMesh>
+
       <Decor />
+      <Flyover />
+      <Doorways />
       {hqLot && <CompanySign lot={hqLot} />}
       <BranchSigns />
       <PoiSigns />
     </group>
   );
+}
+
+function Flyover() {
+  const sign = useMemo(() => makeSignTexture('ANNA SALAI FLYOVER', '#172554', '#fff', 512, 112, 'ELEVATED ROAD  •  KEEP LEFT'), []);
+  const road = useMemo(() => {
+    const stations = [
+      [FLYOVER.startX, 0],
+      [FLYOVER.rampUpEndX, FLYOVER.height],
+      [FLYOVER.rampDownStartX, FLYOVER.height],
+      [FLYOVER.endX, 0],
+    ] as const;
+    const positions: number[] = [];
+    const indices: number[] = [];
+    stations.forEach(([x, y]) => {
+      positions.push(x, y + 0.12, FLYOVER.z - FLYOVER.halfWidth);
+      positions.push(x, y + 0.12, FLYOVER.z + FLYOVER.halfWidth);
+    });
+    for (let i = 0; i < stations.length - 1; i++) {
+      const a = i * 2;
+      indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    return geometry;
+  }, []);
+  useEffect(() => () => { road.dispose(); sign.dispose(); }, [road, sign]);
+
+  const barrierSegments = [
+    [FLYOVER.startX, FLYOVER.rampUpEndX],
+    [FLYOVER.rampUpEndX, FLYOVER.rampDownStartX],
+    [FLYOVER.rampDownStartX, FLYOVER.endX],
+  ];
+  return (
+    <group>
+      <mesh position={[FLYOVER.startX - 8, 3.2, FLYOVER.z]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[6.5, 1.6]} />
+        <meshBasicMaterial map={sign} side={THREE.DoubleSide} />
+      </mesh>
+      <mesh position={[FLYOVER.endX + 8, 3.2, FLYOVER.z]} rotation={[0, Math.PI / 2, 0]}>
+        <planeGeometry args={[6.5, 1.6]} />
+        <meshBasicMaterial map={sign} side={THREE.DoubleSide} />
+      </mesh>
+      <mesh geometry={road} receiveShadow>
+        <meshStandardMaterial color="#34383d" roughness={0.88} side={THREE.DoubleSide} />
+      </mesh>
+      {barrierSegments.flatMap(([start, end]) => {
+        const startY = flyoverHeight(start, FLYOVER.z);
+        const endY = flyoverHeight(end, FLYOVER.z);
+        const length = end - start;
+        const angle = Math.atan2(endY - startY, length);
+        return [-1, 1].map((side) => (
+          <mesh
+            key={`${start}-${side}`}
+            position={[(start + end) / 2, (startY + endY) / 2 + 0.68, FLYOVER.z + side * (FLYOVER.halfWidth - 0.18)]}
+            rotation={[0, 0, angle]}
+            castShadow
+          >
+            <boxGeometry args={[length, 1.15, 0.36]} />
+            <meshStandardMaterial color="#c7cbd0" roughness={0.65} />
+          </mesh>
+        ));
+      })}
+      {Array.from({ length: 18 }, (_, i) => {
+        const x = FLYOVER.startX + 8 + i * 12;
+        const y = flyoverHeight(x, FLYOVER.z);
+        return (
+          <mesh
+            key={i}
+            position={[x, y + 0.15, FLYOVER.z]}
+            rotation={[0, 0, Math.atan2(flyoverHeight(x + 1, FLYOVER.z) - flyoverHeight(x - 1, FLYOVER.z), 2)]}
+          >
+            <boxGeometry args={[4, 0.04, 0.16]} />
+            <meshBasicMaterial color="#f4d35e" />
+          </mesh>
+        );
+      })}
+      {[FLYOVER.rampUpEndX + 18, (FLYOVER.rampUpEndX + FLYOVER.rampDownStartX) / 2, FLYOVER.rampDownStartX - 18].map((x) => (
+        <mesh key={x} position={[x, FLYOVER.height / 2, FLYOVER.z]} castShadow receiveShadow>
+          <boxGeometry args={[1.8, FLYOVER.height, 1.8]} />
+          <meshStandardMaterial color="#9ca3af" roughness={0.85} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+const DOOR_COLORS: Partial<Record<PoiKind, string>> = {
+  home: '#7c4a2d', hq: '#1e3a8a', branch: '#1e3a8a', garage: '#374151', restaurant: '#92400e',
+  shop: '#047857', bank: '#1e3a8a', regoffice: '#6d28d9', hospital: '#0e7490', dealership: '#4338ca',
+  police: '#1e40af', hotel: '#78350f', petrol: '#c2410c', railway: '#1d4ed8', bus: '#0369a1',
+  airport: '#0e7490', mall: '#be185d', itpark: '#1e40af', school: '#0f766e', beach: '#0284c7',
+  factory: '#475569', park: '#166534', office: '#334155', apartments: '#78350f', market: '#b45309',
+};
+
+function Doorways() {
+  const enterable = useMemo(() => pois.filter((p) => p.enterable), []);
+  return <>
+    {enterable.map((p) => {
+      const col = DOOR_COLORS[p.kind as PoiKind] ?? '#334155';
+      // push arch back to building wall (door POI is 4.8 units in front of wall)
+      const northFacing = p.z % P < P / 2;
+      const wallZ = p.z + (northFacing ? 4.8 : -4.8);
+      return (
+        <group key={p.id} position={[p.x, 0, wallZ]}>
+          {/* left post */}
+          <mesh position={[-0.85, 1.3, 0]} castShadow>
+            <boxGeometry args={[0.28, 2.6, 0.28]} />
+            <meshStandardMaterial color={col} roughness={0.6} />
+          </mesh>
+          {/* right post */}
+          <mesh position={[0.85, 1.3, 0]} castShadow>
+            <boxGeometry args={[0.28, 2.6, 0.28]} />
+            <meshStandardMaterial color={col} roughness={0.6} />
+          </mesh>
+          {/* lintel */}
+          <mesh position={[0, 2.75, 0]} castShadow>
+            <boxGeometry args={[2.0, 0.3, 0.28]} />
+            <meshStandardMaterial color={col} roughness={0.6} />
+          </mesh>
+          {/* door panel */}
+          <mesh position={[0, 1.2, 0.01]}>
+            <boxGeometry args={[1.5, 2.4, 0.08]} />
+            <meshStandardMaterial color="#c8a97a" roughness={0.7} />
+          </mesh>
+        </group>
+      );
+    })}
+  </>;
 }
 
 function RoadTexRepeat({ tex }: { tex: THREE.Texture }) {
@@ -315,9 +518,6 @@ function Decor() {
     out.push(<mesh key="deck" position={[x, 9, 5 * P]} castShadow><boxGeometry args={[7, 1.2, 6 * P]} /><meshStandardMaterial color="#9ca3af" /></mesh>);
     for (let z = 2 * P; z <= 8 * P; z += 26) out.push(<mesh key={'pil' + z} position={[x, 4.5, z]} castShadow><boxGeometry args={[1.4, 9, 1.4]} /><meshStandardMaterial color="#b6bcc4" /></mesh>);
     out.push(<mesh key="train" position={[x, 10.4, 4.2 * P]}><boxGeometry args={[3, 2, 30]} /><meshStandardMaterial color="#2563eb" emissive="#1d4ed8" emissiveIntensity={0.15} /></mesh>);
-    // flyover over the central intersection (x=3P, z=0..): a raised road deck across the horizontal road z = 4P
-    out.push(<mesh key="fly" position={[2 * P + 30, 6.2, 4 * P]} castShadow><boxGeometry args={[100, 0.9, 9]} /><meshStandardMaterial color="#868e96" /></mesh>);
-    for (let q = 0; q < 4; q++) out.push(<mesh key={'fp' + q} position={[2 * P + 30 - 40 + q * 27, 3.1, 4 * P]} castShadow><boxGeometry args={[1.5, 6.2, 1.5]} /><meshStandardMaterial color="#adb5bd" /></mesh>);
     // airport planes & runway
     const rw = 1 * P + P / 2;
     out.push(<mesh key="runway" rotation={[-Math.PI / 2, 0, 0]} position={[3 * P, 0.3, rw - 14]}><planeGeometry args={[5 * P, 14]} /><meshStandardMaterial color="#2f3338" /></mesh>);
@@ -339,6 +539,7 @@ function Decor() {
 function CompanySign({ lot }: { lot: Lot }) {
   const company = useGame((s) => s.g?.company);
   const tex = useMemo(() => (company ? makeSignTexture(company.branding.name, company.branding.primary, '#fff', 512, 128, 'HEADQUARTERS') : null), [company?.branding.name, company?.branding.primary]);
+  useEffect(() => () => { tex?.dispose(); }, [tex]);
   if (!company || !tex) return null;
   const cx = (lot.x0 + lot.x1) / 2;
   return (
@@ -359,14 +560,16 @@ function BranchSigns() {
 }
 function BranchSign({ x, z, name, color }: { x: number; z: number; name: string; color: string }) {
   const tex = useMemo(() => makeSignTexture(name, color, '#fff', 512, 128, 'BRANCH OFFICE'), [name, color]);
+  useEffect(() => () => { tex.dispose(); }, [tex]);
   const north = true;
   void north;
   return <mesh position={[x, 6.5, z + 1.8]}><planeGeometry args={[12, 3]} /><meshBasicMaterial map={tex} side={THREE.DoubleSide} /></mesh>;
 }
 
-const signCache = new Map<string, THREE.Texture>();
 function PoiSigns() {
-  const [near, setNear] = useState<{ id: string; name: string; x: number; z: number; kind: string }[]>([]);
+  const signCache = useMemo(() => new Map<string, THREE.Texture>(), []);
+  useEffect(() => () => { signCache.forEach((texture) => texture.dispose()); signCache.clear(); }, [signCache]);
+  const [near, setNear] = useState<{ id: string; name: string; x: number; z: number; kind: PoiKind }[]>([]);
   const acc = useRef(0);
   useFrame((_, dt) => {
     acc.current += dt;
@@ -377,9 +580,20 @@ function PoiSigns() {
     setNear((prev) => (prev.length === list.length && prev.every((p, i) => p.id === list[i].id) ? prev : list.map((p) => ({ id: p.id, name: p.name, x: p.x, z: p.z, kind: p.kind }))));
   });
   const COL: Record<string, string> = { bank: '#1e3a8a', restaurant: '#b45309', shop: '#047857', hospital: '#b91c1c', dealership: '#4338ca', petrol: '#be123c', police: '#1e40af', garage: '#374151', home: '#0f766e', regoffice: '#6d28d9', hq: '#0f172a', branch: '#0f172a', railway: '#7c2d12', airport: '#0369a1', bus: '#0f766e', mall: '#be185d', hotel: '#92400e', market: '#a16207', beach: '#0e7490', itpark: '#4f46e5', school: '#15803d' };
+  const SUB: Partial<Record<PoiKind, string>> = {
+    restaurant: 'IDLI  •  DOSA  •  FILTER COFFEE',
+    shop: 'KADAI  •  DAILY ESSENTIALS',
+    bus: 'MTC CITY BUS',
+    railway: 'SUBURBAN RAIL',
+    garage: 'TWO-WHEELER SERVICE',
+    petrol: 'FUEL  •  AIR  •  OIL',
+    market: 'FRESH MARKET',
+    beach: 'MARINA COAST',
+    hotel: 'ROOMS  •  RESTAURANT',
+  };
   return <>{near.map((p) => {
     let t = signCache.get(p.id);
-    if (!t) { t = makeSignTexture(p.name, COL[p.kind] ?? '#334155', '#fff', 512, 112); signCache.set(p.id, t); }
+    if (!t) { t = makeSignTexture(p.name, COL[p.kind] ?? '#334155', '#fff', 512, SUB[p.kind] ? 144 : 112, SUB[p.kind]); signCache.set(p.id, t); }
     const north = true; void north;
     return <sprite key={p.id} position={[p.x, 5.6, p.z + (p.z % P < P / 2 ? 2.6 : -2.6)]} scale={[10, 2.2, 1]}><spriteMaterial map={t} depthWrite={false} /></sprite>;
   })}</>;

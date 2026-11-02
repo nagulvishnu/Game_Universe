@@ -10,6 +10,22 @@ export const NXN = NXB + 1; // intersection columns (0..9)
 export const NZN = NZB + 1; // intersection rows (0..10)
 export const WORLD_W = NXB * P;
 export const WORLD_D = NZB * P;
+export const FLYOVER = {
+  z: 4 * P,
+  startX: 2 * P - 80,
+  rampUpEndX: 2 * P - 20,
+  rampDownStartX: 2 * P + 80,
+  endX: 2 * P + 140,
+  height: 6.2,
+  halfWidth: 7,
+};
+
+export function flyoverHeight(x: number, z: number): number {
+  if (Math.abs(z - FLYOVER.z) > FLYOVER.halfWidth || x < FLYOVER.startX || x > FLYOVER.endX) return 0;
+  if (x < FLYOVER.rampUpEndX) return FLYOVER.height * (x - FLYOVER.startX) / (FLYOVER.rampUpEndX - FLYOVER.startX);
+  if (x > FLYOVER.rampDownStartX) return FLYOVER.height * (FLYOVER.endX - x) / (FLYOVER.endX - FLYOVER.rampDownStartX);
+  return FLYOVER.height;
+}
 
 const MAP = [
   'AAAAAAMMS',
@@ -119,7 +135,11 @@ function doorOf(i: number, j: number, k: number): { x: number; z: number } | nul
 }
 
 interface Spec { id: string; name: string; kind: PoiKind; i: number; j: number; k: number; enter?: boolean }
-const ENTERABLE: PoiKind[] = ['home', 'hq', 'branch', 'garage', 'restaurant', 'shop', 'bank', 'regoffice', 'hospital', 'dealership', 'police'];
+const ENTERABLE: PoiKind[] = [
+  'home', 'hq', 'branch', 'garage', 'restaurant', 'shop', 'bank', 'regoffice', 'hospital',
+  'dealership', 'police', 'hotel', 'petrol', 'railway', 'bus', 'airport', 'mall', 'itpark',
+  'school', 'beach', 'factory', 'park', 'office', 'apartments', 'market',
+];
 const SPECS: Spec[] = [
   { id: 'home', name: 'Mariamman Lodge — Room 4', kind: 'home', i: 1, j: 5, k: 0 },
   { id: 'garage1', name: 'Murugan Motors Garage', kind: 'garage', i: 2, j: 4, k: 1 },
@@ -196,7 +216,7 @@ SPECS.forEach((s) => {
     if (!d) continue;
     const opts = names[l.district];
     const [kind, list] = opts[Math.floor(rnd() * opts.length)];
-    addPoi({ id: `g${n++}`, name: list[Math.floor(rnd() * list.length)] + ` #${n}`, kind, district: l.district, x: d.x, z: d.z, enterable: false });
+    addPoi({ id: `g${n++}`, name: list[Math.floor(rnd() * list.length)] + ` #${n}`, kind, district: l.district, x: d.x, z: d.z, enterable: true });
   }
 })();
 
