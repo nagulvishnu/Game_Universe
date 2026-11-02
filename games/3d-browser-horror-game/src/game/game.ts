@@ -26,6 +26,7 @@ import {
 import { ITEM_NAMES, makeBottle, makeGlint, makeKey, makeNote, makeTrap, setTrapAngle, type ItemId, type TrapRT } from './props';
 import { disposeMaterials } from './materials';
 import { disposeTextures } from './textures';
+import { Viewmodel } from './viewmodel';
 import { World } from './world';
 
 export type Phase = 'ready' | 'playing' | 'paused' | 'caught' | 'gameover' | 'win';
@@ -71,6 +72,7 @@ export interface PhaseInfo {
   maxDays?: number;
   time?: number;
   dayChange?: boolean;
+  room?: string;
 }
 
 export interface GameCallbacks {
@@ -189,6 +191,8 @@ export class Game {
   private camera: THREE.PerspectiveCamera;
   private composer: EffectComposer | null = null;
   private horror: ShaderPass | null = null;
+  private vm: Viewmodel;
+  private vmThrow = false;
   private canvas: HTMLCanvasElement;
   private ambient: THREE.AmbientLight;
   private flashLight: THREE.SpotLight;
@@ -300,6 +304,8 @@ export class Game {
     this.camera.rotation.order = 'YXZ';
     this.scene.add(this.camera);
 
+    this.vm = new Viewmodel(w / h);
+
     this.ambient = new THREE.AmbientLight(0x8d9fd0, this.baseAmbient * settings.brightness);
     this.scene.add(this.ambient);
 
@@ -353,6 +359,10 @@ export class Game {
       composer.setPixelRatio(this.renderer.getPixelRatio());
       composer.setSize(w, h);
       composer.addPass(new RenderPass(this.scene, this.camera));
+      const vp = new RenderPass(this.vm.scene, this.vm.camera);
+      vp.clear = false;
+      vp.clearDepth = true;
+      composer.addPass(vp);
       const sp = new ShaderPass(HORROR_SHADER);
       composer.addPass(sp);
       composer.addPass(new OutputPass());
@@ -449,6 +459,8 @@ export class Game {
       this.composer.setSize(w, h);
       this.horror?.uniforms.resolution.value.set(w * this.renderer.getPixelRatio(), h * this.renderer.getPixelRatio());
     }
+    this.vm.camera.aspect = w / h;
+    this.vm.camera.updateProjectionMatrix();
   }
 
   // ====================================================================== public api
@@ -552,6 +564,7 @@ export class Game {
       }
     });
     this.composer?.dispose();
+    this.vm.dispose();
     this.renderer.dispose();
     disposeMaterials();
     disposeTextures();
@@ -599,7 +612,7 @@ export class Game {
     this.keys.add(e.code);
     if (e.code === 'Escape' || e.code === 'KeyP') {
       if (this.phase === 'playing' && (this.noLock || e.code === 'KeyP')) this.pause();
-      else if (this.phase === 'paused' && e.code === 'KeyP') this.resume();
+      else if (this.phase === 'paused' && (e.code === 'KeyP' || e.code === 'Escape')) this.resume();
       return;
     }
     if (this.phase !== 'playing') return;
@@ -652,6 +665,7 @@ export class Game {
   };
 
   private render(dt: number) {
+    this.updateViewmodel(dt);
     if (this.horror) {
       const u = this.horror.uniforms;
       u.time.value = this.time;
@@ -662,7 +676,41 @@ export class Game {
     }
     this.pulse = Math.max(0, this.pulse - dt * 2.2);
     if (this.composer) this.composer.render(dt);
-    else this.renderer.render(this.scene, this.camera);
+    else {
+      this.renderer.render(this.scene, this.camera);
+      this.renderer.autoClear = false;
+      this.renderer.clearDepth();
+      this.renderer.render(this.vm.scene, this.vm.camera);
+      this.renderer.autoClear = true;
+    }
+  }
+
+  private updateViewmodel(dt: number) {
+    const p = this.player;
+    const c = this.camera;
+    const cam = this.vm.camera;
+    cam.fov = c.fov;
+    cam.aspect = c.aspect;
+    cam.position.copy(c.position);
+    cam.rotation.copy(c.rotation);
+    cam.updateProjectionMatrix();
+    cam.updateMatrixWorld(true);
+    this.vm.update(dt, {
+      yaw: p.yaw,
+      pitch: p.pitch,
+      bob: p.bob,
+      speed: p.speed,
+      sprinting: p.sprinting,
+      crouch: p.crouch,
+      hidden: p.hide.state !== 'none',
+      flashOn: this.flashOn,
+      fear: this.fear,
+      trapped: p.trapped > 0,
+      shake: this.shake,
+      throwing: this.vmThrow,
+      time: this.time,
+    });
+    this.vmThrow = false;
   }
 
   private update(dt: number) {
@@ -982,6 +1030,7 @@ export class Game {
     vel.y += 1.6;
     this.projectiles.push({ mesh, pos, vel, floor: p.floor, spin: new THREE.Vector3(rand(-9, 9), rand(-4, 4), rand(-9, 9)) });
     this.audio.whoosh();
+    this.vmThrow = true;
   }
 
   private updateProjectiles(dt: number) {
@@ -1288,7 +1337,7 @@ export class Game {
     this.seenHiding = false;
     this.shake = 1.4;
     this.damage = 1;
-    this.cb.onPhase('caught', { day: this.day, maxDays: this.maxDays });
+    this.cb.onPhase('caught', { day: this.day, maxDays: this.maxDays, room: roomAt(p.x, p.z, p.floor)?.name ?? '' });
   }
 
   private updateCaught(dt: number) {
@@ -1331,6 +1380,20 @@ export class Game {
     this.flashOn = true;
     this.damage = 0;
     this.shake = 0;
+    // the house resets overnight: sprung traps re-arm and broken bottles are replaced
+    for (const t of this.traps) {
+      if (t.sprung) {
+        t.sprung = false;
+        t.t = 0;
+        setTrapAngle(t, 0);
+      }
+    }
+    for (const it of this.items) {
+      if (it.id === 'bottle' && it.taken) {
+        it.taken = false;
+        this.scene.add(it.obj);
+      }
+    }
     // granny goes far away
     const far = NAV_NODES.filter((n) => n.floor === 0 && Math.hypot(n.x - p.x, n.z - p.z) > 13 && !n.id.startsWith('gS') && n.room !== 'study');
     const n = far[Math.floor(Math.random() * far.length)];

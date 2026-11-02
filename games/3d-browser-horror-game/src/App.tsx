@@ -108,6 +108,10 @@ export default function App() {
     setSession((s) => s + 1);
   }, []);
 
+  const quitToMenu = useCallback(() => {
+    setSession((s) => s + 1);
+  }, []);
+
   const resume = useCallback(() => gameRef.current?.resume(), []);
 
   const inGame = phase === 'playing' || phase === 'paused' || phase === 'caught';
@@ -131,11 +135,11 @@ export default function App() {
       {hud && hud.whiteout > 0 && phase !== 'win' && <div className="pointer-events-none absolute inset-0 bg-white" style={{ opacity: hud.whiteout }} />}
 
       {phase === 'ready' && !error && <Menu settings={settings} onChange={setSettings} onPlay={play} />}
-      {phase === 'paused' && <PausedOverlay onResume={resume} />}
+      {phase === 'paused' && <PausedOverlay onResume={resume} onQuit={quitToMenu} settings={settings} onChange={setSettings} />}
       {phase === 'caught' && <CaughtOverlay info={info} />}
       {dayCard && phase === 'playing' && <DayCard key={dayCard.key} day={dayCard.day} maxDays={info.maxDays ?? 5} />}
-      {phase === 'gameover' && <GameOver info={info} onRetry={retry} />}
-      {phase === 'win' && <WinScreen info={info} onRetry={retry} />}
+      {phase === 'gameover' && <GameOver info={info} onRetry={retry} onMenu={quitToMenu} />}
+      {phase === 'win' && <WinScreen info={info} onRetry={retry} onMenu={quitToMenu} />}
 
       {/* soft global vignette */}
       <div className="pointer-events-none absolute inset-0" style={{ boxShadow: 'inset 0 0 160px 40px rgba(0,0,0,0.55)' }} />

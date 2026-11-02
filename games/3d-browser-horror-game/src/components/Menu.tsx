@@ -7,7 +7,7 @@ interface Props {
   onPlay: () => void;
 }
 
-function Slider({ label, value, min, max, step, onChange, fmt }: { label: string; value: number; min: number; max: number; step: number; onChange: (v: number) => void; fmt: (v: number) => string }) {
+export function Slider({ label, value, min, max, step, onChange, fmt }: { label: string; value: number; min: number; max: number; step: number; onChange: (v: number) => void; fmt: (v: number) => string }) {
   return (
     <label className="block">
       <div className="mb-1.5 flex justify-between text-[11px] uppercase tracking-[0.2em] text-stone-400">
@@ -19,7 +19,7 @@ function Slider({ label, value, min, max, step, onChange, fmt }: { label: string
   );
 }
 
-const KEYS: [string, string][] = [
+export const KEYS: [string, string][] = [
   ['W A S D', 'Move'],
   ['Mouse', 'Look'],
   ['Shift', 'Run (uses stamina)'],

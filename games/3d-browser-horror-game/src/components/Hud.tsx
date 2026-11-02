@@ -91,6 +91,15 @@ export function Hud({ hud, messages, note, showControls }: Props) {
         </div>
       )}
 
+      {/* chase alert */}
+      {hud.grannyState === 'chase' && !hud.hidden && (
+        <div className="absolute inset-x-0 top-[21%] flex justify-center">
+          <div className="font-horror anim-flicker text-4xl uppercase tracking-[0.2em] text-red-500 drop-shadow-[0_0_16px_rgba(255,0,0,0.75)]">
+            She sees you — run
+          </div>
+        </div>
+      )}
+
       {/* top-left: day */}
       <div className="absolute left-5 top-5">
         <div className="flex items-center gap-3 rounded-md border border-white/10 bg-black/50 px-3 py-2 backdrop-blur-sm">
@@ -183,6 +192,11 @@ export function Hud({ hud, messages, note, showControls }: Props) {
 
       {/* bottom-right: noise + torch */}
       <div className="absolute bottom-5 right-5 flex flex-col items-end gap-2">
+        {hud.noLock && (
+          <div className="rounded-md border border-amber-500/30 bg-black/60 px-3 py-1.5 text-[10px] uppercase tracking-widest text-amber-200/90 backdrop-blur-sm">
+            Drag to look · [Q] throw · [Esc] pause
+          </div>
+        )}
         <div className="flex items-center gap-3 rounded-md border border-white/10 bg-black/50 px-3 py-2 backdrop-blur-sm">
           <EarIcon color={hud.noise > 0.55 ? '#ff5a5a' : '#aaa'} />
           <div className="flex items-end gap-[3px]">
