@@ -508,40 +508,6 @@
       "bannerUrl": null
     },
     {
-      "id": "mechanimos",
-      "title": "MECHANIMOS",
-      "description": "Tiny cars, giant robots. Draft battle cards, tame wild machines, and fight your way through the arena in this mech battler.",
-      "genre": "Action",
-      "category": "3D",
-      "entry": "dist/index.html",
-      "thumbnail": "thumbnail.svg",
-      "version": "1.0.0",
-      "tags": [
-        "Robots",
-        "Combat",
-        "Cards",
-        "Arena",
-        "3D"
-      ],
-      "controls": [
-        "WASD",
-        "Mouse",
-        "Space",
-        "1-3",
-        "Esc"
-      ],
-      "featured": false,
-      "status": "playable",
-      "developer": "Game Universe",
-      "releaseDate": "2026-10-19",
-      "flagship": false,
-      "folder": "mechanimos-robot-battle-game",
-      "external": false,
-      "launchUrl": "/play/mechanimos-robot-battle-game/dist/index.html",
-      "thumbnailUrl": "/play/mechanimos-robot-battle-game/thumbnail.svg",
-      "bannerUrl": null
-    },
-    {
       "id": "bastion-defense",
       "title": "Bastion Defense",
       "description": "A multi-level strategy tower defence. Place and upgrade five tower types, set their targeting, sell and retool, and control the wave speed as the siege escalates.",
@@ -751,13 +717,6 @@
       "folder": "feature-rich-2d-game-ideas",
       "id": "neon-front",
       "title": "Neon Front",
-      "level": "ok",
-      "messages": []
-    },
-    {
-      "folder": "mechanimos-robot-battle-game",
-      "id": "mechanimos",
-      "title": "MECHANIMOS",
       "level": "ok",
       "messages": []
     },
