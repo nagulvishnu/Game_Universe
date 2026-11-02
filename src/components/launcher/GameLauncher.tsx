@@ -141,7 +141,7 @@ function LauncherInner({
   return (
     <div className="fixed inset-0 z-[20] flex flex-col bg-black" style={themeStyle(game)} data-testid="game-launcher">
       <header className="gu-panel z-30 flex h-[52px] shrink-0 items-center justify-between gap-3 border-x-0 border-t-0 px-3 sm:px-5">
-        <button type="button" className="gu-navlink flex items-center gap-2 font-display text-[0.62rem] tracking-[0.2em] uppercase text-[#aab4e6] hover:text-white" onClick={exit}>
+        <button type="button" className="gu-navlink flex items-center gap-2 font-display text-[0.62rem] tracking-[0.2em] uppercase text-[#aab2c6] hover:text-white" onClick={exit}>
           <span aria-hidden>←</span>
           <span className="hidden sm:inline">Back to Game Universe</span>
           <span className="sm:hidden">Back</span>
@@ -192,7 +192,7 @@ function LauncherInner({
 
         {phase === "loading" && (
           <div
-            className="absolute inset-0 z-20 grid place-items-center bg-[#04040b] px-6"
+            className="absolute inset-0 z-20 grid place-items-center bg-[#07080c] px-6"
             role="status"
             aria-live="polite"
             data-testid="game-loading"

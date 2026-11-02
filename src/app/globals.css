@@ -1,29 +1,39 @@
 @import "tailwindcss";
 
+/* ============================================================
+   GAME UNIVERSE — PREMIUM LAUNCHER DESIGN SYSTEM
+   Class contract is preserved (gu-*, reveal, page-enter);
+   every value below is a fresh visual identity.
+   ============================================================ */
+
 @theme inline {
   --font-display: "Orbitron Variable", "Orbitron", "Eurostile", "Bank Gothic", "Segoe UI", system-ui, sans-serif;
   --font-body: "Rajdhani", "Segoe UI", system-ui, sans-serif;
-  --color-void: #04040b;
-  --color-ink: #e8ecff;
-  --color-dim: #9aa4cf;
-  --color-neon: #38e8ff;
-  --color-violet: #8b5cff;
-  --color-magenta: #ff3df2;
-  --color-amber: #ffb84d;
-  --color-danger: #ff4d6d;
+  --color-void: #07080c;
+  --color-ink: #f4f5f7;
+  --color-dim: #9aa2b5;
+  --color-neon: #5b8cff;
+  --color-violet: #8f7bff;
+  --color-magenta: #c56bff;
+  --color-amber: #ffc670;
+  --color-danger: #ff5d73;
 }
 
 :root {
-  --gu-cyan: #38e8ff;
-  --gu-violet: #8b5cff;
-  --gu-magenta: #ff3df2;
-  --gu-line: rgba(130, 165, 255, 0.2);
-  --gu-glass: rgba(9, 11, 28, 0.62);
+  --gu-cyan: #5b8cff;
+  --gu-violet: #8f7bff;
+  --gu-magenta: #c56bff;
+  --gu-line: rgba(255, 255, 255, 0.08);
+  --gu-line-strong: rgba(255, 255, 255, 0.14);
+  --gu-glass: rgba(13, 15, 22, 0.78);
   --gu-nav-h: 64px;
+  --gu-radius: 14px;
+  --gu-radius-lg: 20px;
+  --gu-ease: cubic-bezier(0.22, 0.61, 0.21, 1);
 }
 
 html {
-  background: #04040b;
+  background: #07080c;
   color-scheme: dark;
   scroll-behavior: smooth;
 }
@@ -31,32 +41,32 @@ html {
 body {
   margin: 0;
   background: transparent;
-  color: #e8ecff;
+  color: #f4f5f7;
   font-family: var(--font-body);
-  font-size: 1.12rem;
-  line-height: 1.45;
+  font-size: 1.04rem;
+  line-height: 1.55;
   font-weight: 500;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
 ::selection {
-  background: rgba(56, 232, 255, 0.35);
+  background: rgba(91, 140, 255, 0.35);
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #070818;
+  background: #0a0b10;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2a3170;
-  border: 2px solid #070818;
+  background: #2a2f42;
+  border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b46a0;
+  background: #3b415c;
 }
 
 /* ---------- focus ---------- */
@@ -66,30 +76,31 @@ body {
 :focus-visible {
   outline: 2px solid var(--gu-cyan);
   outline-offset: 3px;
+  border-radius: 4px;
 }
 .gu-clip:focus-visible,
 .gu-btn:focus-visible,
 .gu-chip:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 0 2px #fff, 0 0 0 2px var(--gu-cyan);
-  background: rgba(56, 232, 255, 0.28);
+  box-shadow: 0 0 0 2px #07080c, 0 0 0 4px var(--gu-cyan);
 }
 
 .skip-link {
   position: fixed;
-  left: 12px;
+  left: 16px;
   top: -60px;
   z-index: 200;
   background: #fff;
   color: #000;
-  padding: 10px 16px;
+  padding: 10px 18px;
+  border-radius: 8px;
   font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: 0.1em;
   transition: top 0.2s;
 }
 .skip-link:focus {
-  top: 12px;
+  top: 16px;
 }
 
 /* ---------- typography ---------- */
@@ -98,23 +109,24 @@ body {
 }
 .gu-kicker {
   font-family: var(--font-display);
-  font-size: 0.72rem;
-  letter-spacing: 0.34em;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--gu-cyan);
 }
 .gu-title {
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  line-height: 1.02;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
 }
 .gu-glow-text {
-  text-shadow: 0 0 24px rgba(56, 232, 255, 0.45), 0 0 60px rgba(139, 92, 255, 0.35);
+  text-shadow: 0 2px 40px rgba(255, 255, 255, 0.14);
 }
 .gu-gradient-text {
-  background: linear-gradient(100deg, #fff 10%, #38e8ff 50%, #b07cff 90%);
+  background: linear-gradient(105deg, #ffffff 20%, #9db9ff 70%, #6ea0ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -128,10 +140,10 @@ body {
   overflow: hidden;
   pointer-events: none;
   background:
-    radial-gradient(1200px 700px at 12% 8%, rgba(90, 43, 255, 0.24), transparent 60%),
-    radial-gradient(900px 600px at 88% 28%, rgba(0, 168, 255, 0.14), transparent 60%),
-    radial-gradient(1000px 700px at 50% 112%, rgba(255, 43, 214, 0.13), transparent 60%),
-    #04040b;
+    radial-gradient(1100px 640px at 14% -4%, rgba(91, 140, 255, 0.1), transparent 62%),
+    radial-gradient(900px 560px at 92% 12%, rgba(143, 123, 255, 0.07), transparent 60%),
+    radial-gradient(1200px 800px at 50% 118%, rgba(197, 107, 255, 0.05), transparent 62%),
+    #07080c;
 }
 .gu-atmo::before,
 .gu-atmo::after {
@@ -139,19 +151,19 @@ body {
   position: absolute;
   inset: -50%;
   background-image:
-    radial-gradient(1.2px 1.2px at 20px 30px, #fff, transparent),
-    radial-gradient(1px 1px at 90px 120px, #9fd8ff, transparent),
-    radial-gradient(1.4px 1.4px at 160px 60px, #fff, transparent),
-    radial-gradient(1px 1px at 230px 180px, #d8c4ff, transparent),
-    radial-gradient(1.2px 1.2px at 300px 90px, #fff, transparent);
+    radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 90px 120px, rgba(170, 195, 255, 0.5), transparent),
+    radial-gradient(1.4px 1.4px at 160px 60px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 230px 180px, rgba(210, 200, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 300px 90px, rgba(255, 255, 255, 0.45), transparent);
   background-size: 340px 240px;
-  opacity: 0.55;
-  animation: gu-drift 160s linear infinite;
+  opacity: 0.3;
+  animation: gu-drift 220s linear infinite;
 }
 .gu-atmo::after {
   background-size: 520px 380px;
-  opacity: 0.35;
-  animation-duration: 260s;
+  opacity: 0.18;
+  animation-duration: 320s;
   animation-direction: reverse;
 }
 .gu-atmo-grid {
@@ -161,13 +173,13 @@ body {
   bottom: -10%;
   height: 55%;
   background-image:
-    linear-gradient(rgba(56, 232, 255, 0.16) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 232, 255, 0.16) 1px, transparent 1px);
-  background-size: 64px 64px;
-  transform: perspective(500px) rotateX(62deg);
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  transform: perspective(520px) rotateX(62deg);
   transform-origin: bottom;
-  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent 85%);
-  opacity: 0.5;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent 85%);
+  opacity: 0.6;
 }
 @keyframes gu-drift {
   to {
@@ -175,18 +187,21 @@ body {
   }
 }
 
-/* ---------- glass panels / buttons ---------- */
-.gu-clip {
-  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+/* ---------- panels / buttons / controls ---------- */
+.gu-clip,
+.gu-clip-sm {
+  border-radius: var(--gu-radius-lg);
 }
 .gu-clip-sm {
-  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px));
+  border-radius: var(--gu-radius);
 }
 .gu-panel {
   background: var(--gu-glass);
   border: 1px solid var(--gu-line);
-  backdrop-filter: blur(16px) saturate(1.3);
-  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border-radius: var(--gu-radius-lg);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 24px 60px -24px rgba(0, 0, 0, 0.7);
 }
 
 .gu-btn {
@@ -194,98 +209,104 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  padding: 0.8rem 1.5rem;
+  gap: 0.55rem;
+  padding: 0.72rem 1.35rem;
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.74rem;
-  letter-spacing: 0.22em;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #e8ecff;
-  background: rgba(20, 26, 70, 0.55);
-  border: 1px solid rgba(130, 165, 255, 0.4);
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  color: #f4f5f7;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--gu-line-strong);
+  border-radius: 10px;
   cursor: pointer;
   overflow: hidden;
-  transition: background 0.25s, color 0.25s, transform 0.25s, border-color 0.25s, box-shadow 0.25s;
-}
-.gu-btn::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
-  transform: translateX(-120%);
-  transition: transform 0.7s;
-}
-.gu-btn:hover:not(:disabled)::after {
-  transform: translateX(120%);
+  transition:
+    background 0.25s var(--gu-ease),
+    color 0.25s var(--gu-ease),
+    transform 0.25s var(--gu-ease),
+    border-color 0.25s var(--gu-ease),
+    box-shadow 0.25s var(--gu-ease);
 }
 .gu-btn:hover:not(:disabled) {
-  border-color: var(--gu-cyan);
-  background: rgba(56, 232, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-1px);
 }
+.gu-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
 .gu-btn--primary {
-  color: #03121a;
-  background: linear-gradient(100deg, #38e8ff, #8b9cff);
-  border-color: transparent;
-  box-shadow: 0 0 28px rgba(56, 232, 255, 0.35);
+  color: #ffffff;
+  background: linear-gradient(180deg, #6f9bff, #4a76f0);
+  border-color: rgba(255, 255, 255, 0.24);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.28) inset,
+    0 12px 28px -10px rgba(74, 118, 240, 0.55);
 }
 .gu-btn--primary:hover:not(:disabled) {
-  background: linear-gradient(100deg, #7df2ff, #b3bdff);
-  box-shadow: 0 0 40px rgba(56, 232, 255, 0.6);
+  background: linear-gradient(180deg, #82abff, #5a83f5);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.32) inset,
+    0 16px 36px -10px rgba(74, 118, 240, 0.7);
 }
 .gu-btn--primary:focus-visible {
   background: #fff;
   color: #000;
 }
 .gu-btn:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 .gu-btn--sm {
-  padding: 0.55rem 1rem;
-  font-size: 0.66rem;
+  padding: 0.5rem 0.95rem;
+  font-size: 0.64rem;
 }
 
 .gu-chip {
   font-family: var(--font-display);
-  font-size: 0.66rem;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  padding: 0.5rem 0.9rem;
-  color: #b8c2ee;
-  background: rgba(15, 20, 55, 0.6);
-  border: 1px solid rgba(130, 165, 255, 0.25);
+  padding: 0.5rem 1rem;
+  color: #b6bed2;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid var(--gu-line);
+  border-radius: 999px;
   cursor: pointer;
-  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
-  transition: all 0.2s;
+  transition: all 0.22s var(--gu-ease);
   white-space: nowrap;
 }
 .gu-chip:hover {
   color: #fff;
-  border-color: var(--gu-cyan);
+  border-color: var(--gu-line-strong);
+  background: rgba(255, 255, 255, 0.08);
 }
 .gu-chip[aria-pressed="true"],
 .gu-chip[aria-current="true"] {
-  color: #03121a;
-  background: var(--gu-cyan);
+  color: #fff;
+  background: rgba(91, 140, 255, 0.22);
   border-color: var(--gu-cyan);
-  box-shadow: 0 0 18px rgba(56, 232, 255, 0.45);
+  box-shadow: 0 0 0 1px rgba(91, 140, 255, 0.4);
 }
 .gu-chip small {
-  opacity: 0.65;
-  margin-left: 0.4em;
+  opacity: 0.55;
+  margin-left: 0.45em;
   font-size: 0.85em;
 }
 
 .gu-tag {
-  font-size: 0.82rem;
-  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
-  padding: 0.12rem 0.55rem;
-  border: 1px solid rgba(130, 165, 255, 0.3);
-  color: #b8c2ee;
+  padding: 0.16rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--gu-line);
+  background: rgba(255, 255, 255, 0.04);
+  color: #aab1c6;
 }
 
 .gu-key {
@@ -294,31 +315,34 @@ body {
   padding: 0.3rem 0.7rem;
   text-align: center;
   font-family: var(--font-display);
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   letter-spacing: 0.1em;
-  color: #e8ecff;
-  background: linear-gradient(#1a2158, #0e1235);
-  border: 1px solid rgba(130, 165, 255, 0.45);
-  border-bottom-width: 3px;
+  color: #f4f5f7;
+  background: linear-gradient(180deg, #232636, #171923);
+  border: 1px solid var(--gu-line-strong);
+  border-radius: 8px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
 }
 
 .gu-input {
   width: 100%;
-  padding: 0.95rem 1.1rem 0.95rem 3rem;
+  padding: 0.9rem 1.1rem 0.9rem 3rem;
   font-family: var(--font-body);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   color: #fff;
-  background: rgba(8, 10, 30, 0.75);
-  border: 1px solid rgba(130, 165, 255, 0.3);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--gu-line);
+  border-radius: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 .gu-input::placeholder {
-  color: #7480b5;
+  color: #6d7488;
 }
 .gu-input:focus {
   outline: none;
   border-color: var(--gu-cyan);
-  box-shadow: 0 0 0 1px var(--gu-cyan), 0 0 28px rgba(56, 232, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 3px rgba(91, 140, 255, 0.22);
 }
 
 /* ---------- navigation ---------- */
@@ -333,17 +357,21 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 clamp(1rem, 3vw, 2.5rem);
-  background: linear-gradient(to bottom, rgba(4, 4, 11, 0.85), rgba(4, 4, 11, 0));
+  background: linear-gradient(to bottom, rgba(7, 8, 12, 0.82) 40%, rgba(7, 8, 12, 0));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  mask-image: linear-gradient(to bottom, black 72%, transparent);
 }
 .gu-nav a.gu-navlink,
 .gu-nav button.gu-navlink {
   position: relative;
-  padding: 0.5rem 0.2rem;
+  padding: 0.5rem 0.15rem;
   font-family: var(--font-display);
-  font-size: 0.68rem;
-  letter-spacing: 0.24em;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #aab4e6;
+  color: #a2aabb;
   background: none;
   border: 0;
   cursor: pointer;
@@ -356,10 +384,11 @@ body {
   right: 0;
   bottom: 0;
   height: 2px;
+  border-radius: 2px;
   background: var(--gu-cyan);
-  box-shadow: 0 0 10px var(--gu-cyan);
   transform: scaleX(0);
-  transition: transform 0.3s;
+  transform-origin: left;
+  transition: transform 0.3s var(--gu-ease);
 }
 .gu-navlink:hover,
 .gu-navlink[aria-current="page"] {
@@ -383,30 +412,28 @@ body {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at center, transparent 45%, rgba(3, 3, 10, 0.75) 100%),
-    linear-gradient(to bottom, rgba(3, 3, 10, 0.55), transparent 22%, transparent 70%, rgba(3, 3, 10, 0.9));
+    radial-gradient(ellipse at center, transparent 42%, rgba(4, 5, 9, 0.82) 100%),
+    linear-gradient(to bottom, rgba(4, 5, 9, 0.5), transparent 24%, transparent 68%, #07080c);
 }
 .gu-scanlines {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 3px);
-  mix-blend-mode: overlay;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.03), transparent 18%);
+  mix-blend-mode: soft-light;
 }
 
 .gu-preview {
-  animation: gu-rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: gu-rise 0.45s var(--gu-ease) both;
 }
 @keyframes gu-rise {
   from {
     opacity: 0;
     transform: translateY(18px);
-    filter: blur(6px);
   }
   to {
     opacity: 1;
     transform: none;
-    filter: none;
   }
 }
 
@@ -426,46 +453,51 @@ body {
 .gu-dock-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.5rem 0.9rem;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
   font-family: var(--font-display);
-  font-size: 0.62rem;
-  letter-spacing: 0.18em;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #b8c2ee;
-  background: rgba(8, 10, 30, 0.7);
-  border: 1px solid rgba(130, 165, 255, 0.28);
+  color: #b6bed2;
+  background: rgba(10, 12, 18, 0.75);
+  border: 1px solid var(--gu-line);
+  border-radius: 999px;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.22s var(--gu-ease);
 }
 .gu-dock-btn i {
   display: block;
-  width: 8px;
-  height: 8px;
-  background: var(--c1, #38e8ff);
-  box-shadow: 0 0 10px var(--c1, #38e8ff);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c1, #5b8cff);
+  box-shadow: 0 0 8px var(--c1, #5b8cff);
 }
 .gu-dock-btn:hover,
 .gu-dock-btn[aria-current="true"],
 .gu-dock-btn:focus-visible {
   color: #fff;
-  border-color: var(--c1, #38e8ff);
-  background: rgba(20, 26, 70, 0.8);
+  border-color: var(--c1, #5b8cff);
+  background: rgba(20, 24, 36, 0.85);
 }
 
 /* ---------- game art / cards ---------- */
 .gu-art {
   position: relative;
   overflow: hidden;
-  background: #0a0d26;
+  background: #10131c;
 }
 .gu-art img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.6s;
+  transition: transform 1s var(--gu-ease), filter 0.6s;
 }
 .gu-art-fallback {
   position: absolute;
@@ -474,46 +506,52 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   background:
-    radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--c1) 55%, transparent), transparent 55%),
-    radial-gradient(circle at 80% 90%, color-mix(in srgb, var(--c2) 45%, transparent), transparent 55%),
-    linear-gradient(135deg, #090b22, #14102f);
+    radial-gradient(circle at 28% 18%, color-mix(in srgb, var(--c1) 30%, transparent), transparent 55%),
+    radial-gradient(circle at 82% 88%, color-mix(in srgb, var(--c2) 22%, transparent), transparent 55%),
+    linear-gradient(140deg, #12141f, #191b28);
 }
 .gu-art-fallback::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.045) 0 2px, transparent 2px 22px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
 }
 .gu-art-glyph {
   position: relative;
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(2.4rem, 7cqw, 4.5rem);
+  font-size: clamp(2.2rem, 7cqw, 4.2rem);
   letter-spacing: 0.06em;
+  background: linear-gradient(180deg, #fff, color-mix(in srgb, var(--c1) 60%, #7688b6));
+  -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
-  -webkit-text-stroke: 2px color-mix(in srgb, var(--c1) 90%, #fff);
-  text-shadow: 0 0 30px var(--c1);
 }
 .gu-art-world {
   position: relative;
   font-family: var(--font-display);
-  font-size: 0.6rem;
-  letter-spacing: 0.32em;
+  font-size: 0.58rem;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .gu-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, rgba(16, 20, 54, 0.8), rgba(7, 9, 26, 0.9));
+  background: linear-gradient(180deg, #13161f, #0d0f16);
   border: 1px solid var(--gu-line);
-  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
-  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s, border-color 0.3s;
+  border-radius: var(--gu-radius-lg);
+  overflow: hidden;
   container-type: inline-size;
+  transition:
+    transform 0.45s var(--gu-ease),
+    box-shadow 0.45s var(--gu-ease),
+    border-color 0.3s;
 }
 .gu-card::before {
   content: "";
@@ -522,14 +560,14 @@ body {
   z-index: 3;
   pointer-events: none;
   opacity: 0;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--c1) 22%, transparent), transparent 55%);
-  transition: opacity 0.4s;
+  background: radial-gradient(560px 240px at 50% -10%, color-mix(in srgb, var(--c1) 16%, transparent), transparent 70%);
+  transition: opacity 0.45s;
 }
 .gu-card:hover,
 .gu-card:focus-within {
-  transform: translateY(-6px) scale(1.012);
-  border-color: var(--c1);
-  box-shadow: 0 18px 50px -10px color-mix(in srgb, var(--c1) 45%, transparent);
+  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--c1) 55%, transparent);
+  box-shadow: 0 24px 60px -18px rgba(0, 0, 0, 0.8), 0 0 40px -18px color-mix(in srgb, var(--c1) 60%, transparent);
 }
 .gu-card:hover::before,
 .gu-card:focus-within::before {
@@ -537,14 +575,14 @@ body {
 }
 .gu-card:hover .gu-art img,
 .gu-card:focus-within .gu-art img {
-  transform: scale(1.09);
-  filter: saturate(1.2) brightness(1.08);
+  transform: scale(1.07);
+  filter: saturate(1.15) brightness(1.06);
 }
 .gu-card-reveal {
   max-height: 0;
   opacity: 0;
   overflow: hidden;
-  transition: max-height 0.45s ease, opacity 0.4s ease;
+  transition: max-height 0.45s var(--gu-ease), opacity 0.4s ease;
 }
 .gu-card:hover .gu-card-reveal,
 .gu-card:focus-within .gu-card-reveal {
@@ -562,41 +600,38 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.18rem 0.6rem;
+  padding: 0.2rem 0.65rem;
   font-family: var(--font-display);
-  font-size: 0.56rem;
-  letter-spacing: 0.2em;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  background: rgba(3, 5, 20, 0.8);
+  background: rgba(6, 7, 12, 0.72);
   border: 1px solid currentColor;
-}
-.gu-badge::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  background: currentColor;
-  box-shadow: 0 0 8px currentColor;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 .gu-badge--playable {
-  color: #4dffb0;
+  color: #6fe3a8;
 }
 .gu-badge--development {
-  color: #ffb84d;
+  color: #ffc670;
 }
 .gu-badge--coming-soon {
-  color: #b07cff;
+  color: #a99bff;
 }
 .gu-badge--demo {
-  color: #ff7ad9;
+  color: #ff93e0;
 }
 
-/* ---------- details panel ---------- */
+/* ---------- details panel / drawer ---------- */
 .gu-backdrop {
   position: fixed;
   inset: 0;
   z-index: 80;
-  background: rgba(2, 3, 12, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(4, 5, 9, 0.65);
+  backdrop-filter: blur(6px);
   animation: gu-fade 0.3s both;
 }
 .gu-details {
@@ -609,23 +644,23 @@ body {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  background: linear-gradient(180deg, rgba(10, 13, 38, 0.97), rgba(5, 6, 20, 0.98));
-  border-left: 1px solid var(--c1, var(--gu-line));
-  box-shadow: -30px 0 90px -20px color-mix(in srgb, var(--c1, #38e8ff) 40%, transparent);
-  animation: gu-slide-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  background: linear-gradient(180deg, #13151f, #0b0d14);
+  border-left: 1px solid var(--gu-line);
+  box-shadow: -40px 0 100px -30px rgba(0, 0, 0, 0.8), -1px 0 0 color-mix(in srgb, var(--c1, #5b8cff) 45%, transparent);
+  animation: gu-slide-in 0.5s var(--gu-ease) both;
 }
 .gu-details-row {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.55rem 0;
-  border-bottom: 1px dashed rgba(130, 165, 255, 0.2);
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--gu-line);
 }
 .gu-details-row dt {
   font-family: var(--font-display);
-  font-size: 0.62rem;
-  letter-spacing: 0.24em;
-  color: #7f8cc4;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: #79809a;
   text-transform: uppercase;
   align-self: center;
 }
@@ -641,33 +676,24 @@ body {
 .gu-corners::after {
   content: "";
   position: absolute;
-  width: 22px;
-  height: 22px;
+  inset: 0;
   pointer-events: none;
-  border: 2px solid var(--c1, var(--gu-cyan));
-}
-.gu-corners::before {
-  top: 8px;
-  left: 8px;
-  border-right: 0;
-  border-bottom: 0;
+  border: 1px solid color-mix(in srgb, var(--c1, #5b8cff) 40%, transparent);
+  border-radius: var(--gu-radius-lg);
 }
 .gu-corners::after {
-  bottom: 8px;
-  right: 8px;
-  border-left: 0;
-  border-top: 0;
+  inset: -6px;
+  border-radius: calc(var(--gu-radius-lg) + 6px);
+  border-color: color-mix(in srgb, var(--c1, #5b8cff) 18%, transparent);
 }
 @keyframes gu-slide-in {
   from {
-    transform: translateX(60px);
+    transform: translateX(40px);
     opacity: 0;
-    filter: blur(8px);
   }
   to {
     transform: none;
     opacity: 1;
-    filter: none;
   }
 }
 @keyframes gu-fade {
@@ -687,21 +713,23 @@ body {
   display: grid;
   place-items: center;
   pointer-events: all;
-  background: radial-gradient(circle at center, color-mix(in srgb, var(--c1) 70%, #fff) 0%, var(--c1) 12%, #05061a 70%);
-  animation: gu-portal-expand 1s cubic-bezier(0.7, 0, 0.2, 1) both;
+  background:
+    radial-gradient(900px 500px at 50% 46%, color-mix(in srgb, var(--c1, #5b8cff) 26%, transparent), transparent 70%),
+    #05060b;
+  animation: gu-portal-expand 0.9s var(--gu-ease) both;
 }
 .gu-launch[data-leaving="true"] {
   animation: gu-fade-out 0.45s both;
 }
 .gu-launch > * {
-  animation: gu-rise 0.5s 0.45s both;
+  animation: gu-rise 0.5s 0.35s both;
 }
 @keyframes gu-portal-expand {
   from {
-    clip-path: circle(0% at var(--ox) var(--oy));
+    opacity: 0;
   }
   to {
-    clip-path: circle(150% at var(--ox) var(--oy));
+    opacity: 1;
   }
 }
 @keyframes gu-fade-out {
@@ -717,7 +745,9 @@ body {
   display: grid;
   place-items: center;
   text-align: center;
-  background: radial-gradient(ellipse at center, rgba(12, 10, 40, 0.88), #03030a 75%);
+  background:
+    radial-gradient(1000px 560px at 50% 42%, rgba(35, 42, 72, 0.9), transparent 75%),
+    #05060b;
   backdrop-filter: blur(6px);
   transition: opacity 0.8s, filter 0.8s, transform 0.8s;
 }
@@ -726,54 +756,52 @@ html[data-intro="seen"] .gu-intro {
 }
 .gu-intro[data-leaving="true"] {
   opacity: 0;
-  filter: blur(14px);
-  transform: scale(1.08);
+  filter: blur(10px);
+  transform: scale(1.05);
   pointer-events: none;
 }
 .gu-intro-line {
   opacity: 0;
-  animation: gu-rise 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: gu-rise 1s var(--gu-ease) forwards;
 }
 
 .gu-bar {
-  height: 6px;
-  background: rgba(130, 165, 255, 0.18);
+  height: 4px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.08);
   overflow: hidden;
 }
 .gu-bar > i {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, var(--c2, #8b5cff), var(--c1, #38e8ff));
-  box-shadow: 0 0 16px var(--c1, #38e8ff);
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--c2, #8f7bff), var(--c1, #5b8cff));
   transition: width 0.25s ease-out;
 }
 
 /* ---------- misc animation ---------- */
 .reveal {
   opacity: 0;
-  transform: translateY(32px);
-  filter: blur(8px);
-  transition: opacity 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
-    filter 0.9s;
+  transform: translateY(26px);
+  transition:
+    opacity 0.8s var(--gu-ease),
+    transform 0.8s var(--gu-ease);
   transition-delay: var(--d, 0ms);
 }
 .reveal[data-shown="true"] {
   opacity: 1;
   transform: none;
-  filter: none;
 }
 .page-enter {
-  animation: gu-page-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: gu-page-in 0.55s var(--gu-ease) both;
 }
 @keyframes gu-page-in {
   from {
     opacity: 0;
-    filter: blur(10px);
-    transform: scale(0.99);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    filter: none;
     transform: none;
   }
 }
@@ -796,7 +824,7 @@ html[data-intro="seen"] .gu-intro {
 .gu-spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-top-color: var(--gu-cyan);
   border-radius: 50%;
   animation: gu-spin 0.8s linear infinite;
@@ -810,13 +838,13 @@ html[data-intro="seen"] .gu-intro {
 .gu-fallback-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.5;
-  animation: gu-orb 14s ease-in-out infinite alternate;
+  filter: blur(70px);
+  opacity: 0.35;
+  animation: gu-orb 16s ease-in-out infinite alternate;
 }
 @keyframes gu-orb {
   to {
-    transform: translate3d(60px, -40px, 0) scale(1.2);
+    transform: translate3d(50px, -34px, 0) scale(1.15);
   }
 }
 
@@ -840,30 +868,30 @@ html.gu-cursor textarea {
   will-change: transform;
 }
 .gu-cursor-dot {
-  width: 8px;
-  height: 8px;
-  margin: -4px 0 0 -4px;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
   background: #fff;
   border-radius: 50%;
-  box-shadow: 0 0 12px 3px var(--gu-cyan), 0 0 28px 6px rgba(139, 92, 255, 0.6);
+  box-shadow: 0 0 10px 2px rgba(91, 140, 255, 0.8);
   transition: opacity 0.2s;
 }
 .gu-cursor-ring {
-  width: 38px;
-  height: 38px;
-  margin: -19px 0 0 -19px;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(56, 232, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 50%;
   transition: opacity 0.2s;
 }
 .gu-cursor-ring span {
   font-family: var(--font-display);
-  font-size: 0.55rem;
+  font-size: 0.52rem;
   font-weight: 800;
   letter-spacing: 0.18em;
-  color: #03121a;
+  color: #04122e;
   opacity: 0;
   transition: opacity 0.2s;
 }
@@ -871,17 +899,16 @@ html.gu-cursor textarea {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s, border-color 0.3s;
+  transition: transform 0.3s var(--gu-ease), background 0.3s, border-color 0.3s;
 }
 .gu-cursor-ring[data-mode="link"] i {
-  transform: scale(1.5);
-  background: rgba(56, 232, 255, 0.12);
+  transform: scale(1.45);
+  background: rgba(91, 140, 255, 0.14);
 }
 .gu-cursor-ring[data-mode="play"] i {
-  transform: scale(2.1);
+  transform: scale(2);
   background: var(--gu-cyan);
   border-color: transparent;
-  box-shadow: 0 0 30px rgba(56, 232, 255, 0.7);
 }
 .gu-cursor-ring[data-mode="play"] span {
   opacity: 1;
@@ -912,7 +939,6 @@ html.gu-cursor textarea {
   .reveal {
     opacity: 1;
     transform: none;
-    filter: none;
   }
 }
 html[data-motion="reduced"] {
@@ -928,7 +954,6 @@ html[data-motion="reduced"] *::after {
 html[data-motion="reduced"] .reveal {
   opacity: 1;
   transform: none;
-  filter: none;
 }
 html[data-motion="reduced"] .gu-atmo::before,
 html[data-motion="reduced"] .gu-atmo::after {

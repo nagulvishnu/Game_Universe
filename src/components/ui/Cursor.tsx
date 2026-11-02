@@ -129,7 +129,7 @@ export function Cursor() {
             continue;
           }
           ctx.globalAlpha = p.life * 0.8;
-          ctx.fillStyle = i % 2 ? "#38e8ff" : "#b07cff";
+          ctx.fillStyle = i % 2 ? "#5b8cff" : "#8f7bff";
           ctx.beginPath();
           ctx.arc(p.x, p.y, 1 + p.life * 2, 0, Math.PI * 2);
           ctx.fill();

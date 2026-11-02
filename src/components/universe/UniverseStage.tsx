@@ -137,7 +137,7 @@ export function UniverseStage({ home = false }: { home?: boolean }) {
         <h1 className="gu-title gu-glow-text mt-3 text-[clamp(2.2rem,6.2vw,5.4rem)]">
           <span className="gu-gradient-text">Game</span> Universe
         </h1>
-        <p className="mt-4 max-w-md text-lg text-[#b8c2ee]">
+        <p className="mt-4 max-w-md text-lg text-[#aeb6ca]">
           {games.length > 0
             ? mode === "simple"
               ? `${games.length} ${games.length === 1 ? "world" : "worlds"} ready to play.`
@@ -190,7 +190,7 @@ export function UniverseStage({ home = false }: { home?: boolean }) {
             </div>
             <StatusBadge game={active} />
           </div>
-          <p className="mt-2 line-clamp-2 text-[1.05rem] text-[#c2cbf2]">{active.description}</p>
+          <p className="mt-2 line-clamp-2 text-[1.05rem] text-[#c0c6d8]">{active.description}</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <button
               type="button"
@@ -222,7 +222,7 @@ export function UniverseStage({ home = false }: { home?: boolean }) {
                 {featured[0] ? "Featured game" : "Play now"}
               </p>
               <h2 className="gu-title text-2xl">{hero.title}</h2>
-              <p className="line-clamp-3 text-[#c2cbf2]">{hero.description}</p>
+              <p className="line-clamp-3 text-[#c0c6d8]">{hero.description}</p>
               <div className="flex flex-wrap gap-3 pt-1">
                 <button type="button" className="gu-btn gu-btn--primary" disabled={!isPlayable(hero)} onClick={() => launch(hero.id)}>
                   ▶ Play

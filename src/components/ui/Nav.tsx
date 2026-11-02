@@ -39,10 +39,14 @@ export function Nav() {
     <header className="gu-nav">
       <Link href="/" className="group flex items-center gap-3" aria-label="Game Universe — home" onClick={() => setOpen(false)}>
         <span
-          className="block h-6 w-6 rotate-45 border-2 border-neon shadow-[0_0_14px_var(--gu-cyan)] transition-transform duration-500 group-hover:rotate-[225deg]"
+          className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-[#6f9bff] to-[#4a76f0] shadow-[0_8px_24px_-8px_rgba(74,118,240,0.9)] transition-transform duration-300 group-hover:scale-110"
           aria-hidden
-        />
-        <span className="font-display text-[0.8rem] font-extrabold tracking-[0.3em] uppercase">
+        >
+          <svg width="11" height="12" viewBox="0 0 11 12" fill="none" aria-hidden>
+            <path d="M10.5 5.25 1.5 0v12l9-5.25v-.5Z" fill="#fff" />
+          </svg>
+        </span>
+        <span className="font-display text-[0.76rem] font-bold tracking-[0.28em] uppercase">
           Game <span className="text-neon">Universe</span>
         </span>
       </Link>

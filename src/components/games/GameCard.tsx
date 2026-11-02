@@ -23,6 +23,7 @@ export function GameCard({ game }: { game: GameRecord }) {
     >
       <div className="relative">
         <GameArt game={game} className="aspect-[16/10] w-full" />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0d0f16] to-transparent" aria-hidden />
         <div className="absolute left-3 top-3 z-[4]">
           <StatusBadge game={game} />
         </div>
@@ -34,7 +35,7 @@ export function GameCard({ game }: { game: GameRecord }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-5 pb-3">
-        <p className="gu-kicker" style={{ color: "var(--c1)", letterSpacing: "0.26em" }}>
+        <p className="gu-kicker" style={{ color: "var(--c1)", letterSpacing: "0.22em" }}>
           {game.category} · {game.genre}
         </p>
         <h3 className="gu-title text-xl">
@@ -48,7 +49,7 @@ export function GameCard({ game }: { game: GameRecord }) {
             {game.title}
           </button>
         </h3>
-        <p className="line-clamp-2 text-[1.02rem] text-[#aab4e6]">{game.description}</p>
+        <p className="line-clamp-2 text-[1rem] text-[#aab2c6]">{game.description}</p>
         <div className="gu-card-reveal">
           <div className="flex flex-wrap gap-1.5 pt-1">
             {game.tags.slice(0, 5).map((t) => (
@@ -61,7 +62,7 @@ export function GameCard({ game }: { game: GameRecord }) {
       </div>
 
       <div className="relative z-10 flex items-center justify-between gap-3 px-5 pb-5">
-        <span className="font-display text-[0.62rem] tracking-[0.2em] text-[#7f8cc4]">
+        <span className="font-display text-[0.6rem] tracking-[0.18em] text-[#6d7488]">
           {game.version ? `V${game.version}` : ""}
         </span>
         <button

@@ -45,24 +45,29 @@ function Spotlight({ game, big }: { game: GameRecord; big: boolean }) {
   return (
     <div
       ref={wrap}
-      className={`gu-clip relative isolate overflow-hidden border border-[var(--c1)] ${big ? "min-h-[460px]" : "min-h-[340px]"}`}
+      className={`gu-clip relative isolate overflow-hidden border border-[var(--gu-line)] ${big ? "min-h-[480px]" : "min-h-[340px]"}`}
       style={themeStyle(game)}
       data-testid="featured-game"
     >
       <div ref={art} className="absolute inset-0 -z-10 will-change-transform">
         <GameArt game={game} variant="banner" className="h-full w-full" />
       </div>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#04040b] via-[#04040bcc] to-transparent" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#04040b] via-transparent to-transparent" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#07080c] via-[#07080cd9] to-transparent" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#07080c] via-transparent to-[#07080c66]" />
       <div className="gu-scanlines" />
-      <div className={`flex h-full flex-col justify-end gap-4 p-7 sm:p-10 ${big ? "max-w-2xl" : "max-w-lg"}`}>
-        <StatusBadge game={game} />
-        <p className="gu-kicker" style={{ color: "var(--c1)" }}>
-          {game.flagship ? "Flagship" : "Featured"} · {game.category} · {game.genre}
-        </p>
+      <div className={`relative flex h-full flex-col justify-end gap-4 p-7 sm:p-10 ${big ? "max-w-2xl" : "max-w-lg"}`}>
+        <div className="flex items-center gap-3">
+          <StatusBadge game={game} />
+          <span
+            className="gu-kicker"
+            style={{ color: "var(--c1)", background: "transparent", letterSpacing: "0.22em" }}
+          >
+            {game.flagship ? "Flagship" : "Featured"} · {game.category} · {game.genre}
+          </span>
+        </div>
         <h3 className={`gu-title gu-glow-text ${big ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl"}`}>{game.title}</h3>
-        <p className="line-clamp-3 text-lg text-[#c9d1f5]">{game.description}</p>
-        <div className="flex flex-wrap gap-3 pt-1">
+        <p className="line-clamp-3 text-lg text-[#c8cde0]">{game.description}</p>
+        <div className="flex flex-wrap gap-3 pt-2">
           <button
             type="button"
             className="gu-btn gu-btn--primary"
@@ -137,22 +142,24 @@ export function AboutSection() {
           <h2 id="about-heading" className="gu-title mt-3 max-w-3xl text-3xl sm:text-5xl">
             One home for <span className="gu-gradient-text">every game</span> I build
           </h2>
-          <p className="mt-5 max-w-2xl text-lg text-[#b8c2ee]">
-            This is a personal arcade and portfolio: a launcher that grows on its own. Drop a new game into the games
-            folder and a new world appears in the universe.
-          </p>
-        </Reveal>
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {items.map((it, i) => (
-            <Reveal key={it.n} delay={i * 100}>
-              <div className="gu-panel gu-clip h-full p-7">
-                <p className="font-display text-4xl font-black text-transparent [-webkit-text-stroke:1px_var(--gu-cyan)]">{it.n}</p>
-                <h3 className="gu-title mt-4 text-xl">{it.t}</h3>
-                <p className="mt-3 text-[#b8c2ee]">{it.d}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+        <p className="mt-5 max-w-2xl text-lg text-[#aab2c6]">
+          This is a personal arcade and portfolio: a launcher that grows on its own. Drop a new game into the games
+          folder and a new world appears in the universe.
+        </p>
+      </Reveal>
+      <div className="mt-12 grid gap-6 md:grid-cols-3">
+        {items.map((it, i) => (
+          <Reveal key={it.n} delay={i * 100}>
+            <div className="gu-panel h-full p-7">
+              <p className="font-display text-4xl font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.22)]">
+                {it.n}
+              </p>
+              <h3 className="gu-title mt-4 text-xl">{it.t}</h3>
+              <p className="mt-3 text-[#aab2c6]">{it.d}</p>
+            </div>
+          </Reveal>
+        ))}
+      </div>
       </div>
     </section>
   );

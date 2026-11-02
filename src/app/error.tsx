@@ -11,7 +11,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
   return (
     <div className="grid min-h-[100svh] place-items-center px-6" role="alert">
       <div className="text-center">
-        <p className="gu-kicker" style={{ color: "#ff4d6d" }}>
+        <p className="gu-kicker" style={{ color: "#ff5d73" }}>
           System fault
         </p>
         <h1 className="gu-title mt-3 text-4xl sm:text-5xl">Something went wrong</h1>

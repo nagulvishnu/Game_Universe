@@ -23,7 +23,7 @@ export function DiscoveryPanel() {
             {report.diagnostics.map((d) => (
               <li key={d.folder}>
                 <span
-                  className={d.level === "ok" ? "text-[#4dffb0]" : d.level === "warning" ? "text-amber" : "text-danger"}
+                  className={d.level === "ok" ? "text-[#6fe3a8]" : d.level === "warning" ? "text-amber" : "text-danger"}
                   aria-label={d.level}
                 >
                   {d.level === "ok" ? "✓" : d.level === "warning" ? "⚠" : "✗"}
@@ -41,7 +41,7 @@ export function DiscoveryPanel() {
       )}
       <button type="button" className="gu-chip" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         Discovery · {report.games.length}
-        {problems > 0 && <small style={{ color: "#ffb84d", opacity: 1 }}>⚠ {problems}</small>}
+        {problems > 0 && <small style={{ color: "#ffc670", opacity: 1 }}>⚠ {problems}</small>}
       </button>
     </div>
   );

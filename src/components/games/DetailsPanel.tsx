@@ -79,7 +79,7 @@ export function DetailsPanel() {
         <div className="gu-corners relative">
           <GameArt game={game} variant="banner" className="aspect-[16/9] w-full" />
           <div className="gu-scanlines" />
-          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#070920] to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#13151f] to-transparent" />
           <div className="absolute bottom-3 left-5">
             <StatusBadge game={game} />
           </div>
@@ -93,7 +93,7 @@ export function DetailsPanel() {
             <h2 id="details-title" className="gu-title gu-glow-text mt-2 text-3xl sm:text-4xl">
               {game.title}
             </h2>
-            <p className="mt-4 text-lg text-[#c2cbf2]">{game.description}</p>
+            <p className="mt-4 text-lg text-[#c0c6d8]">{game.description}</p>
           </div>
 
           <dl>
@@ -113,7 +113,7 @@ export function DetailsPanel() {
 
           {game.tags.length > 0 && (
             <div>
-              <h3 className="gu-kicker mb-3" style={{ color: "#7f8cc4" }}>
+              <h3 className="gu-kicker mb-3" style={{ color: "#79809a" }}>
                 Tags
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -128,7 +128,7 @@ export function DetailsPanel() {
 
           {game.controls.length > 0 && (
             <div>
-              <h3 className="gu-kicker mb-3" style={{ color: "#7f8cc4" }}>
+              <h3 className="gu-kicker mb-3" style={{ color: "#79809a" }}>
                 Controls
               </h3>
               <div className="flex flex-wrap gap-2">
