@@ -1,0 +1,16 @@
+{
+  "id": "dungeon-awakening",
+  "title": "Dungeon Awakening",
+  "description": "An anime action RPG deep in the abyss. Fight through dungeons, chain skills and spells, loot gear, and rise from the dark.",
+  "genre": "RPG",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": ["Action RPG", "Anime", "Dungeons", "Fantasy", "3D"],
+  "controls": ["WASD", "Mouse", "Shift", "Space", "1-3", "Esc"],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-02"
+}

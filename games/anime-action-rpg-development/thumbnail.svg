@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Dungeon Awakening">
+  <defs>
+    <linearGradient id="cave" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0614"/>
+      <stop offset="60%" stop-color="#170b2e"/>
+      <stop offset="100%" stop-color="#05030c"/>
+    </linearGradient>
+    <radialGradient id="portal" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0%" stop-color="#e9d5ff"/>
+      <stop offset="45%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#6b21a8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="blade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#7dd3fc"/>
+    </linearGradient>
+    <linearGradient id="stair" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2d1650"/>
+      <stop offset="100%" stop-color="#0a0514"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#cave)"/>
+
+  <!-- cave arch -->
+  <path d="M140 630 L140 300 Q140 90 600 90 Q1060 90 1060 300 L1060 630" fill="#0d0720"/>
+  <path d="M140 630 L140 300 Q140 90 600 90 Q1060 90 1060 300 L1060 630" fill="none" stroke="#7c3aed" stroke-opacity="0.45" stroke-width="5"/>
+  <path d="M220 630 L220 320 Q220 150 600 150 Q980 150 980 320 L980 630" fill="#070412"/>
+
+  <!-- glowing abyss portal -->
+  <ellipse cx="600" cy="330" rx="210" ry="240" fill="url(#portal)" opacity="0.85"/>
+  <ellipse cx="600" cy="330" rx="120" ry="160" fill="#0b0618"/>
+  <ellipse cx="600" cy="330" rx="120" ry="160" fill="none" stroke="#c084fc" stroke-width="5" opacity="0.9"/>
+
+  <!-- descending stairs into dark -->
+  <g fill="url(#stair)" stroke="#a855f7" stroke-opacity="0.5" stroke-width="2">
+    <rect x="500" y="470" width="200" height="26"/>
+    <rect x="516" y="496" width="168" height="26"/>
+    <rect x="532" y="522" width="136" height="26"/>
+    <rect x="548" y="548" width="104" height="26"/>
+  </g>
+
+  <!-- runes -->
+  <g stroke="#e9d5ff" stroke-width="3" stroke-linecap="round" opacity="0.75" fill="none">
+    <path d="M330 250 l14 -22 l14 22 M337 240 h14"/>
+    <path d="M842 250 l14 -22 l14 22 M849 240 h14"/>
+    <path d="M300 380 v26 M287 393 h26"/>
+    <path d="M886 380 v26 M873 393 h26"/>
+  </g>
+
+  <!-- floating embers -->
+  <g fill="#c084fc">
+    <circle cx="420" cy="220" r="5" opacity="0.9"/><circle cx="790" cy="200" r="4" opacity="0.8"/>
+    <circle cx="380" cy="440" r="4" opacity="0.7"/><circle cx="830" cy="430" r="5" opacity="0.8"/>
+    <circle cx="520" cy="180" r="3" opacity="0.7"/><circle cx="690" cy="170" r="4" opacity="0.75"/>
+    <circle cx="450" cy="520" r="3" opacity="0.6"/><circle cx="760" cy="510" r="3" opacity="0.6"/>
+  </g>
+
+  <!-- hero silhouette with sword -->
+  <g transform="translate(600 452)" fill="#04030a">
+    <circle cx="0" cy="-52" r="15"/>
+    <path d="M-20 -34 L20 -34 L26 6 L-26 6 Z"/>
+    <rect x="-24" y="4" width="17" height="38" rx="6"/>
+    <rect x="7" y="4" width="17" height="38" rx="6"/>
+  </g>
+  <g transform="translate(636 420) rotate(35)">
+    <rect x="-5" y="-70" width="10" height="76" rx="4" fill="url(#blade)"/>
+    <rect x="-14" y="4" width="28" height="9" rx="4" fill="#fbbf24"/>
+    <rect x="-4" y="12" width="8" height="22" rx="3" fill="#78350f"/>
+  </g>
+
+  <text x="600" y="596" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="74" font-weight="bold" letter-spacing="8" fill="#f8fafc">DUNGEON AWAKENING</text>
+  <text x="600" y="624" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="20" font-weight="bold" letter-spacing="10" fill="#c084fc">RISE FROM THE ABYSS</text>
+
+  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#a855f7" stroke-opacity="0.5" stroke-width="3"/>
+</svg>

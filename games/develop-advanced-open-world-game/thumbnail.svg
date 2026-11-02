@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="HAVOC CITY">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0f2e"/>
+      <stop offset="55%" stop-color="#1b1148"/>
+      <stop offset="100%" stop-color="#3a1150"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff3df2"/>
+      <stop offset="100%" stop-color="#ff3df2" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#38e8ff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#38e8ff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#sky)"/>
+
+  <g fill="#ffffff">
+    <circle cx="120" cy="70" r="1.6" opacity="0.8"/><circle cx="320" cy="110" r="1.2" opacity="0.6"/>
+    <circle cx="540" cy="60" r="1.5" opacity="0.7"/><circle cx="760" cy="95" r="1.2" opacity="0.5"/>
+    <circle cx="980" cy="55" r="1.7" opacity="0.85"/><circle cx="1120" cy="120" r="1.3" opacity="0.6"/>
+    <circle cx="220" cy="170" r="1.2" opacity="0.5"/><circle cx="880" cy="160" r="1.4" opacity="0.6"/>
+  </g>
+
+  <circle cx="960" cy="150" r="70" fill="#ff3df2" opacity="0.16"/>
+  <circle cx="960" cy="150" r="44" fill="#ff9df6" opacity="0.85"/>
+
+  <!-- skyline back -->
+  <g fill="#120a33">
+    <rect x="0" y="300" width="90" height="330"/><rect x="100" y="250" width="70" height="380"/>
+    <rect x="185" y="330" width="110" height="300"/><rect x="310" y="220" width="80" height="410"/>
+    <rect x="405" y="290" width="95" height="340"/><rect x="515" y="240" width="70" height="390"/>
+    <rect x="600" y="310" width="120" height="320"/><rect x="735" y="230" width="85" height="400"/>
+    <rect x="835" y="300" width="100" height="330"/><rect x="950" y="255" width="75" height="375"/>
+    <rect x="1040" y="320" width="160" height="310"/>
+  </g>
+
+  <!-- skyline front -->
+  <g fill="#0a0620">
+    <rect x="40" y="380" width="120" height="250"/><rect x="230" y="410" width="140" height="220"/>
+    <rect x="430" y="370" width="110" height="260"/><rect x="620" y="420" width="150" height="210"/>
+    <rect x="820" y="385" width="120" height="245"/><rect x="1010" y="405" width="150" height="225"/>
+  </g>
+
+  <!-- neon windows -->
+  <g fill="#38e8ff" opacity="0.9">
+    <rect x="60" y="400" width="12" height="16"/><rect x="84" y="400" width="12" height="16"/>
+    <rect x="60" y="430" width="12" height="16"/><rect x="108" y="430" width="12" height="16"/>
+    <rect x="250" y="430" width="12" height="16"/><rect x="274" y="430" width="12" height="16"/>
+    <rect x="298" y="460" width="12" height="16"/><rect x="450" y="395" width="12" height="16"/>
+    <rect x="474" y="395" width="12" height="16"/><rect x="450" y="430" width="12" height="16"/>
+    <rect x="645" y="445" width="12" height="16"/><rect x="669" y="445" width="12" height="16"/>
+    <rect x="717" y="475" width="12" height="16"/><rect x="845" y="410" width="12" height="16"/>
+    <rect x="869" y="410" width="12" height="16"/><rect x="845" y="445" width="12" height="16"/>
+    <rect x="1040" y="430" width="12" height="16"/><rect x="1064" y="430" width="12" height="16"/>
+    <rect x="1112" y="460" width="12" height="16"/>
+  </g>
+  <g fill="#ff3df2" opacity="0.85">
+    <rect x="132" y="460" width="12" height="16"/><rect x="330" y="245" width="12" height="16"/>
+    <rect x="354" y="275" width="12" height="16"/><rect x="539" y="265" width="12" height="16"/>
+    <rect x="760" y="255" width="12" height="16"/><rect x="784" y="290" width="12" height="16"/>
+    <rect x="975" y="280" width="12" height="16"/><rect x="672" y="475" width="12" height="16"/>
+    <rect x="894" y="445" width="12" height="16"/>
+  </g>
+
+  <!-- searchlights -->
+  <polygon points="320,220 380,470 250,470" fill="url(#beam)" opacity="0.5"/>
+  <polygon points="745,230 815,470 665,470" fill="url(#beam)" opacity="0.4"/>
+
+  <!-- helicopter -->
+  <g transform="translate(560 150)">
+    <rect x="-34" y="-8" width="60" height="20" rx="10" fill="#e2e8f0"/>
+    <rect x="20" y="-2" width="42" height="8" rx="4" fill="#94a3b8"/>
+    <polygon points="-34,2 -56,14 -34,12" fill="#94a3b8"/>
+    <rect x="-6" y="-14" width="64" height="5" rx="2.5" fill="#38e8ff"/>
+    <line x1="26" y1="-11" x2="26" y2="-4" stroke="#cbd5e1" stroke-width="3"/>
+    <rect x="-24" y="14" width="40" height="4" rx="2" fill="#64748b"/>
+  </g>
+
+  <!-- street glow -->
+  <rect x="0" y="596" width="1200" height="34" fill="#070418"/>
+  <rect x="0" y="596" width="1200" height="4" fill="url(#glow)" opacity="0.7"/>
+
+  <text x="600" y="530" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="86" font-weight="bold" letter-spacing="10" fill="#f8fafc">HAVOC CITY</text>
+  <text x="600" y="574" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="bold" letter-spacing="12" fill="#38e8ff">OPEN WORLD SANDBOX</text>
+
+  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#ff3df2" stroke-opacity="0.45" stroke-width="3"/>
+</svg>

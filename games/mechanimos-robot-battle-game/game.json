@@ -1,0 +1,16 @@
+{
+  "id": "mechanimos",
+  "title": "MECHANIMOS",
+  "description": "Tiny cars, giant robots. Draft battle cards, tame wild machines, and fight your way through the arena in this mech battler.",
+  "genre": "Action",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": ["Robots", "Combat", "Cards", "Arena", "3D"],
+  "controls": ["WASD", "Mouse", "Space", "1-3", "Esc"],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-10-19"
+}

@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --navy: #0b0a24;
+  --navy2: #151447;
+  --cyan: #35d0ff;
+  --pink: #ff3d9a;
+  --gold: #ffd24a;
+  --ink: #e9ecff;
+}
+html, body, #root { height: 100%; margin: 0; background: #05040f; overflow: hidden; color: var(--ink); font-family: 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif; user-select: none; }
+canvas { display: block; outline: none; }
+.title-font { font-family: Impact, 'Arial Black', 'Trebuchet MS', sans-serif; letter-spacing: 0.04em; font-style: italic; text-transform: uppercase; }
+.panel {
+  background: linear-gradient(160deg, rgba(21,20,71,.94), rgba(9,8,34,.96));
+  border: 2px solid rgba(53,208,255,.55);
+  box-shadow: 0 0 0 1px rgba(255,61,154,.35), 0 12px 40px rgba(0,0,0,.6), inset 0 0 40px rgba(53,208,255,.07);
+  border-radius: 14px;
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+}
+.btn {
+  position: relative; cursor: pointer; padding: 10px 26px; font-weight: 800; font-style: italic; text-transform: uppercase; letter-spacing: .06em;
+  color: #fff; background: linear-gradient(90deg, #2a5bff, #35d0ff); border: 0; transform: skewX(-12deg);
+  box-shadow: 0 4px 0 #11246b, 0 0 18px rgba(53,208,255,.45); transition: transform .12s, filter .12s, box-shadow .12s;
+  border-radius: 4px;
+}
+.btn > span { display: inline-block; transform: skewX(12deg); }
+.btn:hover:not(:disabled) { transform: skewX(-12deg) translateY(-2px) scale(1.04); filter: brightness(1.2); }
+.btn:active:not(:disabled) { transform: skewX(-12deg) translateY(2px); box-shadow: 0 1px 0 #11246b; }
+.btn:disabled { filter: grayscale(.9) brightness(.55); cursor: not-allowed; }
+.btn.pink { background: linear-gradient(90deg, #d4146e, #ff3d9a); box-shadow: 0 4px 0 #6b0a3a, 0 0 18px rgba(255,61,154,.45); }
+.btn.gold { background: linear-gradient(90deg, #ff9d2e, #ffd24a); color: #2a1a00; box-shadow: 0 4px 0 #7a4a00, 0 0 18px rgba(255,210,74,.45); }
+.btn.ghost { background: rgba(255,255,255,.08); box-shadow: 0 3px 0 rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.25); }
+.btn.sm { padding: 5px 14px; font-size: 12px; }
+.speedlines { background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(53,208,255,.08) 0deg 2deg, transparent 2deg 9deg); }
+.bar { height: 14px; background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.3); transform: skewX(-18deg); overflow: hidden; border-radius: 3px; }
+.bar > i { display: block; height: 100%; transition: width .1s linear; }
+.chip { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; background: rgba(53,208,255,.18); border: 1px solid rgba(53,208,255,.6); }
+.scroll { scrollbar-width: thin; scrollbar-color: #35d0ff #0b0a24; }
+input[type=range] { accent-color: #35d0ff; }
+@keyframes curtainIn { from { clip-path: circle(0% at 50% 50%); } to { clip-path: circle(150% at 50% 50%); } }
+@keyframes curtainOut { from { clip-path: circle(150% at 50% 50%); } to { clip-path: circle(0% at 50% 50%); } }
+@keyframes pop { 0% { transform: scale(2.6); opacity: 0; } 25% { transform: scale(1); opacity: 1; } 85% { opacity: 1; } 100% { transform: scale(.8); opacity: 0; } }
+@keyframes slideIn { from { transform: translateX(60px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes bannerIn { 0% { transform: translateY(-30px) skewX(-12deg); opacity: 0; } 12% { transform: skewX(-12deg); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-10px) skewX(-12deg); opacity: 0; } }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+@keyframes confetti { to { transform: translateY(110vh) rotate(720deg); } }
+@keyframes shine { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+.curtain-in { animation: curtainIn .75s cubic-bezier(.7,0,.3,1) forwards; }
+.curtain-out { animation: curtainOut .7s cubic-bezier(.7,0,.3,1) forwards; }
+.pop { animation: pop 0.9s ease-out forwards; }
+.slide-in { animation: slideIn .25s ease-out; }
+.slide-up { animation: slideUp .3s ease-out; }
+.pulse { animation: pulse 0.8s infinite; }
+.shine-text { background: linear-gradient(90deg, #fff 0%, #35d0ff 30%, #ff3d9a 60%, #ffd24a 90%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 4s linear infinite; }

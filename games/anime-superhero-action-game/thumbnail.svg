@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="HERO CITY">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="55%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <radialGradient id="burst" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cape" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#991b1b"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#sky)"/>
+
+  <!-- sunburst -->
+  <g transform="translate(600 260)" opacity="0.55">
+    <g fill="#fef9c3">
+      <polygon points="0,-260 26,-60 -26,-60"/>
+      <polygon points="0,260 26,60 -26,60"/>
+      <polygon points="-260,0 -60,26 -60,-26"/>
+      <polygon points="260,0 60,26 60,-26"/>
+      <polygon points="-184,-184 -30,-50 -50,-30"/>
+      <polygon points="184,184 30,50 50,30"/>
+      <polygon points="184,-184 50,-30 30,-50"/>
+      <polygon points="-184,184 -50,30 -30,50"/>
+    </g>
+  </g>
+  <circle cx="600" cy="260" r="130" fill="url(#burst)"/>
+
+  <!-- clouds -->
+  <g fill="#ffffff" opacity="0.85">
+    <ellipse cx="180" cy="150" rx="95" ry="32"/><ellipse cx="260" cy="135" rx="65" ry="26"/>
+    <ellipse cx="1010" cy="130" rx="100" ry="30"/><ellipse cx="930" cy="150" rx="60" ry="24"/>
+    <ellipse cx="620" cy="110" rx="80" ry="24" opacity="0.7"/>
+  </g>
+
+  <!-- city skyline (bottom) -->
+  <g fill="#0c4a6e" opacity="0.95">
+    <rect x="0" y="420" width="90" height="210"/><rect x="100" y="380" width="70" height="250"/>
+    <rect x="185" y="440" width="110" height="190"/><rect x="310" y="360" width="80" height="270"/>
+    <rect x="405" y="430" width="95" height="200"/><rect x="515" y="390" width="70" height="240"/>
+    <rect x="600" y="450" width="120" height="180"/><rect x="735" y="370" width="85" height="260"/>
+    <rect x="835" y="430" width="100" height="200"/><rect x="950" y="395" width="75" height="235"/>
+    <rect x="1040" y="440" width="160" height="190"/>
+  </g>
+  <g fill="#38bdf8" opacity="0.9">
+    <rect x="30" y="450" width="12" height="16"/><rect x="54" y="450" width="12" height="16"/>
+    <rect x="330" y="385" width="12" height="16"/><rect x="354" y="415" width="12" height="16"/>
+    <rect x="539" y="415" width="12" height="16"/><rect x="760" y="395" width="12" height="16"/>
+    <rect x="784" y="430" width="12" height="16"/><rect x="975" y="420" width="12" height="16"/>
+    <rect x="1080" y="465" width="12" height="16"/><rect x="1104" y="465" width="12" height="16"/>
+  </g>
+
+  <!-- flying hero -->
+  <g transform="translate(600 255) rotate(-16)">
+    <!-- cape -->
+    <path d="M-10 -6 Q-90 26 -120 74 Q-70 56 -14 42 Z" fill="url(#cape)"/>
+    <!-- body -->
+    <ellipse cx="0" cy="10" rx="30" ry="44" fill="#1d4ed8"/>
+    <circle cx="6" cy="-44" r="22" fill="#fcd34d"/>
+    <path d="M-16 -52 Q6 -74 28 -52 Q14 -62 -4 -60 Z" fill="#0f172a"/>
+    <!-- arms -->
+    <path d="M22 -14 L66 -34 L72 -18 L28 4 Z" fill="#1d4ed8"/>
+    <circle cx="70" cy="-26" r="10" fill="#fcd34d"/>
+    <path d="M-24 -8 L-64 10 L-56 26 L-16 10 Z" fill="#1d4ed8"/>
+    <circle cx="-62" cy="18" r="10" fill="#fcd34d"/>
+    <!-- legs -->
+    <path d="M-14 44 L-44 88 L-28 96 L2 56 Z" fill="#1e3a8a"/>
+    <path d="M14 44 L48 82 L62 70 L28 40 Z" fill="#1e3a8a"/>
+    <!-- emblem -->
+    <circle cx="4" cy="6" r="13" fill="#fef9c3"/>
+    <path d="M4 -4 L8 4 L16 6 L10 12 L11 20 L4 16 L-3 20 L-2 12 L-8 6 L0 4 Z" fill="#dc2626"/>
+  </g>
+
+  <!-- speed lines -->
+  <g stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.75">
+    <line x1="360" y1="250" x2="200" y2="278"/>
+    <line x1="390" y1="300" x2="260" y2="322"/>
+    <line x1="820" y1="220" x2="960" y2="204"/>
+    <line x1="810" y1="280" x2="930" y2="272"/>
+  </g>
+
+  <text x="600" y="560" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="92" font-weight="bold" letter-spacing="14" fill="#ffffff">HERO CITY</text>
+  <text x="600" y="604" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="bold" letter-spacing="12" fill="#0c4a6e">3D SUPERHERO ACTION</text>
+
+  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#0ea5e9" stroke-opacity="0.6" stroke-width="3"/>
+</svg>

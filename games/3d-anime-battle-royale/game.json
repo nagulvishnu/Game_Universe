@@ -1,0 +1,16 @@
+{
+  "id": "last-drop",
+  "title": "LAST DROP",
+  "description": "A 3D anime battle royale. Drop onto the island, scavenge weapons and loot, and fight to be the last one standing.",
+  "genre": "Battle Royale",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": ["Shooter", "Battle Royale", "Anime", "3D"],
+  "controls": ["WASD", "Mouse", "Shift", "Space", "1-4", "Esc"],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-02"
+}

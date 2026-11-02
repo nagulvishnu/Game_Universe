@@ -1,0 +1,24 @@
+{
+  "id": "skybound-flight-simulator",
+  "name": "SKYBOUND: Flight Simulator",
+  "short_name": "Skybound",
+  "version": "1.0.0",
+  "description": "A 3D browser flight simulator with six aircraft classes, a large explorable world, dynamic weather, day/night cycle, career mode and eight game modes.",
+  "genre": ["simulation", "flight", "3d"],
+  "entry": "index.html",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "start_url": "./index.html",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "inputs": ["keyboard", "mouse", "gamepad"],
+  "technology": ["three.js", "react", "typescript", "webaudio"],
+  "modes": ["free-flight", "career", "landing-challenges", "passenger", "cargo", "rescue", "fighter", "time-trials"],
+  "storage": { "key": "skybound.flightsim.save.v1", "type": "localStorage" },
+  "embedding": {
+    "iframe": "<iframe src=\"/games/skybound/index.html\" allow=\"fullscreen; gamepad; autoplay\" style=\"border:0;width:100%;height:100%\"></iframe>",
+    "messagesOut": ["ready", "start", "end"],
+    "messagesIn": ["pause", "resume", "mute", "unmute"],
+    "messageFormat": { "out": { "source": "skybound", "type": "string" }, "in": { "target": "skybound", "type": "string" } }
+  }
+}

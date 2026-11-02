@@ -1,0 +1,16 @@
+{
+  "id": "eclipse-last-awakening",
+  "title": "ECLIPSE: The Last Awakening",
+  "description": "An autonomous 3D anime film experience. Follow the story of the last awakening through cinematic scenes, captions and a dynamic score — or steer it yourself.",
+  "genre": "Adventure",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": ["Cinematic", "Anime", "Story", "3D"],
+  "controls": ["Arrow Keys", "Space", "Mouse"],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-02"
+}

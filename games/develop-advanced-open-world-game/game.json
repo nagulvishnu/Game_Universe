@@ -1,0 +1,16 @@
+{
+  "id": "havoc-city",
+  "title": "HAVOC CITY",
+  "description": "A 3D open-world action sandbox. Free-roam a sprawling city district by district, take the wheel of cars and planes, and turn the whole sandbox into your playground.",
+  "genre": "Open World",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": ["Open World", "Action", "Sandbox", "3D"],
+  "controls": ["WASD", "Mouse", "Shift", "Space", "E", "Esc"],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-02"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "hero-city",
+  "title": "HERO CITY",
+  "description": "A 3D anime open-world superhero game. Soar over the city, take on missions, unlock upgrades, and keep Hero City safe.",
+  "genre": "Action",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": ["Superhero", "Open World", "Flying", "Anime", "3D"],
+  "controls": ["WASD", "Mouse", "Shift", "Space", "E", "Esc"],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-02"
+}

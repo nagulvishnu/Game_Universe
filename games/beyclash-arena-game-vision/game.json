@@ -1,0 +1,16 @@
+{
+  "id": "beyclash-arena",
+  "title": "Beyclash Arena",
+  "description": "A 3D physics-based beyblade battler. Build and customise your blade, explore the city between matches, and climb the tournament bracket to become champion.",
+  "genre": "Action",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": ["Arcade", "Beyblade", "Tournaments", "3D"],
+  "controls": ["WASD", "Mouse", "Space", "E", "Esc"],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-02"
+}

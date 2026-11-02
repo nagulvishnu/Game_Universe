@@ -1,0 +1,16 @@
+{
+  "id": "ride-to-riches",
+  "title": "Ride to Riches",
+  "description": "A 3D open-world bike-taxi life sim. Work the streets, master dynamic fares and night pricing, then build your own transport company.",
+  "genre": "Simulation",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": ["Life Sim", "Open World", "Driving", "Tycoon", "3D"],
+  "controls": ["WASD", "Arrow Keys", "Mouse", "Shift", "Space", "Esc"],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-02"
+}

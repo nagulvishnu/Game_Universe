@@ -1,6 +1,40 @@
 {
   "games": [
     {
+      "id": "last-drop",
+      "title": "LAST DROP",
+      "description": "A 3D anime battle royale. Drop onto the island, scavenge weapons and loot, and fight to be the last one standing.",
+      "genre": "Battle Royale",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Shooter",
+        "Battle Royale",
+        "Anime",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Shift",
+        "Space",
+        "1-4",
+        "Esc"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-02",
+      "flagship": false,
+      "folder": "3d-anime-battle-royale",
+      "external": false,
+      "launchUrl": "/play/3d-anime-battle-royale/dist/index.html",
+      "thumbnailUrl": "/play/3d-anime-battle-royale/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
       "id": "dropzone-50",
       "title": "Dropzone 50",
       "description": "A 3D battle royale. Insert into the drop, scavenge weapons and armour, and fight it out to be the last one standing.",
@@ -97,6 +131,177 @@
       "external": false,
       "launchUrl": "/play/3d-car-racing-game/dist/index.html",
       "thumbnailUrl": "/play/3d-car-racing-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "dungeon-awakening",
+      "title": "Dungeon Awakening",
+      "description": "An anime action RPG deep in the abyss. Fight through dungeons, chain skills and spells, loot gear, and rise from the dark.",
+      "genre": "RPG",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Action RPG",
+        "Anime",
+        "Dungeons",
+        "Fantasy",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Shift",
+        "Space",
+        "1-3",
+        "Esc"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-02",
+      "flagship": false,
+      "folder": "anime-action-rpg-development",
+      "external": false,
+      "launchUrl": "/play/anime-action-rpg-development/dist/index.html",
+      "thumbnailUrl": "/play/anime-action-rpg-development/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "hero-city",
+      "title": "HERO CITY",
+      "description": "A 3D anime open-world superhero game. Soar over the city, take on missions, unlock upgrades, and keep Hero City safe.",
+      "genre": "Action",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Superhero",
+        "Open World",
+        "Flying",
+        "Anime",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Shift",
+        "Space",
+        "E",
+        "Esc"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-02",
+      "flagship": false,
+      "folder": "anime-superhero-action-game",
+      "external": false,
+      "launchUrl": "/play/anime-superhero-action-game/dist/index.html",
+      "thumbnailUrl": "/play/anime-superhero-action-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "beyclash-arena",
+      "title": "Beyclash Arena",
+      "description": "A 3D physics-based beyblade battler. Build and customise your blade, explore the city between matches, and climb the tournament bracket to become champion.",
+      "genre": "Action",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Arcade",
+        "Beyblade",
+        "Tournaments",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Space",
+        "E",
+        "Esc"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-02",
+      "flagship": false,
+      "folder": "beyclash-arena-game-vision",
+      "external": false,
+      "launchUrl": "/play/beyclash-arena-game-vision/dist/index.html",
+      "thumbnailUrl": "/play/beyclash-arena-game-vision/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "ride-to-riches",
+      "title": "Ride to Riches",
+      "description": "A 3D open-world bike-taxi life sim. Work the streets, master dynamic fares and night pricing, then build your own transport company.",
+      "genre": "Simulation",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Life Sim",
+        "Open World",
+        "Driving",
+        "Tycoon",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Arrow Keys",
+        "Mouse",
+        "Shift",
+        "Space",
+        "Esc"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-02",
+      "flagship": false,
+      "folder": "bike-taxi-life-simulation",
+      "external": false,
+      "launchUrl": "/play/bike-taxi-life-simulation/dist/index.html",
+      "thumbnailUrl": "/play/bike-taxi-life-simulation/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "skybound-flight-simulator",
+      "title": "SKYBOUND: Flight Simulator",
+      "description": "A 3D browser flight simulator with six aircraft classes, a large explorable world, dynamic weather, day/night cycle, career mode and eight game modes.",
+      "genre": "Simulation",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Flight",
+        "Simulator",
+        "Open World",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Arrow Keys",
+        "Mouse",
+        "Space",
+        "Esc"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-02",
+      "flagship": false,
+      "folder": "build-3d-flight-simulator",
+      "external": false,
+      "launchUrl": "/play/build-3d-flight-simulator/dist/index.html",
+      "thumbnailUrl": "/play/build-3d-flight-simulator/thumbnail.svg",
       "bannerUrl": null
     },
     {
@@ -203,6 +408,71 @@
       "bannerUrl": null
     },
     {
+      "id": "havoc-city",
+      "title": "HAVOC CITY",
+      "description": "A 3D open-world action sandbox. Free-roam a sprawling city district by district, take the wheel of cars and planes, and turn the whole sandbox into your playground.",
+      "genre": "Open World",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Open World",
+        "Action",
+        "Sandbox",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Shift",
+        "Space",
+        "E",
+        "Esc"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-02",
+      "flagship": false,
+      "folder": "develop-advanced-open-world-game",
+      "external": false,
+      "launchUrl": "/play/develop-advanced-open-world-game/dist/index.html",
+      "thumbnailUrl": "/play/develop-advanced-open-world-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "eclipse-last-awakening",
+      "title": "ECLIPSE: The Last Awakening",
+      "description": "An autonomous 3D anime film experience. Follow the story of the last awakening through cinematic scenes, captions and a dynamic score — or steer it yourself.",
+      "genre": "Adventure",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Cinematic",
+        "Anime",
+        "Story",
+        "3D"
+      ],
+      "controls": [
+        "Arrow Keys",
+        "Space",
+        "Mouse"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-02",
+      "flagship": false,
+      "folder": "eclipse-master-development-directive",
+      "external": false,
+      "launchUrl": "/play/eclipse-master-development-directive/dist/index.html",
+      "thumbnailUrl": "/play/eclipse-master-development-directive/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
       "id": "neon-front",
       "title": "Neon Front",
       "description": "A 2D action shooter. Dash and boost, throw grenades, melee, and spend your charge on an ultimate while the neon front pushes back.",
@@ -235,6 +505,40 @@
       "external": false,
       "launchUrl": "/play/feature-rich-2d-game-ideas/dist/index.html",
       "thumbnailUrl": "/play/feature-rich-2d-game-ideas/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "mechanimos",
+      "title": "MECHANIMOS",
+      "description": "Tiny cars, giant robots. Draft battle cards, tame wild machines, and fight your way through the arena in this mech battler.",
+      "genre": "Action",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Robots",
+        "Combat",
+        "Cards",
+        "Arena",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Space",
+        "1-3",
+        "Esc"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-10-19",
+      "flagship": false,
+      "folder": "mechanimos-robot-battle-game",
+      "external": false,
+      "launchUrl": "/play/mechanimos-robot-battle-game/dist/index.html",
+      "thumbnailUrl": "/play/mechanimos-robot-battle-game/thumbnail.svg",
       "bannerUrl": null
     },
     {
@@ -346,6 +650,13 @@
   ],
   "diagnostics": [
     {
+      "folder": "3d-anime-battle-royale",
+      "id": "last-drop",
+      "title": "LAST DROP",
+      "level": "ok",
+      "messages": []
+    },
+    {
       "folder": "3d-battle-royale-game",
       "id": "dropzone-50",
       "title": "Dropzone 50",
@@ -363,6 +674,41 @@
       "folder": "3d-car-racing-game",
       "id": "turbo-horizon",
       "title": "Turbo Horizon",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "anime-action-rpg-development",
+      "id": "dungeon-awakening",
+      "title": "Dungeon Awakening",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "anime-superhero-action-game",
+      "id": "hero-city",
+      "title": "HERO CITY",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "beyclash-arena-game-vision",
+      "id": "beyclash-arena",
+      "title": "Beyclash Arena",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "bike-taxi-life-simulation",
+      "id": "ride-to-riches",
+      "title": "Ride to Riches",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "build-3d-flight-simulator",
+      "id": "skybound-flight-simulator",
+      "title": "SKYBOUND: Flight Simulator",
       "level": "ok",
       "messages": []
     },
@@ -388,9 +734,30 @@
       "messages": []
     },
     {
+      "folder": "develop-advanced-open-world-game",
+      "id": "havoc-city",
+      "title": "HAVOC CITY",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "eclipse-master-development-directive",
+      "id": "eclipse-last-awakening",
+      "title": "ECLIPSE: The Last Awakening",
+      "level": "ok",
+      "messages": []
+    },
+    {
       "folder": "feature-rich-2d-game-ideas",
       "id": "neon-front",
       "title": "Neon Front",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "mechanimos-robot-battle-game",
+      "id": "mechanimos",
+      "title": "MECHANIMOS",
       "level": "ok",
       "messages": []
     },
