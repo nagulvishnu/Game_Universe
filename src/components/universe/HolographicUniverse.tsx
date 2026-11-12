@@ -54,8 +54,6 @@ export function HolographicUniverse() {
   const [phase, setPhase] = useState<PickPhase>("idle");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [manualPickOpen, setManualPickOpen] = useState(false);
-  const [manualQuery, setManualQuery] = useState("");
 
   const engineRef = useRef<HologramEngine | null>(null);
   const cardRefs = useRef(new Map<string, HTMLElement>());
@@ -149,7 +147,7 @@ export function HolographicUniverse() {
 
     const index = cards.findIndex((c) => c.id === chosen.id);
 
-    // Without WebGL there is no machine to spin — show the result immediately.
+    // Without WebGL there is no machine to spin Ã¢â‚¬â€ show the result immediately.
     if (!engine) {
       setSelectedId(chosen.id);
       setPhase("revealing");
@@ -184,18 +182,18 @@ export function HolographicUniverse() {
     });
     timelineRef.current = timeline;
 
-    // 1 — accelerate: the universe comes alive.
+    // 1 Ã¢â‚¬â€ accelerate: the universe comes alive.
     timeline.to(engine, { orbitSpeed: 3.4, duration: 1.15, ease: "power2.in" }, 0);
     timeline.to(engine, { energy: 1, duration: 1.15, ease: "power2.in" }, 0);
 
-    // 2 — the machine spins, chasing its target.
+    // 2 Ã¢â‚¬â€ the machine spins, chasing its target.
     timeline.to(engine, { orbitAngle: target, duration: 2.5, ease: "power3.inOut" }, 0.2);
 
-    // 3 — decelerate into the chosen world.
+    // 3 Ã¢â‚¬â€ decelerate into the chosen world.
     timeline.to(engine, { orbitSpeed: 0.14, duration: 1.3, ease: "power3.out" }, "-=0.4");
     timeline.to(engine, { energy: 0.55, duration: 1.3, ease: "power2.out" }, "<");
 
-    // 4 — the chosen card breaks the sphere and emerges.
+    // 4 Ã¢â‚¬â€ the chosen card breaks the sphere and emerges.
     timeline.call(() => {
       engine.setSelected(chosen.id);
       sfx("reveal");
@@ -231,22 +229,34 @@ export function HolographicUniverse() {
 
   const onCardSelect = useCallback(
     (id: string) => {
+      if (busyRef.current || phase === "spinning") return;
       const game = getGame(id);
       if (!game) return;
       if (!isPlayable(game)) {
         openDetails(id);
         return;
       }
-      launch(id);
+      timelineRef.current?.kill();
+      timelineRef.current = null;
+      const engine = engineRef.current;
+      if (engine) {
+        engine.autoOrbit = true;
+        engine.setBoost(0, 0.14);
+        engine.setSelected(id);
+        engine.setSelectionProgress(1);
+      }
+      setSelectedId(id);
+      setPhase("revealing");
+      sfx("reveal");
     },
-    [getGame, launch, openDetails],
+    [getGame, openDetails, phase, sfx],
   );
 
   /* ---------------- orbit drag ---------------- */
 
   const onStagePointerDown = useCallback(
     (e: React.PointerEvent<HTMLElement>) => {
-      // Touch keeps its native gestures — the page still has to scroll.
+      // Touch keeps its native gestures Ã¢â‚¬â€ the page still has to scroll.
       if (e.pointerType === "touch" || e.button !== 0) return;
       if (phase !== "idle" || !engineRef.current) return;
       const target = e.target as HTMLElement;
@@ -310,7 +320,7 @@ export function HolographicUniverse() {
           e.currentTarget.releasePointerCapture(e.pointerId);
         }
       } catch {
-        // Already released by the browser — nothing to do.
+        // Already released by the browser Ã¢â‚¬â€ nothing to do.
       }
       document.body.style.userSelect = "";
       delete document.documentElement.dataset.guCursor;
@@ -360,29 +370,6 @@ export function HolographicUniverse() {
 
   const hovered = hoveredId ? getGame(hoveredId) : undefined;
   const selected = selectedId ? getGame(selectedId) : undefined;
-  const manualGames = useMemo(() => {
-    const q = manualQuery.trim().toLowerCase();
-    if (!q) return games;
-    return games.filter((g) =>
-      [g.title, g.genre, g.category, ...(g.tags || [])].join(" ").toLowerCase().includes(q),
-    );
-  }, [games, manualQuery]);
-
-  const onManualSelect = useCallback(
-    (id: string) => {
-      const game = getGame(id);
-      if (!game) return;
-      setManualPickOpen(false);
-      setManualQuery("");
-      if (!isPlayable(game)) {
-        openDetails(id);
-        return;
-      }
-      setSelectedId(id);
-      setPhase("revealing");
-    },
-    [getGame, openDetails],
-  );
 
   /* ---------------- render ---------------- */
 
@@ -427,7 +414,7 @@ export function HolographicUniverse() {
         />
       )}
 
-      {/* Orbital cards — real DOM so they stay crisp, focusable and clickable. */}
+      {/* Orbital cards Ã¢â‚¬â€ real DOM so they stay crisp, focusable and clickable. */}
       <div className="gu-orbit-layer" aria-label="Orbiting game worlds">
         {games.map((g) => (
           <OrbitalCard
@@ -446,7 +433,7 @@ export function HolographicUniverse() {
         ))}
       </div>
 
-      {/* The machine's volumetric bloom — drawn above the cards so the core
+      {/* The machine's volumetric bloom Ã¢â‚¬â€ drawn above the cards so the core
           always reads as the dominant element in the composition. */}
       <div ref={bloomRef} className="gu-holo-bloom" aria-hidden />
 
@@ -482,7 +469,7 @@ export function HolographicUniverse() {
         </ul>
         {!webglAvailable && (
           <p className="mt-2 max-w-md text-sm text-amber" role="note">
-            3D view unavailable (WebGL is disabled) — showing the flat universe. Games still play
+            3D view unavailable (WebGL is disabled) Ã¢â‚¬â€ showing the flat universe. Games still play
             normally.
           </p>
         )}
@@ -497,69 +484,22 @@ export function HolographicUniverse() {
           />
           <span className="gu-holo-readout__title">{hovered.title}</span>
           <span className="gu-holo-readout__meta">
-            {hovered.category} · {hovered.genre}
+            {hovered.category} Ã‚Â· {hovered.genre}
           </span>
         </div>
       )}
 
       {/* Pick controls */}
       <div className="gu-holo-controls">
-        <div className="flex flex-col items-center gap-2 sm:flex-row">
-          <RandomPickButton
-            phase={phase}
-            disabled={games.length === 0}
-            onClick={runPick}
-            onReset={reset}
-          />
-          <button
-            type="button"
-            className="gu-btn"
-            data-testid="manual-pick-toggle"
-            onClick={() => setManualPickOpen((v) => !v)}
-          >
-            {manualPickOpen ? "Close picker" : "Pick manually"}
-          </button>
-        </div>
-        <p className="gu-holo-tagline">Let the universe decide, or pick a world yourself.</p>
-
-        {manualPickOpen && (
-          <div className="gu-panel gu-clip mt-2 w-full max-w-xl p-4 text-left" data-testid="manual-picker">
-            <input
-              type="search"
-              value={manualQuery}
-              onChange={(e) => setManualQuery(e.target.value)}
-              placeholder="Search worlds to pick..."
-              className="gu-input w-full"
-              aria-label="Search worlds to pick manually"
-              autoFocus
-            />
-            <ul className="mt-3 max-h-56 overflow-auto pr-1">
-              {manualGames.map((g) => (
-                <li key={g.id}>
-                  <button
-                    type="button"
-                    className="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left hover:bg-white/5"
-                    onClick={() => onManualSelect(g.id)}
-                  >
-                    <span className="min-w-0">
-                      <span className="block truncate font-display text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[#eef3ff]">{g.title}</span>
-                      <span className="block truncate text-[0.85rem] text-[#aab2c6]">
-                        {g.category} · {g.genre}{isPlayable(g) ? "" : ` · ${g.status}`}
-                      </span>
-                    </span>
-                    <span className={`gu-btn gu-btn--sm ${isPlayable(g) ? "gu-btn--primary" : ""}`}>
-                      {isPlayable(g) ? "Pick" : "Details"}
-                    </span>
-                  </button>
-                </li>
-              ))}
-              {manualGames.length === 0 && (
-                <li className="px-3 py-4 text-center text-[#aab2c6]">No worlds match.</li>
-              )}
-            </ul>
-          </div>
-        )}
+        <RandomPickButton
+          phase={phase}
+          disabled={games.length === 0}
+          onClick={runPick}
+          onReset={reset}
+        />
+        <p className="gu-holo-tagline">Click an orbiting card to pick manually, or let the universe decide.</p>
       </div>
+
       {/* Selected world reveal */}
       {selected && phase === "revealing" && (
         <SelectionReveal
