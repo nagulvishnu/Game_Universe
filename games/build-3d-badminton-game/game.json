@@ -1,0 +1,26 @@
+{
+  "id": "badminton-masters",
+  "title": "Badminton Masters: 3D Sports",
+  "description": "Fast-paced 3D badminton — smash, drop and rally in quick arcade matches against the AI or a friend.",
+  "genre": "Sports",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Sports",
+    "Badminton",
+    "Arcade",
+    "Multiplayer"
+  ],
+  "controls": [
+    "WASD",
+    "Space",
+    "Shift",
+    "P2: Arrows, Num keys"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "chaos-breaker",
+  "title": "Chaos Breaker: Anime Weapon Combat Arena",
+  "description": "An anime weapon combat arena — chain light and heavy attacks, charge your blade, and break through waves of enemies in stylish 3D battles.",
+  "genre": "Action",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Anime",
+    "Combat",
+    "Arena",
+    "Action"
+  ],
+  "controls": [
+    "WASD",
+    "Mouse",
+    "F",
+    "Space"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

@@ -1,0 +1,28 @@
+{
+  "id": "demon-lord-simulator",
+  "title": "Demon Lord Simulator",
+  "description": "Rule your own dark realm as the demon lord — grow your power, command from the throne, and become an unstoppable force.",
+  "genre": "Simulation",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Demon",
+    "Simulator",
+    "Dark Fantasy",
+    "3D"
+  ],
+  "controls": [
+    "WASD",
+    "Mouse",
+    "Arrow keys",
+    "Space",
+    "Tab",
+    "M"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

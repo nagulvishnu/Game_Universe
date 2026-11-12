@@ -16,5 +16,7 @@ export default defineConfig([
     "games/**",
     // Built copies of games, published by discovery into /public/play.
     "public/play/**",
+    // Leftovers from an interrupted discovery sync (same content as above).
+    "public/play.tmp-*/",
   ]),
 ]);

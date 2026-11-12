@@ -1,0 +1,7 @@
+dist
+node_modules
+coverage
+package-lock.json
+test-results
+playwright-report
+opencode -s ses_e50878c77ffetNfPmb73QBW2IF

@@ -1,0 +1,28 @@
+{
+  "id": "colossus-mech-combat",
+  "title": "Colossus: Age of Titans",
+  "description": "Pilot a colossal mech against towering kaiju — attack, aim, dash and jump through massive battles in the Age of Titans.",
+  "genre": "Action",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Mech",
+    "Kaiju",
+    "Combat",
+    "3D"
+  ],
+  "controls": [
+    "WASD",
+    "Mouse",
+    "LMB",
+    "RMB",
+    "Space",
+    "Shift"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

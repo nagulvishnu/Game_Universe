@@ -1,0 +1,24 @@
+{
+  "id": "anime-clash",
+  "title": "Anime Clash: 3D Local Multiplayer Fighter",
+  "description": "A 3D anime arena fighter for two players on one keyboard — pick your fighter, chain combos, and clash for local bragging rights.",
+  "genre": "Fighting",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Anime",
+    "Fighting",
+    "Multiplayer",
+    "Local Co-op"
+  ],
+  "controls": [
+    "P1: WASD, F, G, R, T, V",
+    "P2: Arrows, J, K, U, I, O"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

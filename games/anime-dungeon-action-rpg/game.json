@@ -1,0 +1,26 @@
+{
+  "id": "tower-of-infinity",
+  "title": "Tower of Infinity: Anime Dungeon RPG",
+  "description": "Climb the endless Tower of Infinity through procedurally generated dungeons, loot rare gear, and grow stronger with every floor.",
+  "genre": "RPG",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Anime",
+    "Dungeon",
+    "Roguelike",
+    "RPG"
+  ],
+  "controls": [
+    "WASD",
+    "Mouse",
+    "Shift",
+    "Space"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

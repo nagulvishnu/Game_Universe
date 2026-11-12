@@ -1,0 +1,24 @@
+{
+  "id": "chess-infinity",
+  "title": "Chess Infinity",
+  "description": "A premium chess experience with AI opponents, puzzles, training modes, opening studies and timed challenges.",
+  "genre": "Strategy",
+  "category": "2D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Chess",
+    "Board",
+    "Strategy",
+    "Puzzle"
+  ],
+  "controls": [
+    "Mouse",
+    "Click"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

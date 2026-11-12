@@ -1,0 +1,28 @@
+{
+  "id": "godverse",
+  "title": "Godverse: God-Mode Open World",
+  "description": "Every power unlocked from the first second — fly, boost and reshape an entire open world as an all-powerful god.",
+  "genre": "Open World",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Open World",
+    "Sandbox",
+    "God Mode",
+    "Simulator"
+  ],
+  "controls": [
+    "WASD",
+    "Mouse",
+    "Space",
+    "Shift",
+    "Q",
+    "Tab"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

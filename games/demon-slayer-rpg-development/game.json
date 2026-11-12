@@ -1,0 +1,27 @@
+{
+  "id": "demon-slayer-rpg",
+  "title": "Demon Slayer: The Breathing World",
+  "description": "Master the breathing styles in a 3D anime world — sprint, dodge, and unleash precise slashes against the demons that hunt you.",
+  "genre": "RPG",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Anime",
+    "RPG",
+    "Swords",
+    "3D"
+  ],
+  "controls": [
+    "WASD",
+    "Shift",
+    "Mouse",
+    "Space",
+    "C"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

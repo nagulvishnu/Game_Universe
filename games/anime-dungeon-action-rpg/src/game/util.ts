@@ -1,0 +1,10 @@
+export const TAU = Math.PI * 2;
+export const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
+export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+export const damp = (a: number, b: number, k: number, dt: number) => a + (b - a) * (1 - Math.exp(-k * dt));
+export const wrap = (a: number) => { while (a > Math.PI) a -= TAU; while (a < -Math.PI) a += TAU; return a; };
+export const dampAngle = (a: number, b: number, k: number, dt: number) => a + wrap(b - a) * (1 - Math.exp(-k * dt));
+export const ease = (t: number) => t * t * (3 - 2 * t);
+export const rr = (a: number, b: number) => a + Math.random() * (b - a);
+export const dist2 = (ax: number, az: number, bx: number, bz: number) => Math.hypot(ax - bx, az - bz);
+export const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;

@@ -1,0 +1,48 @@
+.ci-board-frame { position: relative; width: 100%; aspect-ratio: 1; padding: clamp(5px, 1.4vw, 14px); border-radius: 14px; background: var(--frame); box-shadow: 0 24px 60px -18px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,255,255,.12), inset 0 2px 8px rgba(255,255,255,.12); }
+.ci-board { position: relative; width: 100%; height: 100%; border-radius: 6px; overflow: hidden; user-select: none; -webkit-user-select: none; touch-action: none; box-shadow: 0 0 0 1px rgba(0,0,0,.35); }
+.ci-grid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); }
+.ci-sq { position: relative; overflow: hidden; }
+.ci-sq::before { content: ""; position: absolute; inset: 0; pointer-events: none; transition: background-color .2s; }
+.ci-sq.last::before { background: var(--last); }
+.ci-sq.sel::before { background: var(--selc); box-shadow: inset 0 0 0 3px rgba(255,255,255,.35); }
+.ci-sq.check::before { background: radial-gradient(circle, rgba(255,40,40,.95) 0%, rgba(255,40,40,.55) 40%, rgba(255,40,40,0) 75%); animation: ci-pulse 1.2s ease-in-out infinite; }
+.ci-sq.mated::before { background: radial-gradient(circle, rgba(255,20,20,1) 0%, rgba(255,20,20,.7) 50%, rgba(255,20,20,0) 85%); animation: ci-pulse .8s ease-in-out infinite; }
+.ci-sq.hint::before { box-shadow: inset 0 0 0 4px rgba(80,220,140,.95); background: rgba(80,220,140,.28); animation: ci-pulse 1s ease-in-out infinite; }
+.ci-sq.marked::after { content: ""; position: absolute; inset: 4%; border-radius: 50%; border: 4px solid rgba(255,170,0,.8); pointer-events: none; }
+.ci-dot { position: absolute; left: 34%; top: 34%; width: 32%; height: 32%; border-radius: 50%; background: rgba(20,20,20,.32); pointer-events: none; z-index: 3; animation: ci-pop .16s ease-out; box-shadow: 0 0 0 1px rgba(255,255,255,.1); }
+.ci-ring { position: absolute; inset: 4%; border-radius: 50%; border: 5px solid rgba(220,40,40,.6); pointer-events: none; z-index: 3; animation: ci-pop .16s ease-out; }
+.ci-rank, .ci-file { position: absolute; font: 700 clamp(8px, 1.5vw, 12px)/1 ui-sans-serif, system-ui, sans-serif; pointer-events: none; z-index: 1; opacity: .9; }
+.ci-rank { left: 4%; top: 4%; }
+.ci-file { right: 5%; bottom: 3%; }
+.ci-pieces { position: absolute; inset: 0; pointer-events: none; }
+.ci-piece { position: absolute; left: 0; top: 0; width: 12.5%; height: 12.5%; z-index: 2; transition: transform .2s cubic-bezier(.25,.8,.3,1); will-change: transform; padding: 3%; }
+.ci-piece.noanim { transition: none; }
+.ci-piece.dragging { transition: none; z-index: 20; filter: drop-shadow(0 8px 8px rgba(0,0,0,.45)); }
+.ci-piece-inner { display: block; width: 100%; height: 100%; animation: ci-pop .22s ease-out; }
+.ci-piece-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.ci-fx { position: absolute; width: 12.5%; height: 12.5%; pointer-events: none; z-index: 4; }
+.ci-fx.capture::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 3px solid rgba(255,255,255,.85); animation: ci-ripple .5s ease-out forwards; }
+.ci-fx.promote::after { content: ""; position: absolute; inset: -20%; border-radius: 50%; background: radial-gradient(circle, rgba(255,230,120,.9), transparent 70%); animation: ci-ripple .7s ease-out forwards; }
+.ci-arrows { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 6; opacity: .95; }
+.ci-promo-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.45); z-index: 30; }
+.ci-promo { position: absolute; width: 12.5%; z-index: 31; background: #fffdf5; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.6); display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.ci-promo button { aspect-ratio: 1; padding: 6%; background: #f3e9cf; border: 0; cursor: pointer; transition: background .15s, transform .15s; }
+.ci-promo button + button { border-top: 1px solid rgba(0,0,0,.08); }
+.ci-promo button:hover { background: #ffd978; transform: scale(1.04); }
+.ci-promo .ci-piece-svg { filter: none; }
+
+.fx-neon { box-shadow: 0 0 0 1px #00e5ff, 0 0 28px rgba(0,229,255,.55), 0 0 90px rgba(255,61,242,.25); }
+.fx-neon .ci-sq { box-shadow: inset 0 0 0 .5px rgba(0,229,255,.18); }
+.fx-gold { box-shadow: 0 0 0 2px #c9a227, 0 0 50px rgba(245,197,66,.25), 0 24px 60px -18px rgba(0,0,0,.8); }
+.fx-cosmic { box-shadow: 0 0 0 1px #7c5cff, 0 0 60px rgba(124,92,255,.45); }
+.fx-cosmic .ci-grid { animation: ci-twinkle 6s ease-in-out infinite alternate; }
+.fx-emerald { box-shadow: 0 0 0 2px #2c6b45, 0 0 50px rgba(134,224,160,.2), 0 24px 60px -18px rgba(0,0,0,.8); }
+.fx-marble { box-shadow: 0 0 0 2px #6a7287, 0 24px 60px -18px rgba(0,0,0,.8); }
+.mate-glow { animation: ci-mateglow 1.4s ease-in-out 2; }
+
+@keyframes ci-pulse { 0%,100% { opacity: .75 } 50% { opacity: 1 } }
+@keyframes ci-pop { from { transform: scale(.7); opacity: .4 } to { transform: scale(1); opacity: 1 } }
+@keyframes ci-ripple { from { transform: scale(.4); opacity: 1 } to { transform: scale(1.9); opacity: 0 } }
+@keyframes ci-twinkle { from { filter: brightness(.95) } to { filter: brightness(1.12) } }
+@keyframes ci-mateglow { 0%,100% { box-shadow: 0 0 0 0 rgba(255,60,60,0) } 50% { box-shadow: 0 0 0 4px rgba(255,60,60,.8), 0 0 60px rgba(255,60,60,.6) } }
+@media (prefers-reduced-motion: reduce) { .ci-piece { transition: none; } .ci-piece-inner, .ci-dot, .ci-ring { animation: none; } }

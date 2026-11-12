@@ -189,7 +189,8 @@ export function syncGameAssets(report: DiscoveryReport, gamesDir: string, public
     });
   }
   // Swap tmp into place. On Windows renameSync cannot replace an existing dir
-  // (EPERM), so fall back to clearing + copying.
+  // (EPERM), so fall back to clearing + copying — then always drop the temp
+  // dir, or every sync leaves a play.tmp-* copy behind on disk.
   try {
     fs.renameSync(tmpDir, publicPlayDir);
   } catch {
@@ -202,6 +203,7 @@ export function syncGameAssets(report: DiscoveryReport, gamesDir: string, public
         { recursive: true, force: true },
       );
     }
+    fs.rmSync(tmpDir, { recursive: true, force: true });
   }
 }
 

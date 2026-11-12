@@ -1,0 +1,27 @@
+{
+  "id": "turbo-masters",
+  "title": "Turbo Masters: Anime Racing",
+  "description": "Two-player anime racing on one keyboard — throttle, drift, nitro and items decide who crosses the line first.",
+  "genre": "Racing",
+  "category": "2D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Racing",
+    "Multiplayer",
+    "Arcade",
+    "Anime"
+  ],
+  "controls": [
+    "WASD",
+    "Arrows",
+    "Shift",
+    "Space",
+    "F"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "tennis-masters",
+  "title": "Tennis Masters: 3D Arcade Tennis",
+  "description": "Stylized 3D tennis with snappy rallies — pick your shots, charge specials, and outplay the opponent in singles or local versus.",
+  "genre": "Sports",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Sports",
+    "Tennis",
+    "Arcade",
+    "Multiplayer"
+  ],
+  "controls": [
+    "P1: WASD, 1-4, Space, Shift",
+    "P2: Arrows"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

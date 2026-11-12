@@ -1,0 +1,26 @@
+{
+  "id": "stickverse",
+  "title": "Stickverse: Rise of the Dark Empire",
+  "description": "Rise as the dark lord of a vast anime open world — battle heroes, grow your power, and conquer the empire in this 3D villain simulation.",
+  "genre": "Action",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Anime",
+    "Open World",
+    "Villain",
+    "3D"
+  ],
+  "controls": [
+    "WASD",
+    "Mouse",
+    "Space",
+    "Esc"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

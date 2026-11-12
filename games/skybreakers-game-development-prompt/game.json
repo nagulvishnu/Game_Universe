@@ -1,0 +1,28 @@
+{
+  "id": "skybreakers",
+  "title": "Skybreakers: Lost Kingdoms",
+  "description": "Explore the floating kingdom of Aetheria — fly between islands, charge your blade, and begin your journey as a skybreaker.",
+  "genre": "Adventure",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Adventure",
+    "Open World",
+    "Fantasy",
+    "Flying"
+  ],
+  "controls": [
+    "WASD",
+    "Mouse",
+    "Shift",
+    "Space",
+    "V",
+    "LMB"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

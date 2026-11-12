@@ -1,0 +1,26 @@
+{
+  "id": "solo-leveling",
+  "title": "Solo Leveling: The Shadow Monarch",
+  "description": "Rise from the weakest hunter to the Shadow Monarch — attack, dodge and level up in a dark anime world where only you grow stronger.",
+  "genre": "RPG",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Anime",
+    "RPG",
+    "Shadows",
+    "Action"
+  ],
+  "controls": [
+    "WASD",
+    "Mouse",
+    "Ctrl",
+    "Shift"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

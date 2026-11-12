@@ -1,0 +1,28 @@
+{
+  "id": "naruto-shinobi-legacy",
+  "title": "Naruto: Shinobi Legacy",
+  "description": "Step into the shinobi world — fight with light and heavy attacks, charge chakra, and unleash specials and ultimates.",
+  "genre": "Action",
+  "category": "3D",
+  "version": "1.0.0",
+  "thumbnail": "thumbnail.svg",
+  "entry": "dist/index.html",
+  "featured": false,
+  "tags": [
+    "Anime",
+    "Ninja",
+    "Action",
+    "RPG"
+  ],
+  "controls": [
+    "WASD",
+    "Mouse",
+    "Q",
+    "E",
+    "R",
+    "F"
+  ],
+  "status": "playable",
+  "developer": "Game Universe",
+  "releaseDate": "2026-11-12"
+}

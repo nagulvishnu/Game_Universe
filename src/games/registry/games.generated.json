@@ -35,6 +35,38 @@
       "bannerUrl": null
     },
     {
+      "id": "stickverse",
+      "title": "Stickverse: Rise of the Dark Empire",
+      "description": "Rise as the dark lord of a vast anime open world — battle heroes, grow your power, and conquer the empire in this 3D villain simulation.",
+      "genre": "Action",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Anime",
+        "Open World",
+        "Villain",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Space",
+        "Esc"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "3d-anime-villain-simulation",
+      "external": false,
+      "launchUrl": "/play/3d-anime-villain-simulation/dist/index.html",
+      "thumbnailUrl": "/play/3d-anime-villain-simulation/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
       "id": "dropzone-50",
       "title": "Dropzone 50",
       "description": "A 3D battle royale. Insert into the drop, scavenge weapons and armour, and fight it out to be the last one standing.",
@@ -169,6 +201,68 @@
       "bannerUrl": null
     },
     {
+      "id": "anime-clash",
+      "title": "Anime Clash: 3D Local Multiplayer Fighter",
+      "description": "A 3D anime arena fighter for two players on one keyboard — pick your fighter, chain combos, and clash for local bragging rights.",
+      "genre": "Fighting",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Anime",
+        "Fighting",
+        "Multiplayer",
+        "Local Co-op"
+      ],
+      "controls": [
+        "P1: WASD, F, G, R, T, V",
+        "P2: Arrows, J, K, U, I, O"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "anime-clash-game-development",
+      "external": false,
+      "launchUrl": "/play/anime-clash-game-development/dist/index.html",
+      "thumbnailUrl": "/play/anime-clash-game-development/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "tower-of-infinity",
+      "title": "Tower of Infinity: Anime Dungeon RPG",
+      "description": "Climb the endless Tower of Infinity through procedurally generated dungeons, loot rare gear, and grow stronger with every floor.",
+      "genre": "RPG",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Anime",
+        "Dungeon",
+        "Roguelike",
+        "RPG"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Shift",
+        "Space"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "anime-dungeon-action-rpg",
+      "external": false,
+      "launchUrl": "/play/anime-dungeon-action-rpg/dist/index.html",
+      "thumbnailUrl": "/play/anime-dungeon-action-rpg/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
       "id": "hero-city",
       "title": "HERO CITY",
       "description": "A 3D anime open-world superhero game. Soar over the city, take on missions, unlock upgrades, and keep Hero City safe.",
@@ -269,6 +363,38 @@
       "external": false,
       "launchUrl": "/play/bike-taxi-life-simulation/dist/index.html",
       "thumbnailUrl": "/play/bike-taxi-life-simulation/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "badminton-masters",
+      "title": "Badminton Masters: 3D Sports",
+      "description": "Fast-paced 3D badminton — smash, drop and rally in quick arcade matches against the AI or a friend.",
+      "genre": "Sports",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Sports",
+        "Badminton",
+        "Arcade",
+        "Multiplayer"
+      ],
+      "controls": [
+        "WASD",
+        "Space",
+        "Shift",
+        "P2: Arrows, Num keys"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "build-3d-badminton-game",
+      "external": false,
+      "launchUrl": "/play/build-3d-badminton-game/dist/index.html",
+      "thumbnailUrl": "/play/build-3d-badminton-game/thumbnail.svg",
       "bannerUrl": null
     },
     {
@@ -408,6 +534,169 @@
       "bannerUrl": null
     },
     {
+      "id": "tennis-masters",
+      "title": "Tennis Masters: 3D Arcade Tennis",
+      "description": "Stylized 3D tennis with snappy rallies — pick your shots, charge specials, and outplay the opponent in singles or local versus.",
+      "genre": "Sports",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Sports",
+        "Tennis",
+        "Arcade",
+        "Multiplayer"
+      ],
+      "controls": [
+        "P1: WASD, 1-4, Space, Shift",
+        "P2: Arrows"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "build-stylized-tennis-game",
+      "external": false,
+      "launchUrl": "/play/build-stylized-tennis-game/dist/index.html",
+      "thumbnailUrl": "/play/build-stylized-tennis-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "chaos-breaker",
+      "title": "Chaos Breaker: Anime Weapon Combat Arena",
+      "description": "An anime weapon combat arena — chain light and heavy attacks, charge your blade, and break through waves of enemies in stylish 3D battles.",
+      "genre": "Action",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Anime",
+        "Combat",
+        "Arena",
+        "Action"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "F",
+        "Space"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "chaos-breaker-game-development",
+      "external": false,
+      "launchUrl": "/play/chaos-breaker-game-development/dist/index.html",
+      "thumbnailUrl": "/play/chaos-breaker-game-development/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "colossus-mech-combat",
+      "title": "Colossus: Age of Titans",
+      "description": "Pilot a colossal mech against towering kaiju — attack, aim, dash and jump through massive battles in the Age of Titans.",
+      "genre": "Action",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Mech",
+        "Kaiju",
+        "Combat",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "LMB",
+        "RMB",
+        "Space",
+        "Shift"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "colossus-mech-combat-game",
+      "external": false,
+      "launchUrl": "/play/colossus-mech-combat-game/dist/index.html",
+      "thumbnailUrl": "/play/colossus-mech-combat-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "demon-lord-simulator",
+      "title": "Demon Lord Simulator",
+      "description": "Rule your own dark realm as the demon lord — grow your power, command from the throne, and become an unstoppable force.",
+      "genre": "Simulation",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Demon",
+        "Simulator",
+        "Dark Fantasy",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Arrow keys",
+        "Space",
+        "Tab",
+        "M"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "demon-lord-simulator-development",
+      "external": false,
+      "launchUrl": "/play/demon-lord-simulator-development/dist/index.html",
+      "thumbnailUrl": "/play/demon-lord-simulator-development/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "demon-slayer-rpg",
+      "title": "Demon Slayer: The Breathing World",
+      "description": "Master the breathing styles in a 3D anime world — sprint, dodge, and unleash precise slashes against the demons that hunt you.",
+      "genre": "RPG",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Anime",
+        "RPG",
+        "Swords",
+        "3D"
+      ],
+      "controls": [
+        "WASD",
+        "Shift",
+        "Mouse",
+        "Space",
+        "C"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "demon-slayer-rpg-development",
+      "external": false,
+      "launchUrl": "/play/demon-slayer-rpg-development/dist/index.html",
+      "thumbnailUrl": "/play/demon-slayer-rpg-development/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
       "id": "havoc-city",
       "title": "HAVOC CITY",
       "description": "A 3D open-world action sandbox. Free-roam a sprawling city district by district, take the wheel of cars and planes, and turn the whole sandbox into your playground.",
@@ -439,6 +728,36 @@
       "external": false,
       "launchUrl": "/play/develop-advanced-open-world-game/dist/index.html",
       "thumbnailUrl": "/play/develop-advanced-open-world-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "chess-infinity",
+      "title": "Chess Infinity",
+      "description": "A premium chess experience with AI opponents, puzzles, training modes, opening studies and timed challenges.",
+      "genre": "Strategy",
+      "category": "2D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Chess",
+        "Board",
+        "Strategy",
+        "Puzzle"
+      ],
+      "controls": [
+        "Mouse",
+        "Click"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "develop-chess-infinity-game",
+      "external": false,
+      "launchUrl": "/play/develop-chess-infinity-game/dist/index.html",
+      "thumbnailUrl": "/play/develop-chess-infinity-game/thumbnail.svg",
       "bannerUrl": null
     },
     {
@@ -508,6 +827,40 @@
       "bannerUrl": null
     },
     {
+      "id": "godverse",
+      "title": "Godverse: God-Mode Open World",
+      "description": "Every power unlocked from the first second — fly, boost and reshape an entire open world as an all-powerful god.",
+      "genre": "Open World",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Open World",
+        "Sandbox",
+        "God Mode",
+        "Simulator"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Space",
+        "Shift",
+        "Q",
+        "Tab"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "godverse-open-world-simulator",
+      "external": false,
+      "launchUrl": "/play/godverse-open-world-simulator/dist/index.html",
+      "thumbnailUrl": "/play/godverse-open-world-simulator/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
       "id": "bastion-defense",
       "title": "Bastion Defense",
       "description": "A multi-level strategy tower defence. Place and upgrade five tower types, set their targeting, sell and retool, and control the wave speed as the siege escalates.",
@@ -539,6 +892,40 @@
       "external": false,
       "launchUrl": "/play/multi-level-interactive-strategy-game/dist/index.html",
       "thumbnailUrl": "/play/multi-level-interactive-strategy-game/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "naruto-shinobi-legacy",
+      "title": "Naruto: Shinobi Legacy",
+      "description": "Step into the shinobi world — fight with light and heavy attacks, charge chakra, and unleash specials and ultimates.",
+      "genre": "Action",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Anime",
+        "Ninja",
+        "Action",
+        "RPG"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Q",
+        "E",
+        "R",
+        "F"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "naruto-action-rpg-development",
+      "external": false,
+      "launchUrl": "/play/naruto-action-rpg-development/dist/index.html",
+      "thumbnailUrl": "/play/naruto-action-rpg-development/thumbnail.svg",
       "bannerUrl": null
     },
     {
@@ -578,6 +965,72 @@
       "bannerUrl": null
     },
     {
+      "id": "skybreakers",
+      "title": "Skybreakers: Lost Kingdoms",
+      "description": "Explore the floating kingdom of Aetheria — fly between islands, charge your blade, and begin your journey as a skybreaker.",
+      "genre": "Adventure",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Adventure",
+        "Open World",
+        "Fantasy",
+        "Flying"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Shift",
+        "Space",
+        "V",
+        "LMB"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "skybreakers-game-development-prompt",
+      "external": false,
+      "launchUrl": "/play/skybreakers-game-development-prompt/dist/index.html",
+      "thumbnailUrl": "/play/skybreakers-game-development-prompt/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
+      "id": "solo-leveling",
+      "title": "Solo Leveling: The Shadow Monarch",
+      "description": "Rise from the weakest hunter to the Shadow Monarch — attack, dodge and level up in a dark anime world where only you grow stronger.",
+      "genre": "RPG",
+      "category": "3D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Anime",
+        "RPG",
+        "Shadows",
+        "Action"
+      ],
+      "controls": [
+        "WASD",
+        "Mouse",
+        "Ctrl",
+        "Shift"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "solo-leveling-action-rpg",
+      "external": false,
+      "launchUrl": "/play/solo-leveling-action-rpg/dist/index.html",
+      "thumbnailUrl": "/play/solo-leveling-action-rpg/thumbnail.svg",
+      "bannerUrl": null
+    },
+    {
       "id": "starfall",
       "title": "Starfall",
       "description": "A 3D space shooter. Fly with WASD, aim with the mouse, charge your primary, cycle weapons and burn abilities as you cut through enemy waves and multi-phase bosses.",
@@ -612,6 +1065,39 @@
       "launchUrl": "/play/starfall-space-shooter-development/dist/index.html",
       "thumbnailUrl": "/play/starfall-space-shooter-development/thumbnail.svg",
       "bannerUrl": null
+    },
+    {
+      "id": "turbo-masters",
+      "title": "Turbo Masters: Anime Racing",
+      "description": "Two-player anime racing on one keyboard — throttle, drift, nitro and items decide who crosses the line first.",
+      "genre": "Racing",
+      "category": "2D",
+      "entry": "dist/index.html",
+      "thumbnail": "thumbnail.svg",
+      "version": "1.0.0",
+      "tags": [
+        "Racing",
+        "Multiplayer",
+        "Arcade",
+        "Anime"
+      ],
+      "controls": [
+        "WASD",
+        "Arrows",
+        "Shift",
+        "Space",
+        "F"
+      ],
+      "featured": false,
+      "status": "playable",
+      "developer": "Game Universe",
+      "releaseDate": "2026-11-12",
+      "flagship": false,
+      "folder": "turbo-masters-game-development",
+      "external": false,
+      "launchUrl": "/play/turbo-masters-game-development/dist/index.html",
+      "thumbnailUrl": "/play/turbo-masters-game-development/thumbnail.svg",
+      "bannerUrl": null
     }
   ],
   "diagnostics": [
@@ -619,6 +1105,13 @@
       "folder": "3d-anime-battle-royale",
       "id": "last-drop",
       "title": "LAST DROP",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "3d-anime-villain-simulation",
+      "id": "stickverse",
+      "title": "Stickverse: Rise of the Dark Empire",
       "level": "ok",
       "messages": []
     },
@@ -651,6 +1144,20 @@
       "messages": []
     },
     {
+      "folder": "anime-clash-game-development",
+      "id": "anime-clash",
+      "title": "Anime Clash: 3D Local Multiplayer Fighter",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "anime-dungeon-action-rpg",
+      "id": "tower-of-infinity",
+      "title": "Tower of Infinity: Anime Dungeon RPG",
+      "level": "ok",
+      "messages": []
+    },
+    {
       "folder": "anime-superhero-action-game",
       "id": "hero-city",
       "title": "HERO CITY",
@@ -668,6 +1175,13 @@
       "folder": "bike-taxi-life-simulation",
       "id": "ride-to-riches",
       "title": "Ride to Riches",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "build-3d-badminton-game",
+      "id": "badminton-masters",
+      "title": "Badminton Masters: 3D Sports",
       "level": "ok",
       "messages": []
     },
@@ -700,9 +1214,51 @@
       "messages": []
     },
     {
+      "folder": "build-stylized-tennis-game",
+      "id": "tennis-masters",
+      "title": "Tennis Masters: 3D Arcade Tennis",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "chaos-breaker-game-development",
+      "id": "chaos-breaker",
+      "title": "Chaos Breaker: Anime Weapon Combat Arena",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "colossus-mech-combat-game",
+      "id": "colossus-mech-combat",
+      "title": "Colossus: Age of Titans",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "demon-lord-simulator-development",
+      "id": "demon-lord-simulator",
+      "title": "Demon Lord Simulator",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "demon-slayer-rpg-development",
+      "id": "demon-slayer-rpg",
+      "title": "Demon Slayer: The Breathing World",
+      "level": "ok",
+      "messages": []
+    },
+    {
       "folder": "develop-advanced-open-world-game",
       "id": "havoc-city",
       "title": "HAVOC CITY",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "develop-chess-infinity-game",
+      "id": "chess-infinity",
+      "title": "Chess Infinity",
       "level": "ok",
       "messages": []
     },
@@ -721,9 +1277,23 @@
       "messages": []
     },
     {
+      "folder": "godverse-open-world-simulator",
+      "id": "godverse",
+      "title": "Godverse: God-Mode Open World",
+      "level": "ok",
+      "messages": []
+    },
+    {
       "folder": "multi-level-interactive-strategy-game",
       "id": "bastion-defense",
       "title": "Bastion Defense",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "naruto-action-rpg-development",
+      "id": "naruto-shinobi-legacy",
+      "title": "Naruto: Shinobi Legacy",
       "level": "ok",
       "messages": []
     },
@@ -735,9 +1305,30 @@
       "messages": []
     },
     {
+      "folder": "skybreakers-game-development-prompt",
+      "id": "skybreakers",
+      "title": "Skybreakers: Lost Kingdoms",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "solo-leveling-action-rpg",
+      "id": "solo-leveling",
+      "title": "Solo Leveling: The Shadow Monarch",
+      "level": "ok",
+      "messages": []
+    },
+    {
       "folder": "starfall-space-shooter-development",
       "id": "starfall",
       "title": "Starfall",
+      "level": "ok",
+      "messages": []
+    },
+    {
+      "folder": "turbo-masters-game-development",
+      "id": "turbo-masters",
+      "title": "Turbo Masters: Anime Racing",
       "level": "ok",
       "messages": []
     }
