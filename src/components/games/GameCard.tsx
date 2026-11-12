@@ -55,6 +55,14 @@ export function GameCard({ game }: { game: GameRecord }) {
       onPointerLeave={onPointerLeave}
     >
       <div className="gu-card__tilt">
+        <button
+          type="button"
+          className="absolute inset-x-0 top-0 bottom-[72px] z-[1] cursor-pointer"
+          onClick={() => openDetails(game.id)}
+          aria-label={`${game.title} - view details`}
+          data-cursor={playable ? "play" : undefined}
+          tabIndex={-1}
+        />
         <div className="relative">
           <GameArt game={game} className="aspect-[16/10] w-full" />
           <div className="gu-card__scrim" aria-hidden />
@@ -77,7 +85,7 @@ export function GameCard({ game }: { game: GameRecord }) {
               type="button"
               onClick={() => openDetails(game.id)}
               aria-label={`${game.title} — view details`}
-              className="text-left uppercase after:absolute after:inset-0 after:z-[5] after:content-['']"
+              className="text-left uppercase"
               data-cursor={playable ? "play" : undefined}
             >
               {game.title}

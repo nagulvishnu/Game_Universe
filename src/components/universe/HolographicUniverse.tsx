@@ -54,6 +54,8 @@ export function HolographicUniverse() {
   const [phase, setPhase] = useState<PickPhase>("idle");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [manualPickOpen, setManualPickOpen] = useState(false);
+  const [manualQuery, setManualQuery] = useState("");
 
   const engineRef = useRef<HologramEngine | null>(null);
   const cardRefs = useRef(new Map<string, HTMLElement>());
@@ -358,6 +360,29 @@ export function HolographicUniverse() {
 
   const hovered = hoveredId ? getGame(hoveredId) : undefined;
   const selected = selectedId ? getGame(selectedId) : undefined;
+  const manualGames = useMemo(() => {
+    const q = manualQuery.trim().toLowerCase();
+    if (!q) return games;
+    return games.filter((g) =>
+      [g.title, g.genre, g.category, ...(g.tags || [])].join(" ").toLowerCase().includes(q),
+    );
+  }, [games, manualQuery]);
+
+  const onManualSelect = useCallback(
+    (id: string) => {
+      const game = getGame(id);
+      if (!game) return;
+      setManualPickOpen(false);
+      setManualQuery("");
+      if (!isPlayable(game)) {
+        openDetails(id);
+        return;
+      }
+      setSelectedId(id);
+      setPhase("revealing");
+    },
+    [getGame, openDetails],
+  );
 
   /* ---------------- render ---------------- */
 
@@ -477,17 +502,64 @@ export function HolographicUniverse() {
         </div>
       )}
 
-      {/* Random pick */}
+      {/* Pick controls */}
       <div className="gu-holo-controls">
-        <RandomPickButton
-          phase={phase}
-          disabled={games.length === 0}
-          onClick={runPick}
-          onReset={reset}
-        />
-        <p className="gu-holo-tagline">Let the universe decide your next adventure.</p>
-      </div>
+        <div className="flex flex-col items-center gap-2 sm:flex-row">
+          <RandomPickButton
+            phase={phase}
+            disabled={games.length === 0}
+            onClick={runPick}
+            onReset={reset}
+          />
+          <button
+            type="button"
+            className="gu-btn"
+            data-testid="manual-pick-toggle"
+            onClick={() => setManualPickOpen((v) => !v)}
+          >
+            {manualPickOpen ? "Close picker" : "Pick manually"}
+          </button>
+        </div>
+        <p className="gu-holo-tagline">Let the universe decide, or pick a world yourself.</p>
 
+        {manualPickOpen && (
+          <div className="gu-panel gu-clip mt-2 w-full max-w-xl p-4 text-left" data-testid="manual-picker">
+            <input
+              type="search"
+              value={manualQuery}
+              onChange={(e) => setManualQuery(e.target.value)}
+              placeholder="Search worlds to pick..."
+              className="gu-input w-full"
+              aria-label="Search worlds to pick manually"
+              autoFocus
+            />
+            <ul className="mt-3 max-h-56 overflow-auto pr-1">
+              {manualGames.map((g) => (
+                <li key={g.id}>
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left hover:bg-white/5"
+                    onClick={() => onManualSelect(g.id)}
+                  >
+                    <span className="min-w-0">
+                      <span className="block truncate font-display text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[#eef3ff]">{g.title}</span>
+                      <span className="block truncate text-[0.85rem] text-[#aab2c6]">
+                        {g.category} · {g.genre}{isPlayable(g) ? "" : ` · ${g.status}`}
+                      </span>
+                    </span>
+                    <span className={`gu-btn gu-btn--sm ${isPlayable(g) ? "gu-btn--primary" : ""}`}>
+                      {isPlayable(g) ? "Pick" : "Details"}
+                    </span>
+                  </button>
+                </li>
+              ))}
+              {manualGames.length === 0 && (
+                <li className="px-3 py-4 text-center text-[#aab2c6]">No worlds match.</li>
+              )}
+            </ul>
+          </div>
+        )}
+      </div>
       {/* Selected world reveal */}
       {selected && phase === "revealing" && (
         <SelectionReveal
