@@ -248,8 +248,9 @@ export function HolographicUniverse() {
       setSelectedId(id);
       setPhase("revealing");
       sfx("reveal");
+      launch(id);
     },
-    [getGame, openDetails, phase, sfx],
+    [getGame, openDetails, launch, phase, sfx],
   );
 
   /* ---------------- orbit drag ---------------- */
