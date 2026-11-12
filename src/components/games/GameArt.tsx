@@ -38,7 +38,7 @@ export function GameArt({
         <div className="gu-art-fallback" data-testid="art-fallback">
           <span className="gu-art-glyph">{initials(game.title)}</span>
           <span className="gu-art-world">
-            {game.genre} · {theme.world}
+            {game.genre} | {theme.world}
           </span>
         </div>
       )}

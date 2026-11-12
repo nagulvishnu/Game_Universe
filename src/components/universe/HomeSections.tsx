@@ -29,7 +29,7 @@ function Spotlight({ game, big }: { game: import("@/games/types").GameRecord; bi
         <div className="flex flex-wrap items-center gap-3">
           <StatusBadge game={game} />
           <span className="gu-kicker" style={{ color: "var(--c1)", letterSpacing: "0.22em" }}>
-            {game.flagship ? "Flagship" : "Featured"} · {game.category} · {game.genre}
+            {game.flagship ? "Flagship" : "Featured"} | {game.category} | {game.genre}
           </span>
         </div>
         <h3 className={`gu-title gu-glow-text ${big ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl"}`}>

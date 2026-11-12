@@ -61,8 +61,8 @@ export function SelectionReveal({
           </p>
           <h2 className="gu-title gu-glow-text mt-2 text-2xl sm:text-4xl">{game.title}</h2>
           <p className="gu-reveal__meta">
-            {game.category} · {game.genre}
-            {game.version ? ` · V${game.version}` : ""}
+            {game.category} | {game.genre}
+            {game.version ? ` | V${game.version}` : ""}
           </p>
           <p className="gu-reveal__desc">{game.description}</p>
 

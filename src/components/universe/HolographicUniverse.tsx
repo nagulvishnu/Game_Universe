@@ -263,10 +263,7 @@ export function HolographicUniverse() {
       const target = e.target as HTMLElement;
       // Buttons and links keep their own behaviour. Orbital cards may start a
       // drag; their click is suppressed on release if the pointer moved.
-      if (
-        target.closest("a, button, input, textarea, select") &&
-        !target.closest(".gu-orbital")
-      ) {
+      if (target.closest("a, button, input, textarea, select, .gu-orbital")) {
         return;
       }
 
@@ -485,7 +482,7 @@ export function HolographicUniverse() {
           />
           <span className="gu-holo-readout__title">{hovered.title}</span>
           <span className="gu-holo-readout__meta">
-            {hovered.category} Ã‚Â· {hovered.genre}
+            {hovered.category} | {hovered.genre}
           </span>
         </div>
       )}

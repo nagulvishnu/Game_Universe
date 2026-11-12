@@ -78,7 +78,7 @@ export function GameCard({ game }: { game: GameRecord }) {
 
         <div className="flex flex-1 flex-col gap-2 p-5 pb-3">
           <p className="gu-kicker" style={{ color: "var(--c1)", letterSpacing: "0.22em" }}>
-            {game.category} · {game.genre}
+            {game.category} | {game.genre}
           </p>
           <h3 className="gu-title text-xl">
             <button

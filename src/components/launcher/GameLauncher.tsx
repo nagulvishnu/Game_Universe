@@ -148,7 +148,7 @@ function LauncherInner({
         </button>
         <div className="min-w-0 flex-1 text-center">
           <p className="truncate font-display text-[0.7rem] font-bold tracking-[0.22em] uppercase">{game.title}</p>
-          <p className="hidden text-[0.7rem] tracking-[0.2em] text-dim sm:block">{statusLabel(game.status)}{game.version ? ` · V${game.version}` : ""}</p>
+          <p className="hidden text-[0.7rem] tracking-[0.2em] text-dim sm:block">{statusLabel(game.status)}{game.version ? ` | V${game.version}` : ""}</p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           <button

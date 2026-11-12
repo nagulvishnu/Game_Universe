@@ -116,7 +116,7 @@ export function GlobalSearch({ games, onClose, onNavigate }: GlobalSearchProps) 
                   />
                   <span className="gu-search__result-title">{g.title}</span>
                   <span className="gu-search__result-meta">
-                    {g.category} · {g.genre}
+                    {g.category} | {g.genre}
                   </span>
                 </button>
               </li>
@@ -125,7 +125,7 @@ export function GlobalSearch({ games, onClose, onNavigate }: GlobalSearchProps) 
 
           <p className="gu-search__hint">
             <kbd className="gu-key">↑</kbd>
-            <kbd className="gu-key">↓</kbd> navigate · <kbd className="gu-key">↵</kbd> open ·{" "}
+            <kbd className="gu-key">↓</kbd> navigate | <kbd className="gu-key">↵</kbd> open |{" "}
             <kbd className="gu-key">esc</kbd> close
           </p>
         </motion.div>

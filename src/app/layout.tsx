@@ -10,7 +10,7 @@ import { AppProviders } from "@/components/providers/AppProviders";
 import { discoveryReport, games } from "@/games/registry";
 
 export const metadata: Metadata = {
-  title: { default: "Game Universe", template: "%s · Game Universe" },
+  title: { default: "Game Universe", template: "%s | Game Universe" },
   description:
     "A portal to different gaming worlds — explore an ever-growing collection of independent browser games in an interactive holographic universe.",
 };

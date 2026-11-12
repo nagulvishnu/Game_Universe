@@ -40,7 +40,7 @@ export function DiscoveryPanel() {
         </div>
       )}
       <button type="button" className="gu-chip" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-        Discovery · {report.games.length}
+        Discovery | {report.games.length}
         {problems > 0 && <small style={{ color: "#ffc670", opacity: 1 }}>⚠ {problems}</small>}
       </button>
     </div>
