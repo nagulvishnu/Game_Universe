@@ -1,8 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { makeGame, SAMPLE_GAMES } from "@/test/fixtures";
-import { dedupeGames, deriveFacets, filterGames, findGame, pickFeatured, searchGames } from "../registry/registry";
+import {
+  dedupeGames,
+  deriveFacets,
+  eligibleForRandom,
+  filterGames,
+  findGame,
+  groupByCategory,
+  pickFeatured,
+  pickRandomGame,
+  searchGames,
+  sortByMode,
+} from "../registry/registry";
 import { getGameTheme } from "../theme";
-import { placePortals } from "@/three/placement";
 
 describe("registry", () => {
   it("handles duplicate ids (first wins)", () => {
@@ -43,21 +53,95 @@ describe("registry", () => {
   });
 });
 
-describe("theme + placement", () => {
+describe("category grouping", () => {
+  it("groups games by their declared category", () => {
+    const groups = groupByCategory(SAMPLE_GAMES);
+    expect(groups.map((g) => g.key).sort()).toEqual(["2D", "3D"]);
+    const threeD = groups.find((g) => g.key === "3D")!;
+    expect(threeD.count).toBe(2);
+    expect(threeD.games.map((g) => g.id).sort()).toEqual(["ai-beast-world", "neon-velocity"]);
+  });
+
+  it("never invents categories — every group comes from a real game", () => {
+    const groups = groupByCategory(SAMPLE_GAMES);
+    const known = new Set(SAMPLE_GAMES.map((g) => g.category));
+    for (const group of groups) expect(known.has(group.key)).toBe(true);
+    expect(groups.reduce((sum, g) => sum + g.count, 0)).toBe(SAMPLE_GAMES.length);
+  });
+
+  it("returns an empty list when there are no games", () => {
+    expect(groupByCategory([])).toEqual([]);
+  });
+});
+
+describe("sorting", () => {
+  it("sorts alphabetically by title", () => {
+    expect(sortByMode(SAMPLE_GAMES, "title").map((g) => g.title)).toEqual([
+      "AI Beast World",
+      "Neon Velocity",
+      "Zombie Defense",
+    ]);
+  });
+
+  it("sorts by category then title", () => {
+    expect(sortByMode(SAMPLE_GAMES, "category").map((g) => g.category)).toEqual(["2D", "3D", "3D"]);
+  });
+
+  it("sorts by release date, newest first, and keeps undated games last", () => {
+    const dated = [
+      makeGame({ id: "old", title: "Old", releaseDate: "2020-01-01" }),
+      makeGame({ id: "new", title: "New", releaseDate: "2026-05-05" }),
+      makeGame({ id: "undated", title: "Undated" }),
+    ];
+    expect(sortByMode(dated, "recent").map((g) => g.id)).toEqual(["new", "old", "undated"]);
+  });
+
+  it("does not mutate the input array", () => {
+    const original = SAMPLE_GAMES.map((g) => g.id);
+    sortByMode(SAMPLE_GAMES, "title");
+    expect(SAMPLE_GAMES.map((g) => g.id)).toEqual(original);
+  });
+});
+
+describe("random pick", () => {
+  it("only ever selects playable games", () => {
+    expect(eligibleForRandom(SAMPLE_GAMES).map((g) => g.id)).toEqual(["ai-beast-world", "neon-velocity"]);
+  });
+
+  it("selects from the registry, not a hardcoded list", () => {
+    const chosen = pickRandomGame(SAMPLE_GAMES, () => 0);
+    expect(chosen?.id).toBe("ai-beast-world");
+    expect(pickRandomGame(SAMPLE_GAMES, () => 0.99)?.id).toBe("neon-velocity");
+  });
+
+  it("never picks a game that is not playable", () => {
+    for (let i = 0; i < 50; i++) {
+      const chosen = pickRandomGame(SAMPLE_GAMES);
+      expect(chosen).not.toBeNull();
+      expect(chosen?.status).toBe("playable");
+    }
+  });
+
+  it("returns null when there is nothing eligible", () => {
+    const allDevelopment = SAMPLE_GAMES.map((g) => ({ ...g, status: "development" as const }));
+    expect(eligibleForRandom(allDevelopment)).toHaveLength(0);
+    expect(pickRandomGame(allDevelopment)).toBeNull();
+    expect(pickRandomGame([])).toBeNull();
+  });
+
+  it("handles a non-playable registry without throwing", () => {
+    const chosen = pickRandomGame(
+      SAMPLE_GAMES.map((g) => ({ ...g, status: "coming-soon" as const })),
+      () => 0.5,
+    );
+    expect(chosen).toBeNull();
+  });
+});
+
+describe("theme", () => {
   it("derives world themes from metadata", () => {
     expect(getGameTheme(SAMPLE_GAMES[1]).kind).toBe("racing");
     expect(getGameTheme(SAMPLE_GAMES[2]).kind).toBe("corrupted");
     expect(getGameTheme(SAMPLE_GAMES[0]).kind).toBe("planet");
-  });
-
-  it("places portals deterministically without overlap", () => {
-    const ids = Array.from({ length: 30 }, (_, i) => `game-${i}`);
-    const a = placePortals(ids);
-    const b = placePortals([...ids].reverse());
-    expect([...a.entries()]).toEqual([...b.entries()]);
-    const pts = [...a.values()];
-    for (let i = 0; i < pts.length; i++)
-      for (let j = i + 1; j < pts.length; j++)
-        expect(Math.hypot(pts[i][0] - pts[j][0], pts[i][1] - pts[j][1], pts[i][2] - pts[j][2])).toBeGreaterThan(7);
   });
 });

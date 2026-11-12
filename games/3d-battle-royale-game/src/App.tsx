@@ -145,7 +145,7 @@ export default function App() {
         ref={miniRef}
         width={300}
         height={300}
-        className="absolute pointer-events-none"
+        className="br-minimap-canvas absolute pointer-events-none"
         style={{ right: 12, top: 60, width: 150, height: 150, display: playing ? 'block' : 'none', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.6))' }}
       />
       <canvas

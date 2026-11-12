@@ -29,7 +29,7 @@ export function HudView({ hud, game }: { hud: Hud; game: Game }) {
   const todIcon = hud.tod > 0.22 && hud.tod < 0.78 ? "☀" : "☾";
   const wIcon: Record<string, string> = { clear: "", rain: "🌧", storm: "⛈", fog: "🌫", sand: "🌪", snow: "❄", ash: "🌋" };
   return (
-    <div className="absolute inset-0 pointer-events-none select-none" style={{ opacity: showCtrl || hud.screen === "dead" ? 1 : 0.35, transition: "opacity .3s" }}>
+    <div className="rpg-hud absolute inset-0 pointer-events-none select-none" style={{ opacity: showCtrl || hud.screen === "dead" ? 1 : 0.35, transition: "opacity .3s" }}>
       {/* vignette flashes */}
       <div className="absolute inset-0" style={{ boxShadow: `inset 0 0 ${60 + hud.hurt * 140}px rgba(255,20,10,${hud.hurt * 0.55})`, transition: "box-shadow .1s" }} />
       {hud.underwater && <div className="absolute inset-0" style={{ background: "radial-gradient(circle, rgba(20,110,150,.25), rgba(5,40,80,.65))" }} />}
@@ -37,7 +37,7 @@ export function HudView({ hud, game }: { hud: Hud; game: Game }) {
       {hud.cine && <><div className="absolute left-0 right-0 top-0 h-[9%] bg-black" /><div className="absolute left-0 right-0 bottom-0 h-[9%] bg-black" /></>}
 
       {/* top-left vitals */}
-      <div className="absolute left-3 top-3 anim-up" style={{ width: touch ? 190 : 270, display: hud.cine ? "none" : "block" }}>
+      <div className="rpg-vitals absolute left-3 top-3 anim-up" style={{ width: touch ? 190 : 270, display: hud.cine ? "none" : "block" }}>
         <div className="flex items-center gap-2 mb-1">
           <div className="font-title text-lg w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "radial-gradient(circle at 30% 30%, #ffe3a8, #b8681f)", color: "#2b1204", border: "2px solid #fff0c8", boxShadow: "0 0 12px rgba(255,180,80,.6)" }}>{hud.level}</div>
           <div className="flex-1">
@@ -93,7 +93,7 @@ export function HudView({ hud, game }: { hud: Hud; game: Game }) {
       )}
 
       {/* top right: minimap + quest */}
-      <div className="absolute right-3 top-3 flex flex-col items-end gap-2" style={{ display: hud.cine ? "none" : "flex" }}>
+      <div className="rpg-minimap absolute right-3 top-3 flex flex-col items-end gap-2" style={{ display: hud.cine ? "none" : "flex" }}>
         <div className="relative" style={{ width: mapSize, height: mapSize }}>
           <canvas ref={mini} width={mapSize * 2} height={mapSize * 2} style={{ width: mapSize, height: mapSize, filter: "drop-shadow(0 4px 10px rgba(0,0,0,.6))" }} />
           <div className="absolute left-1/2 -translate-x-1/2 -top-1 text-[10px] px-1 rounded bg-black/60 font-bold" style={{ color: "#ffd98a" }}>N↑</div>
@@ -224,7 +224,7 @@ function Touch({ hud, game }: { hud: Hud; game: Game }) {
     input.set("sprint", l > R * 1.08);
   };
   return (
-    <div className="absolute inset-0" style={{ touchAction: "none" }}>
+    <div className="rpg-touch-controls absolute inset-0" style={{ touchAction: "none" }}>
       <div className="absolute left-0 bottom-0 pointer-events-auto" style={{ width: "42%", height: "62%", touchAction: "none" }}
         onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); st.current = { id: e.pointerId, ox: e.clientX, oy: e.clientY }; if (stickEl.current) { stickEl.current.style.left = e.clientX - 64 + "px"; stickEl.current.style.top = e.clientY - 64 + "px"; stickEl.current.style.opacity = "1"; } moveStick(e.clientX, e.clientY); }}
         onPointerMove={(e) => { if (st.current && st.current.id === e.pointerId) moveStick(e.clientX, e.clientY); }}
@@ -247,16 +247,16 @@ function Touch({ hud, game }: { hud: Hud; game: Game }) {
       <TBtn act="skill2" size={50} style={{ right: 200, bottom: 100 }} cd={hud.cd.s2}>🔮</TBtn>
       <TBtn act="vesper" size={50} style={{ right: 84, bottom: 156 }} cd={hud.cd.vs}>🦊</TBtn>
       <TBtn act="ult" size={58} style={{ right: 18, bottom: 184 }} ready={hud.ultReady && hud.unlock.ult} cd={hud.ultReady ? 0 : 1 - hud.en / 100}>☄️</TBtn>
-      <div className="absolute left-1/2 -translate-x-1/2 flex gap-2 pointer-events-none" style={{ bottom: 8 }}>
+      <div className="rpg-touch-actions absolute left-1/2 -translate-x-1/2 flex gap-2 pointer-events-none" style={{ bottom: 8 }}>
         {([["block", "🛡️"], ["core", "🔥"], ["mount", "🐾"], ["sense", "👁️"], ["lock", "🎯"]] as [Act, string][]).map(([a, ic]) => (
           <div key={a} className="pointer-events-auto flex items-center justify-center rounded-full" style={{ position: "relative", width: 44, height: 44, background: "rgba(12,10,26,.55)", border: "2px solid rgba(255,214,140,.45)", fontSize: 20, touchAction: "none" }}
             onPointerDown={(e) => { e.preventDefault(); (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); input.set(a, true); }}
             onPointerUp={() => input.set(a, false)} onPointerCancel={() => input.set(a, false)}>{ic}</div>
         ))}
       </div>
-      <div className="absolute flex gap-2 pointer-events-none" style={{ left: "50%", top: 40, transform: "translateX(-50%)" }}>
-        <div className="pointer-events-auto rounded-full flex items-center justify-center" style={{ width: 38, height: 38, background: "rgba(12,10,26,.6)", border: "1.5px solid rgba(255,214,140,.4)" }} onPointerDown={() => game.openMenu()}>🗺️</div>
-        <div className="pointer-events-auto rounded-full flex items-center justify-center" style={{ width: 38, height: 38, background: "rgba(12,10,26,.6)", border: "1.5px solid rgba(255,214,140,.4)" }} onPointerDown={() => game.pause()}>⏸</div>
+      <div className="rpg-touch-menu absolute flex gap-2 pointer-events-none" style={{ left: "50%", top: 40, transform: "translateX(-50%)" }}>
+        <div className="rpg-touch-menu-button pointer-events-auto rounded-full flex items-center justify-center" style={{ width: 38, height: 38, background: "rgba(12,10,26,.6)", border: "1.5px solid rgba(255,214,140,.4)" }} onPointerDown={() => game.openMenu()}>🗺️</div>
+        <div className="rpg-touch-menu-button pointer-events-auto rounded-full flex items-center justify-center" style={{ width: 38, height: 38, background: "rgba(12,10,26,.6)", border: "1.5px solid rgba(255,214,140,.4)" }} onPointerDown={() => game.pause()}>⏸</div>
       </div>
     </div>
   );

@@ -9,7 +9,6 @@ export const HUB_PREFIX = "gu-";
 export const HUB_KEYS = {
   settings: "gu-settings",
   lastGame: "gu-last-game",
-  introSeen: "gu-intro-seen",
 } as const;
 
 function assertHubKey(key: string) {

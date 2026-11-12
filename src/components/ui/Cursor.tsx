@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useSettings } from "@/components/providers/SettingsProvider";
 
-type Mode = "default" | "link" | "play" | "text";
+type Mode = "default" | "link" | "play" | "text" | "grab";
 
 interface Particle {
   x: number;
@@ -83,6 +83,7 @@ export function Cursor() {
       if (explicit === "play") domMode = "play";
       else if (t.closest("input, textarea, select")) domMode = "text";
       else if (t.closest("a, button, [role='button'], [role='switch'], summary, label")) domMode = "link";
+      else if (explicit === "grab") domMode = "grab";
       else domMode = "default";
     };
     const onLeaveDoc = () => {
@@ -93,9 +94,11 @@ export function Cursor() {
 
     const tick = () => {
       raf = requestAnimationFrame(tick);
-      // Universe hover (WebGL portals) publishes its state on <html>.
+      // Universe hover (WebGL portals) and the orbit drag publish their state
+      // on <html>; either way the explicit state outranks the DOM guess.
       const universe = root.dataset.guCursor as Mode | undefined;
-      const mode: Mode = universe === "play" ? "play" : domMode;
+      const mode: Mode =
+        universe === "play" || universe === "grab" ? universe : domMode;
       if (mode !== current) {
         current = mode;
         ring.dataset.mode = mode;

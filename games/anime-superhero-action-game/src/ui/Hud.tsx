@@ -28,7 +28,7 @@ export default function Hud() {
   return (
     <div className="pointer-events-none absolute inset-0 select-none" style={{ fontFamily: "Rajdhani, 'Segoe UI', sans-serif", color: "#fff" }}>
       {/* top-left hero panel */}
-      <div className="absolute left-5 top-5 flex gap-3">
+      <div className="hero-hud-player absolute left-5 top-5 flex gap-3">
         <div className="relative" style={{ width: 96, height: 96 }}>
           <div className="absolute inset-0 overflow-hidden" style={{ border: `3px solid ${def.color}`, boxShadow: `0 0 18px ${def.color}`, clipPath: "polygon(12% 0,100% 0,88% 100%,0 100%)" }}>
             <Portrait hero={h.hero} size={96} />
@@ -74,7 +74,7 @@ export default function Hud() {
       )}
 
       {/* minimap */}
-      <div className="absolute right-5 top-5 flex flex-col items-end gap-2">
+      <div className="hero-hud-map absolute right-5 top-5 flex flex-col items-end gap-2">
         <div className="relative" style={{ width: 176, height: 176 }}>
           <canvas ref={mmRef} width={176} height={176} className="rounded-full" style={{ boxShadow: `0 0 20px ${def.color}88`, background: "#000" }} />
         </div>
@@ -83,7 +83,7 @@ export default function Hud() {
           <div className="text-xs tracking-widest text-white/60">{h.clock}</div>
         </div>
         {h.mission && (
-          <div className="w-[300px] p-3" style={{ background: "linear-gradient(135deg,rgba(10,14,30,.88),rgba(30,20,50,.7))", borderLeft: "4px solid #ffd23f", clipPath: "polygon(0 0,100% 0,100% 100%,6% 100%)" }}>
+          <div className="hero-hud-mission w-[300px] p-3" style={{ background: "linear-gradient(135deg,rgba(10,14,30,.88),rgba(30,20,50,.7))", borderLeft: "4px solid #ffd23f", clipPath: "polygon(0 0,100% 0,100% 100%,6% 100%)" }}>
             <div className="text-[11px] font-bold tracking-[.25em] text-yellow-300">MISSION</div>
             <div className="text-lg font-black italic tracking-wide">{h.mission.toUpperCase()}</div>
             {h.objectives.map((o, i) => (<div key={i} className="mt-0.5 flex gap-2 text-[13px] text-white/90"><span className="text-emerald-300">▸</span>{o}</div>))}
@@ -113,7 +113,7 @@ export default function Hud() {
       {h.prompt && <div className="absolute bottom-[150px] left-1/2 -translate-x-1/2 px-5 py-2 text-lg font-bold tracking-widest" style={{ background: "rgba(8,10,22,.85)", border: "1px solid #ffd23f", color: "#ffd23f" }}>{h.prompt}</div>}
 
       {/* abilities */}
-      <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-end gap-3">
+      <div className="hero-hud-abilities absolute bottom-5 left-1/2 flex -translate-x-1/2 items-end gap-3">
         {ordered.map((a) => {
           const c = h.cds[a.key];
           const cd = c?.cd ?? 0, frac = c ? Math.min(1, cd / (c.max || 1)) : 0;

@@ -31,7 +31,7 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
   const toastCol = toast?.kind === 'kill' ? '#f87171' : toast?.kind === 'dead' ? '#ef4444' : toast?.kind === 'win' ? '#fbbf24' : toast?.kind === 'zone' ? '#38bdf8' : '#ffffff';
 
   return (
-    <div className="absolute inset-0 pointer-events-none">
+    <div className="br-hud absolute inset-0 pointer-events-none">
       {/* feedback layers */}
       {hud.phase === 'fall' && <div className="absolute inset-0 speedlines opacity-70" />}
       {!hud.inZone && hud.hp > 0 && <div className="absolute inset-0 zone-vignette" />}
@@ -61,7 +61,7 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
 
       {/* top-center: team scoreboard (duos / squads / arena) */}
       {hud.teamMode && (
-        <div className="absolute left-1/2 top-3 -translate-x-1/2 panel px-4 py-1.5 flex items-center gap-3" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 6px)' }}>
+        <div className="br-team-score absolute left-1/2 top-3 -translate-x-1/2 panel px-4 py-1.5 flex items-center gap-3" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 6px)' }}>
           {hud.scoreLimit > 0 ? (
             <>
               <span className="text-[10px] tracking-widest text-emerald-300 font-bold">YOUR TEAM</span>
@@ -109,7 +109,7 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
       )}
 
       {/* top-left stats */}
-      <div className="absolute left-3 top-3 flex flex-col gap-2" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="br-stats absolute left-3 top-3 flex flex-col gap-2" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="flex gap-2">
           <div className="panel clip-tag px-3 py-1.5 flex items-center gap-2">
             <span className="text-lg">👥</span>
@@ -181,7 +181,7 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
       </div>
 
       {/* top-right minimap + buttons */}
-      <div className="absolute right-3 top-3 flex flex-col items-end gap-2" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="br-map-controls absolute right-3 top-3 flex flex-col items-end gap-2" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="flex gap-2 pointer-events-auto">
           <button className="panel w-9 h-9 text-lg" onClick={() => game?.toggleMap()} aria-label="map">🗺</button>
           <button className="panel w-9 h-9 text-lg" onClick={onMute} aria-label="mute">{muted ? '🔇' : '🔊'}</button>
@@ -254,7 +254,7 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
       )}
 
       {/* bottom-left: health */}
-      <div className="absolute left-3 bottom-3 w-[min(46vw,300px)]" style={{ marginBottom: isTouch ? 0 : 0, paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <div className="br-vitals absolute left-3 bottom-3 w-[min(46vw,300px)]" style={{ marginBottom: isTouch ? 0 : 0, paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <div className="flex flex-col gap-1 mb-2">
           {picks.map((p) => (
             <div key={p.id} className="pick-in text-sm font-bold w-fit px-2 rounded bg-black/45" style={{ color: hex(p.color), borderLeft: `3px solid ${hex(p.color)}` }}>
@@ -287,7 +287,7 @@ export default function Hud({ hud, game, feed, picks, toast, hit, hurt, isTouch,
 
       {/* bottom-right: weapons */}
       {!inVeh && (
-        <div className={`absolute right-3 ${isTouch ? 'bottom-[44%] sm:bottom-3' : 'bottom-3'} flex flex-col items-end gap-1.5`} style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className={`br-weapon-info absolute right-3 ${isTouch ? 'bottom-[44%] sm:bottom-3' : 'bottom-3'} flex flex-col items-end gap-1.5`} style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           <div className="panel px-3 py-1.5 text-right min-w-[150px]">
             <div className="text-[11px] tracking-widest text-slate-400 uppercase">{hud.weapon}</div>
             {hud.isGun ? (

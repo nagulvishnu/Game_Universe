@@ -72,7 +72,7 @@ export default function App() {
       )}
 
       {/* touch warning */}
-      <div className="absolute bottom-3 right-4 z-30 hidden [@media(pointer:coarse)]:flex items-center gap-2 bg-amber-950/80 border border-amber-500/50 text-amber-200 text-[11px] px-3 py-2 max-w-xs">
+      <div className="sf-touch-warning absolute bottom-3 right-4 z-30 hidden [@media(pointer:coarse)]:flex items-center gap-2 bg-amber-950/80 border border-amber-500/50 text-amber-200 text-[11px] px-3 py-2 max-w-xs">
         <MonitorSmartphone className="w-4 h-4 shrink-0" /> STARFALL is designed for keyboard + mouse. Touch controls are not supported.
       </div>
 

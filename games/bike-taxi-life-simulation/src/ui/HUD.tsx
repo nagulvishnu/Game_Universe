@@ -162,9 +162,9 @@ export function HUD() {
   const col = { good: 'border-emerald-400 bg-emerald-950/90', bad: 'border-rose-400 bg-rose-950/90', warn: 'border-amber-400 bg-amber-950/90', info: 'border-sky-400 bg-slate-900/90' } as Record<string, string>;
   void now;
   return (
-    <div className="pointer-events-none absolute inset-0 z-10 select-none text-white">
+    <div className="bike-hud pointer-events-none absolute inset-0 z-10 select-none text-white">
       {/* top-left */}
-      <div className="absolute left-3 top-3 flex flex-col gap-2">
+      <div className="bike-top-left absolute left-3 top-3 flex flex-col gap-2">
         <div className="pointer-events-auto rounded-xl bg-slate-900/80 px-3 py-2 shadow-lg backdrop-blur">
           <div className="flex items-center gap-3">
             <div className="text-2xl font-black tabular-nums">{fmtTime(time)}</div>
@@ -189,7 +189,7 @@ export function HUD() {
       </div>
 
       {/* minimap */}
-      <div className="absolute right-3 top-3 flex flex-col items-end gap-2">
+      <div className="bike-minimap absolute right-3 top-3 flex flex-col items-end gap-2">
         <MapCanvas size={170} />
         {hud.distToTarget !== null && <div className="rounded-lg bg-slate-900/80 px-3 py-1 text-xs font-bold text-sky-300">🎯 {Math.round(hud.distToTarget)} m to destination</div>}
         <div className="rounded-lg bg-slate-900/70 px-2 py-1 text-[10px] text-slate-300">{ui.saveStatus}</div>
@@ -228,14 +228,14 @@ export function HUD() {
       </div>
 
       {/* prompt */}
-      {hud.prompt && <div className="absolute bottom-36 left-1/2 -translate-x-1/2 rounded-xl border border-amber-300 bg-slate-900/90 px-5 py-2 text-sm font-bold text-amber-200 shadow-xl">{hud.prompt}</div>}
-      {ui.toast && <div className="absolute bottom-52 left-1/2 -translate-x-1/2 rounded-lg bg-black/80 px-4 py-2 text-sm">{ui.toast}</div>}
+      {hud.prompt && <div className="bike-prompt absolute bottom-36 left-1/2 -translate-x-1/2 rounded-xl border border-amber-300 bg-slate-900/90 px-5 py-2 text-sm font-bold text-amber-200 shadow-xl">{hud.prompt}</div>}
+      {ui.toast && <div className="bike-toast absolute bottom-52 left-1/2 -translate-x-1/2 rounded-lg bg-black/80 px-4 py-2 text-sm">{ui.toast}</div>}
       {hud.lowGrip && hud.mode === 'ride' && <div className="absolute left-1/2 top-24 -translate-x-1/2 rounded-full bg-sky-900/80 px-3 py-1 text-xs font-bold text-sky-200">☔ Wet road — reduced grip & braking</div>}
       {g.needs.hunger < 20 || g.needs.thirst < 20 || g.needs.energy < 15 ? <div className="absolute left-1/2 top-16 -translate-x-1/2 rounded-full bg-rose-900/80 px-3 py-1 text-xs font-bold text-rose-200">{g.needs.hunger < 20 ? '🍽 You are hungry' : g.needs.thirst < 20 ? '💧 You are thirsty' : '😴 You are exhausted — go home and sleep'}</div> : null}
 
       {/* speedometer */}
       {(hud.mode === 'ride' || hud.mode === 'fallen') && (
-        <div className="absolute bottom-4 left-4 w-[230px] rounded-2xl bg-slate-900/85 p-3 shadow-xl backdrop-blur">
+        <div className="bike-speedometer absolute bottom-4 left-4 w-[230px] rounded-2xl bg-slate-900/85 p-3 shadow-xl backdrop-blur">
           <div className="flex items-end justify-between">
             <div><span className="text-5xl font-black tabular-nums">{hud.speedKmh}</span><span className="ml-1 text-xs text-slate-400">km/h</span></div>
             <div className="text-right text-xs"><div className="text-slate-400">GEAR</div><div className="text-2xl font-black text-amber-300">{hud.speedKmh < 2 ? 'N' : hud.gear}</div></div>
@@ -250,7 +250,7 @@ export function HUD() {
       )}
 
       {/* needs */}
-      <div className="absolute bottom-4 left-1/2 flex w-[400px] -translate-x-1/2 gap-3 rounded-2xl bg-slate-900/75 px-4 py-2 backdrop-blur" style={{ marginLeft: (hud.mode === 'ride' || hud.mode === 'fallen') ? 20 : 0 }}>
+      <div className="bike-needs absolute bottom-4 left-1/2 flex w-[400px] -translate-x-1/2 gap-3 rounded-2xl bg-slate-900/75 px-4 py-2 backdrop-blur" style={{ marginLeft: (hud.mode === 'ride' || hud.mode === 'fallen') ? 20 : 0 }}>
         <Bar value={g.needs.energy} color="bg-yellow-400" label="⚡ Energy" /><Bar value={g.needs.hunger} color="bg-orange-400" label="🍛 Hunger" /><Bar value={g.needs.thirst} color="bg-sky-400" label="💧 Thirst" /><Bar value={g.needs.health} color="bg-rose-400" label="❤ Health" />
       </div>
       <div className="absolute bottom-4 right-4 hidden w-[230px] rounded-xl bg-slate-900/70 p-2 text-[10px] leading-relaxed text-slate-300 md:block">

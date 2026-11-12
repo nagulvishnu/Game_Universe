@@ -5,12 +5,13 @@ import type { DiscoveryReport, GameRecord } from "@/games/types";
 import { GamesProvider } from "./GamesProvider";
 import { SettingsProvider } from "./SettingsProvider";
 import { UIProvider } from "./UIProvider";
-import { Nav } from "@/components/ui/Nav";
+import { MainNavigation } from "@/components/nav/MainNavigation";
 import { Cursor } from "@/components/ui/Cursor";
 import { LaunchOverlay } from "@/components/ui/LaunchOverlay";
 import { DetailsPanel } from "@/components/games/DetailsPanel";
 import { SettingsDrawer } from "@/components/ui/SettingsDrawer";
 import { DiscoveryPanel } from "@/components/ui/DiscoveryPanel";
+import { ParticleEnvironment } from "@/components/fx/ParticleEnvironment";
 
 export function AppProviders({
   games,
@@ -28,8 +29,8 @@ export function AppProviders({
           <a href="#main" className="skip-link">
             Skip to content
           </a>
-          <div className="gu-atmo" aria-hidden />
-          <Nav />
+          <ParticleEnvironment />
+          <MainNavigation />
           <main id="main" tabIndex={-1}>
             {children}
           </main>

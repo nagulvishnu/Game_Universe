@@ -208,7 +208,7 @@ export default function RaceView({ config, onExit, onRestart }: { config: RaceCo
   const touch = (t: Parameters<Game["setTouch"]>[0]) => game.current?.setTouch(t);
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-black text-white select-none">
+    <div className="race-view fixed inset-0 overflow-hidden bg-black text-white select-none">
       <div ref={host} className="absolute inset-0" />
 
       {/* nitro speed lines */}
@@ -252,7 +252,7 @@ export default function RaceView({ config, onExit, onRestart }: { config: RaceCo
           </div>
 
           {/* top-right: leaderboard + buttons */}
-          <div className="absolute right-4 top-4 flex flex-col items-end gap-2 sm:right-8 sm:top-6">
+          <div className="race-buttons absolute right-4 top-4 flex flex-col items-end gap-2 sm:right-8 sm:top-6">
             <div className="flex gap-2">
               {[
                 { l: "Camera (C)", i: "CAM", f: () => game.current?.cycleCamera() },
@@ -278,7 +278,7 @@ export default function RaceView({ config, onExit, onRestart }: { config: RaceCo
           </div>
 
           {/* speedo */}
-          <div className="pointer-events-none absolute bottom-3 right-2 origin-bottom-right scale-[0.72] sm:bottom-6 sm:right-8 sm:scale-100">
+          <div className="race-speedo pointer-events-none absolute bottom-3 right-2 origin-bottom-right scale-[0.72] sm:bottom-6 sm:right-8 sm:scale-100">
             <Speedo hud={hud} />
           </div>
 
@@ -293,7 +293,7 @@ export default function RaceView({ config, onExit, onRestart }: { config: RaceCo
       )}
 
       {/* minimap (always mounted so the game can grab the canvas) */}
-      <div className={"pointer-events-none absolute bottom-4 left-4 sm:bottom-6 sm:left-8 " + (hud && phase !== "finished" && !error ? "" : "invisible")}>
+      <div className={"race-minimap pointer-events-none absolute bottom-4 left-4 sm:bottom-6 sm:left-8 " + (hud && phase !== "finished" && !error ? "" : "invisible")}>
         <div className="rounded-2xl border border-white/10 bg-slate-950/55 p-2 backdrop-blur">
           <canvas ref={mini} width={200} height={200} className="h-[130px] w-[130px] sm:h-[190px] sm:w-[190px]" />
           <div className="px-1 text-center text-[10px] font-bold uppercase italic tracking-widest" style={{ color: st.accent }}>
@@ -321,7 +321,7 @@ export default function RaceView({ config, onExit, onRestart }: { config: RaceCo
       {count && (
         <div key={count.key} className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div
-            className={"count-pop font-black italic " + (count.text === "GO!" ? "text-[9rem] text-emerald-300 [text-shadow:0_0_60px_rgba(52,211,153,0.9)]" : "text-[10rem] text-white [text-shadow:0_0_60px_rgba(34,211,238,0.8)]")}
+            className={"race-countdown-text count-pop font-black italic " + (count.text === "GO!" ? "text-[9rem] text-emerald-300 [text-shadow:0_0_60px_rgba(52,211,153,0.9)]" : "text-[10rem] text-white [text-shadow:0_0_60px_rgba(34,211,238,0.8)]")}
           >
             {count.text}
           </div>
@@ -331,15 +331,15 @@ export default function RaceView({ config, onExit, onRestart }: { config: RaceCo
       {/* touch controls */}
       {touchUI && hud && phase !== "finished" && !paused && (
         <>
-          <div className="absolute bottom-[200px] left-4 flex gap-3 sm:bottom-6 sm:left-1/2 sm:-translate-x-[calc(100%+20px)]">
+          <div className="race-steering absolute bottom-[200px] left-4 flex gap-3 sm:bottom-6 sm:left-1/2 sm:-translate-x-[calc(100%+20px)]">
             <TouchBtn label="◀" className="h-20 w-20 text-3xl" onDown={() => touch({ left: true })} onUp={() => touch({ left: false })} />
             <TouchBtn label="▶" className="h-20 w-20 text-3xl" onDown={() => touch({ right: true })} onUp={() => touch({ right: false })} />
           </div>
-          <div className="absolute bottom-[230px] right-4 flex flex-col items-end gap-3 sm:bottom-[300px]">
+          <div className="race-aux-controls absolute bottom-[230px] right-4 flex flex-col items-end gap-3 sm:bottom-[300px]">
             <TouchBtn label="NOS" className="h-14 w-20 bg-sky-500/30 text-lg" onDown={() => touch({ nitro: true })} onUp={() => touch({ nitro: false })} />
             <TouchBtn label="Drift" className="h-12 w-20 text-sm" onDown={() => touch({ hand: true })} onUp={() => touch({ hand: false })} />
           </div>
-          <div className="absolute bottom-4 right-4 flex gap-3 sm:hidden">
+          <div className="race-pedals absolute bottom-4 right-4 flex gap-3 sm:hidden">
             <TouchBtn label="Brake" className="h-16 w-20 text-sm" onDown={() => touch({ brake: true })} onUp={() => touch({ brake: false })} />
             <TouchBtn label="Gas" className="h-16 w-24 bg-emerald-500/30 text-lg" onDown={() => touch({ gas: true })} onUp={() => touch({ gas: false })} />
           </div>
@@ -378,7 +378,7 @@ export default function RaceView({ config, onExit, onRestart }: { config: RaceCo
       {/* pause */}
       {paused && !finish && (
         <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="w-[min(92vw,520px)] rounded-3xl border border-white/15 bg-slate-950/90 p-8 text-center">
+          <div className="race-pause-panel w-[min(92vw,520px)] rounded-3xl border border-white/15 bg-slate-950/90 p-8 text-center">
             <div className="text-xs font-bold uppercase tracking-[0.4em] text-cyan-300">Paused</div>
             <div className="mt-1 text-4xl font-black uppercase italic">{config.track.name}</div>
             <div className="mt-6 grid gap-3">

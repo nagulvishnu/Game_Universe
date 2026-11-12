@@ -10,18 +10,15 @@ import { AppProviders } from "@/components/providers/AppProviders";
 import { discoveryReport, games } from "@/games/registry";
 
 export const metadata: Metadata = {
-  title: { default: "Nagul's Game Universe", template: "%s · Game Universe" },
+  title: { default: "Game Universe", template: "%s · Game Universe" },
   description:
-    "A personal 3D game universe — explore worlds, launch independent browser games, and browse the full library.",
+    "A portal to different gaming worlds — explore an ever-growing collection of independent browser games in an interactive holographic universe.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#07080c",
+  themeColor: "#04060f",
   colorScheme: "dark",
 };
-
-// Static, controlled snippet: lets returning visitors skip the intro without a flash.
-const INTRO_SNIPPET = `try{if(localStorage.getItem("gu-intro-seen")==="true")document.documentElement.dataset.intro="seen"}catch(e){}`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   // The discovery panel is a development tool — never shipped to normal production users.
@@ -30,9 +27,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: INTRO_SNIPPET }} />
         <noscript>
-          <style>{`.reveal{opacity:1!important;transform:none!important;filter:none!important}.gu-intro{display:none!important}`}</style>
+          <style>{`.reveal{opacity:1!important;transform:none!important;filter:none!important}`}</style>
         </noscript>
       </head>
       <body>

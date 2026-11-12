@@ -12,3 +12,58 @@
 
 html, body, #root { height: 100%; margin: 0; background: #020617; }
 canvas { display: block; }
+
+@media (max-width: 640px) {
+  .sf-mission-hud {
+    top: 0.5rem !important;
+    left: 0.5rem !important;
+    right: auto !important;
+    width: min(54vw, 20rem) !important;
+  }
+
+  .sf-mission-hud .sf-objective {
+    font-size: 0.65rem;
+    line-height: 1.2;
+  }
+
+  .sf-hostile-hud {
+    top: 0.5rem !important;
+    right: 0.5rem !important;
+  }
+
+  .sf-boss-hud {
+    top: 6.25rem !important;
+    width: calc(100vw - 1rem) !important;
+  }
+
+  .sf-ally-hud {
+    top: auto !important;
+    bottom: 8.5rem;
+    left: 0.5rem !important;
+    width: min(40vw, 13rem) !important;
+  }
+
+  .sf-ship-hud {
+    bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+    left: 0.5rem !important;
+    width: min(45vw, 18rem) !important;
+  }
+
+  .sf-weapons-hud {
+    bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+    right: 0.5rem !important;
+    width: min(48vw, 20rem) !important;
+  }
+
+  .sf-dialogue-hud {
+    bottom: 7.5rem !important;
+    width: calc(100vw - 1rem) !important;
+  }
+
+  .sf-touch-warning {
+    right: 50% !important;
+    bottom: max(8rem, calc(7rem + env(safe-area-inset-bottom))) !important;
+    max-width: min(92vw, 22rem) !important;
+    transform: translateX(50%);
+  }
+}

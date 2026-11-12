@@ -156,7 +156,7 @@ export function TouchControls() {
     <div className={`absolute flex h-1/3 w-1/3 items-center justify-center rounded-xl text-xl font-black ${cls} ${dir === d ? 'bg-[#ffd23f] text-[#1d1a33]' : 'bg-[#2c2870] text-white'} border-[3px] border-[#0b0a1e]`}>{label}</div>
   );
   return (
-    <div className="mx-auto flex w-full max-w-xl items-center justify-between gap-3 px-3 py-2" style={{ height: 'clamp(130px, 24dvh, 190px)' }}>
+    <div className="pokemon-touch-controls mx-auto flex w-full max-w-xl items-center justify-between gap-3 px-3 py-2" style={{ height: 'clamp(130px, 24dvh, 190px)' }}>
       <div
         ref={padRef} className="relative aspect-square h-full touch-none"
         onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); upd(calc(e)); }}

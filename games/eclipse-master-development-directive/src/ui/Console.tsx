@@ -90,7 +90,7 @@ export function Console({ onClose }: { onClose: () => void }) {
   const [tab, setTab] = useState<Tab>('Runtime');
   const s = film.scene;
   return (
-    <div className="absolute bottom-24 right-4 top-16 z-50 flex w-[440px] flex-col rounded-xl bg-neutral-950/92 text-white shadow-2xl ring-1 ring-white/10 backdrop-blur-md">
+    <div className="eclipse-console absolute bottom-24 right-4 top-16 z-50 flex w-[440px] flex-col rounded-xl bg-neutral-950/92 text-white shadow-2xl ring-1 ring-white/10 backdrop-blur-md">
       <div className="flex items-center justify-between border-b border-white/10 px-3 py-2"><div className="text-sm font-semibold tracking-widest text-amber-300">PRODUCTION CONSOLE</div><button onClick={onClose} className="px-2 text-white/60 hover:text-white">✕</button></div>
       <div className="flex flex-wrap gap-1 border-b border-white/10 p-2">{TABS.map((t) => <button key={t} onClick={() => setTab(t)} className={`rounded px-2 py-1 text-xs ${tab === t ? 'bg-amber-500 text-black' : 'bg-white/10 hover:bg-white/20'}`}>{t}</button>)}</div>
       <div className="min-h-0 flex-1 overflow-y-auto p-3">

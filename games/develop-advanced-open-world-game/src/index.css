@@ -327,3 +327,27 @@ input[type="range"] {
 canvas {
   display: block;
 }
+
+@media (max-width: 767px) {
+  html,
+  body,
+  #root {
+    height: 100%;
+    min-height: 100%;
+  }
+
+  .ow-mobile-controls {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (max-width: 420px) {
+  .ow-mobile-controls .ow-joystick {
+    transform: scale(0.88);
+    transform-origin: bottom left;
+  }
+
+  .ow-mobile-controls .ow-action-stack {
+    gap: 0.5rem;
+  }
+}

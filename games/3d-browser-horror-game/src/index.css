@@ -134,3 +134,44 @@ input[type="range"]::-moz-range-thumb {
   border: 2px solid #1a0505;
   cursor: pointer;
 }
+
+@media (max-width: 700px) {
+  .horror-hud-day { left: 8px; top: max(8px, env(safe-area-inset-top)); }
+  .horror-hud-day > div { gap: 6px; padding: 6px 8px; }
+  .horror-hud-day .font-horror { font-size: 1.45rem; }
+  .horror-hud-objective { top: 76px; padding: 0 8px; }
+  .horror-hud-objective > div { width: 100%; max-width: 100%; padding: 6px 8px; font-size: 9px; line-height: 1.4; }
+  .horror-hud-inventory {
+    left: 8px;
+    right: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    max-width: calc(100vw - 16px);
+    overflow-x: auto;
+    gap: 4px;
+    padding: 6px;
+    scrollbar-width: thin;
+  }
+  .horror-hud-inventory > div { flex: 0 0 54px; width: 54px; }
+  .horror-hud-inventory > div > div:first-child { width: 42px; height: 42px; }
+  .horror-hud-stamina { bottom: 98px; padding: 0 8px; }
+  .horror-hud-stamina > div:first-child { max-width: 94vw; }
+  .horror-hud-stamina > div:first-child > div { max-width: 94vw; font-size: 12px; }
+  .horror-hud-stamina > div:last-child { width: min(45vw, 224px); }
+  .horror-hud-status { top: 116px; right: 8px; bottom: auto; gap: 4px; max-width: 45vw; }
+  .horror-hud-status > div { padding: 5px 7px; gap: 5px; font-size: 9px; }
+  .horror-hud-status svg { width: 18px; height: 18px; }
+  .horror-hud-controls { display: none; }
+  .horror-hud .font-horror.anim-flicker,
+  .horror-hud .font-horror.anim-shiver { font-size: clamp(1.25rem, 6vw, 2rem); text-align: center; }
+  .horror-hud .anim-rise { max-width: calc(100vw - 24px); padding: 20px; }
+}
+
+@media (max-height: 520px) and (max-width: 900px) {
+  .horror-hud-inventory { bottom: max(4px, env(safe-area-inset-bottom)); }
+  .horror-hud-stamina { bottom: 82px; }
+  .horror-hud-status { top: auto; bottom: 82px; }
+}
+
+@supports (height: 100dvh) {
+  html, body, #root { height: 100dvh; }
+}

@@ -565,11 +565,11 @@ export default function HUD({
         </div>
 
         {/* mobile controls */}
-        <div className="md:hidden">
+        <div className="ow-mobile-controls md:hidden">
           <div className="absolute bottom-3 left-2.5">
-            <Joystick api={api} />
+            <div className="ow-joystick"><Joystick api={api} /></div>
           </div>
-          <div className="absolute bottom-3 right-3 flex flex-col items-end gap-2">
+          <div className="ow-action-stack absolute bottom-3 right-3 flex flex-col items-end gap-2">
             {hud && (
               <div className="pointer-events-auto mb-1 flex items-center gap-1">
                 <span className="border border-white/15 bg-black/60 px-2 py-1 font-mono-ui text-[9px] text-zinc-300">

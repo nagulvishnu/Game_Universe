@@ -188,8 +188,21 @@ export function syncGameAssets(report: DiscoveryReport, gamesDir: string, public
       },
     });
   }
-  fs.rmSync(publicPlayDir, { recursive: true, force: true });
-  fs.renameSync(tmpDir, publicPlayDir);
+  // Swap tmp into place. On Windows renameSync cannot replace an existing dir
+  // (EPERM), so fall back to clearing + copying.
+  try {
+    fs.renameSync(tmpDir, publicPlayDir);
+  } catch {
+    fs.rmSync(publicPlayDir, { recursive: true, force: true });
+    fs.mkdirSync(publicPlayDir, { recursive: true });
+    for (const entry of fs.readdirSync(tmpDir, { withFileTypes: true })) {
+      fs.cpSync(
+        path.join(tmpDir, entry.name),
+        path.join(publicPlayDir, entry.name),
+        { recursive: true, force: true },
+      );
+    }
+  }
 }
 
 export function formatReport(report: DiscoveryReport): string {

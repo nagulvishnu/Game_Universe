@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
-import { UniverseStage } from "@/components/universe/UniverseStage";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Universe" };
-
+/**
+ * The universe now lives on the home page as the holographic stage.
+ * This legacy path redirects so existing links keep working.
+ */
 export default function UniversePage() {
-  return <UniverseStage />;
+  redirect("/");
 }

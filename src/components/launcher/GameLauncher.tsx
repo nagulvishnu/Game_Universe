@@ -140,29 +140,29 @@ function LauncherInner({
 
   return (
     <div className="fixed inset-0 z-[20] flex flex-col bg-black" style={themeStyle(game)} data-testid="game-launcher">
-      <header className="gu-panel z-30 flex h-[52px] shrink-0 items-center justify-between gap-3 border-x-0 border-t-0 px-3 sm:px-5">
-        <button type="button" className="gu-navlink flex items-center gap-2 font-display text-[0.62rem] tracking-[0.2em] uppercase text-[#aab2c6] hover:text-white" onClick={exit}>
+      <header className="gu-panel z-30 flex h-[52px] shrink-0 items-center justify-between gap-2 border-x-0 border-t-0 px-3 sm:px-5">
+        <button type="button" className="gu-navlink flex shrink-0 items-center gap-2 font-display text-[0.62rem] tracking-[0.2em] uppercase text-[#aab2c6] hover:text-white" onClick={exit}>
           <span aria-hidden>←</span>
-          <span className="hidden sm:inline">Back to Game Universe</span>
+          <span className="hidden sm:inline">Back to Universe</span>
           <span className="sm:hidden">Back</span>
         </button>
-        <div className="min-w-0 text-center">
+        <div className="min-w-0 flex-1 text-center">
           <p className="truncate font-display text-[0.7rem] font-bold tracking-[0.22em] uppercase">{game.title}</p>
           <p className="hidden text-[0.7rem] tracking-[0.2em] text-dim sm:block">{statusLabel(game.status)}{game.version ? ` · V${game.version}` : ""}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5">
           <button
             type="button"
-            className="gu-btn gu-btn--sm"
+            className="gu-btn gu-btn--sm hidden sm:inline-flex"
             onClick={() => frameRef.current?.focus()}
             disabled={phase !== "ready"}
             title="Give keyboard focus to the game"
           >
-            Play
+            Focus
           </button>
           <button type="button" className="gu-btn gu-btn--sm" onClick={toggleFullscreen} disabled={!fsSupported}>
             <span className="hidden sm:inline">{isFs ? "Exit fullscreen" : "Fullscreen"}</span>
-            <span className="sm:hidden">FS</span>
+            <span className="sm:hidden">{isFs ? "⤡" : "⤢"}</span>
           </button>
           <button type="button" className="gu-btn gu-btn--sm" onClick={exit}>
             Exit

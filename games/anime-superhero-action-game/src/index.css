@@ -49,3 +49,53 @@ body { font-family: Rajdhani, "Segoe UI", system-ui, sans-serif; -webkit-font-sm
 input[type="range"] { height: 6px; }
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-thumb { background: #ffffff33; }
+
+@media (max-width: 760px) {
+  .hero-hud-player { left: 8px; top: max(8px, env(safe-area-inset-top)); right: 45vw; gap: 5px; }
+  .hero-hud-player > div:first-child { display: none; }
+  .hero-hud-player > div:nth-child(2) { width: auto; min-width: 0; flex: 1; }
+  .hero-hud-player > div:nth-child(2) > div:first-child { flex-wrap: wrap; gap: 2px 6px; }
+  .hero-hud-player > div:nth-child(2) .text-2xl { font-size: 1.1rem; }
+  .hero-hud-player > div:nth-child(2) .text-xs { font-size: 9px; }
+  .hero-hud-player > div:nth-child(2) .mt-2 { flex-wrap: wrap; gap: 3px; font-size: 9px; }
+  .hero-hud-map { top: max(8px, env(safe-area-inset-top)); right: 8px; max-width: 43vw; gap: 4px; }
+  .hero-hud-map > div:first-child { width: 92px !important; height: 92px !important; }
+  .hero-hud-map canvas { width: 92px; height: 92px; }
+  .hero-hud-map .hero-hud-mission { width: 43vw; padding: 6px; }
+  .hero-hud-map .hero-hud-mission .text-lg { font-size: 12px; }
+  .hero-hud-map .hero-hud-mission > div:nth-child(n+2) { font-size: 10px; }
+  .hero-hud-abilities {
+    left: 8px;
+    right: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    transform: none;
+    max-width: calc(100vw - 16px);
+    overflow-x: auto;
+    gap: 5px;
+    padding: 4px 0;
+    justify-content: flex-start;
+    scrollbar-width: thin;
+  }
+  .hero-hud-abilities > * { flex: 0 0 auto; }
+  .hero-hud-abilities > .relative:not(.ml-2) { width: 48px !important; height: 48px !important; }
+  .hero-hud-abilities > .relative.ml-3 { width: 60px !important; height: 60px !important; margin-left: 0; }
+  .hero-hud-abilities > .ml-2 { display: none; }
+  .hero-hud-abilities > .relative.ml-3 svg { width: 60px; height: 60px; }
+}
+
+@media (max-width: 430px) {
+  .hero-hud-player { right: 42vw; }
+  .hero-hud-map > div:first-child,
+  .hero-hud-map canvas { width: 78px !important; height: 78px !important; }
+  .hero-hud-map .hero-hud-mission { width: 42vw; }
+}
+
+@media (max-height: 520px) and (max-width: 900px) {
+  .hero-hud-player { top: 6px; transform: scale(.85); transform-origin: top left; }
+  .hero-hud-map { top: 6px; }
+  .hero-hud-abilities { bottom: max(4px, env(safe-area-inset-bottom)); }
+}
+
+@supports (height: 100dvh) {
+  html, body, #root { height: 100dvh; }
+}

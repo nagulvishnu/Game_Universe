@@ -105,3 +105,112 @@ export function sortGames(games: GameRecord[]): GameRecord[] {
     (a, b) => Number(b.flagship) - Number(a.flagship) || a.title.localeCompare(b.title),
   );
 }
+
+/* ------------------------------------------------------------------ *
+ * Categories — derived from real metadata only (never a hardcoded list)
+ * ------------------------------------------------------------------ */
+
+export interface CategoryGroup {
+  key: string;
+  label: string;
+  count: number;
+  games: GameRecord[];
+}
+
+function titleCase(value: string): string {
+  return value
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+/**
+ * Group every registered game by its declared `category` field.
+ * Returns only categories that actually contain games.
+ */
+export function groupByCategory(games: GameRecord[]): CategoryGroup[] {
+  const map = new Map<string, GameRecord[]>();
+  for (const g of games) {
+    const key = g.category.trim();
+    if (!key) continue;
+    const list = map.get(key);
+    if (list) list.push(g);
+    else map.set(key, [g]);
+  }
+  return [...map.entries()]
+    .map(([key, list]) => ({
+      key,
+      label: titleCase(key),
+      count: list.length,
+      games: [...list].sort((a, b) => a.title.localeCompare(b.title)),
+    }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+}
+
+/* ------------------------------------------------------------------ *
+ * Sorting — only ordering options the metadata can actually support
+ * ------------------------------------------------------------------ */
+
+export type GameSortMode = "title" | "recent" | "category";
+
+export const GAME_SORT_MODES: readonly GameSortMode[] = ["title", "recent", "category"] as const;
+
+/**
+ * Sort registered games.
+ * - `title`    → alphabetical
+ * - `recent`   → newest release date first (games without a date sort last)
+ * - `category` → category, then title
+ */
+export function sortByMode(games: GameRecord[], mode: GameSortMode): GameRecord[] {
+  const out = [...games];
+  switch (mode) {
+    case "recent": {
+      const stamp = (g: GameRecord) => {
+        const t = g.releaseDate ? Date.parse(g.releaseDate) : NaN;
+        return Number.isNaN(t) ? -Infinity : t;
+      };
+      return out.sort(
+        (a, b) => stamp(b) - stamp(a) || a.title.localeCompare(b.title),
+      );
+    }
+    case "category":
+      return out.sort(
+        (a, b) =>
+          a.category.localeCompare(b.category) || a.title.localeCompare(b.title),
+      );
+    case "title":
+    default:
+      return out.sort((a, b) => a.title.localeCompare(b.title));
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Random pick — genuine randomness over the registry, never a fixed list
+ * ------------------------------------------------------------------ */
+
+/**
+ * Games that can actually be entered right now.
+ * Anything that is not playable cannot be launched, so it is never a candidate.
+ */
+export function eligibleForRandom(games: GameRecord[]): GameRecord[] {
+  return games.filter(isPlayable);
+}
+
+/**
+ * Pick one random eligible game.
+ * `rng` is injectable so the behaviour can be tested deterministically.
+ */
+export function pickRandomGame(
+  games: GameRecord[],
+  rng: () => number = Math.random,
+): GameRecord | null {
+  const eligible = eligibleForRandom(games);
+  if (eligible.length === 0) return null;
+  const index = Math.floor(rng() * eligible.length);
+  const safeIndex = Number.isFinite(index)
+    ? Math.min(eligible.length - 1, Math.max(0, index))
+    : 0;
+  return eligible[safeIndex];
+}

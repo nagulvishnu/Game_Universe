@@ -196,7 +196,7 @@ export default function App() {
   const hangarFromMenu = screen === 'hangar' && !mission;
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-slate-950 text-white">
+    <div className="flight-root relative w-screen h-screen overflow-hidden bg-slate-950 text-white">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" tabIndex={0} />
 
       {screen === 'title' && <TitleScreen onStart={() => { engineRef.current?.audio.init(); setScreen('menu'); }} />}

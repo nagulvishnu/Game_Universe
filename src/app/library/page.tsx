@@ -1,14 +1,9 @@
-import type { Metadata } from "next";
-import { LibraryView } from "@/components/games/LibraryView";
-import { Footer } from "@/components/universe/HomeSections";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Library" };
-
+/**
+ * The library is now the Explore page.
+ * This legacy path redirects so existing links keep working.
+ */
 export default function LibraryPage() {
-  return (
-    <>
-      <LibraryView />
-      <Footer />
-    </>
-  );
+  redirect("/explore");
 }

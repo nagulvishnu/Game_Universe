@@ -2,7 +2,7 @@
  * Lightweight procedural audio (WebAudio, no asset downloads).
  * Nothing plays until `start()` is called from a user gesture.
  */
-export type SfxKind = "hover" | "click" | "open" | "launch";
+export type SfxKind = "hover" | "click" | "open" | "launch" | "hologram" | "reveal";
 
 class HubAudio {
   private ctx: AudioContext | null = null;
@@ -144,6 +144,20 @@ class HubAudio {
         bp.connect(g);
         g.connect(this.master);
         src.start(now);
+        break;
+      }
+      case "hologram": {
+        // The machine powering up — a rising swell with a shimmering top.
+        blip("sine", 220, 1320, 0.85, 0.06);
+        blip("triangle", 440, 1760, 0.7, 0.035);
+        blip("sawtooth", 110, 660, 1.0, 0.03);
+        break;
+      }
+      case "reveal": {
+        // A confirmed destination — a warm two-note chime.
+        blip("sine", 660, 660, 0.5, 0.07);
+        blip("sine", 990, 990, 0.7, 0.05);
+        blip("triangle", 1320, 1320, 0.45, 0.025);
         break;
       }
     }

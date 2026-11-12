@@ -8,7 +8,7 @@ import { game } from '../game/engine';
 function Skill({ k, name, cd, max, cost, en, color, icon }: { k: string; name: string; cd: number; max: number; cost: number; en: number; color: string; icon: string }) {
   const f = max > 0 ? Math.min(1, cd / max) : 0; const lack = en < cost && cd <= 0;
   return (
-    <div className="relative h-14 w-14 overflow-hidden rounded-xl text-center" title={name} style={{ border: `2px solid ${cd > 0 ? '#555' : color}`, background: `radial-gradient(circle, ${color}55, #0c0818)`, opacity: lack ? 0.55 : 1, boxShadow: cd <= 0 && !lack ? `0 0 12px ${color}88` : 'none' }}>
+    <div className="rpg-skill relative h-14 w-14 overflow-hidden rounded-xl text-center" title={name} style={{ border: `2px solid ${cd > 0 ? '#555' : color}`, background: `radial-gradient(circle, ${color}55, #0c0818)`, opacity: lack ? 0.55 : 1, boxShadow: cd <= 0 && !lack ? `0 0 12px ${color}88` : 'none' }}>
       <div className="mt-1 text-2xl leading-none">{icon}</div>
       <div className="text-[10px] font-black text-white">{k}</div>
       {cd > 0 && <div className="absolute inset-x-0 bottom-0 bg-black/70" style={{ height: `${f * 100}%` }} />}
@@ -25,9 +25,9 @@ export default function Hud() {
   const banner = h.banner && now - h.banner.t < 3300 ? h.banner : null; const lu = h.levelUp && now - h.levelUp.t < 2600 ? h.levelUp : null; const perfect = now - h.perfect < 700;
   const tfReady = h.tf >= 100 && !h.tfActive;
   return (
-    <div className="pointer-events-none fixed inset-0 z-10 select-none">
+    <div className="rpg-hud pointer-events-none fixed inset-0 z-10 select-none">
       {/* player panel */}
-      <div className="absolute left-4 top-4 w-80">
+      <div className="rpg-player absolute left-4 top-4 w-80">
         <div className="flex items-center gap-3">
           <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-violet-300 bg-gradient-to-br from-violet-700 to-indigo-950 text-xl font-black shadow-[0_0_14px_#8a4aff]" style={h.tfActive ? { borderColor: '#ffe9a0', boxShadow: '0 0 20px #ffd24a' } : {}}>{lvl}</div>
           <div className="flex-1 space-y-1">
@@ -44,7 +44,7 @@ export default function Hud() {
       </div>
 
       {/* objective */}
-      <div className="absolute right-4 top-4 w-72 text-right">
+      <div className="rpg-objective absolute right-4 top-4 w-72 text-right">
         <div className="text-[11px] font-bold uppercase tracking-[.25em] text-violet-300">{h.location}</div>
         <div className="mt-1 rounded-lg bg-black/45 px-3 py-2 text-sm" style={{ borderRight: '3px solid #c084fc' }}>
           <div className="text-[10px] font-bold uppercase tracking-widest text-amber-300">Objective</div>
@@ -55,7 +55,7 @@ export default function Hud() {
 
       {/* boss */}
       {h.boss && (
-        <div className="absolute left-1/2 top-5 w-[min(720px,70vw)] -translate-x-1/2 text-center" style={{ animation: 'fadeUp .5s' }}>
+        <div className="rpg-boss absolute left-1/2 top-5 w-[min(720px,70vw)] -translate-x-1/2 text-center" style={{ animation: 'fadeUp .5s' }}>
           <div className="text-xs font-bold uppercase tracking-[.4em] text-rose-300">{h.boss.title}</div>
           <div className="text-2xl font-black tracking-[.15em] text-white drop-shadow-[0_2px_8px_#000]">{h.boss.name}{h.boss.phase > 0 && <span className="ml-3 text-sm text-rose-400">PHASE {h.boss.phase + 1}</span>}</div>
           <div className="relative mt-1 h-5 overflow-hidden rounded-sm bg-black/70 ring-2 ring-rose-900"><div className="h-full" style={{ width: `${(h.boss.hp / h.boss.max) * 100}%`, background: 'linear-gradient(180deg,#ff4a5a,#a0102a)', transition: 'width .15s' }} /><div className="absolute inset-0 flex items-center justify-center text-[11px] font-bold">{Math.ceil(h.boss.hp)} / {h.boss.max}</div></div>
@@ -64,27 +64,27 @@ export default function Hud() {
         </div>
       )}
       {!h.boss && h.target && (
-        <div className="absolute left-1/2 top-5 w-72 -translate-x-1/2 text-center">
+        <div className="rpg-target absolute left-1/2 top-5 w-72 -translate-x-1/2 text-center">
           <div className="text-sm font-bold text-white drop-shadow">🎯 {h.target.name} <span className="text-xs text-zinc-300">Lv {h.target.level}</span></div>
           <Bar v={h.target.hp} max={h.target.max} color="#ff5a5a" h={8} />
         </div>
       )}
 
       {/* skills */}
-      <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-end gap-2">
+      <div className="rpg-skills absolute bottom-5 left-1/2 flex -translate-x-1/2 items-end gap-2">
         <div className="mr-3 flex gap-1.5 text-center">
           {([['1', '🧪', h.potions.hp], ['2', '⚗️', h.potions.en], ['3', '🔮', h.potions.elixir]] as const).map(([k, ic, n]) => (<div key={k} className="relative h-10 w-10 rounded-lg border border-white/25 bg-black/55 text-lg leading-10"><span className={n ? '' : 'opacity-30'}>{ic}</span><span className="absolute left-0.5 top-0 text-[9px] font-bold text-zinc-300">{k}</span><span className="absolute bottom-0 right-1 text-[10px] font-bold text-white">{n}</span></div>))}
         </div>
         <Skill k="E" name="Abyssal Burst" cd={h.cd.e} max={h.cd.eMax} cost={h.costs.e} en={h.en} color="#c084fc" icon="🔮" />
         <Skill k="R" name="Shadow Rift" cd={h.cd.r} max={h.cd.rMax} cost={h.costs.r} en={h.en} color="#8a4aff" icon="🌀" />
         <Skill k="V" name="Abyssal Judgment" cd={h.cd.v} max={h.cd.vMax} cost={h.costs.v} en={h.en} color="#ff3d7f" icon="☄️" />
-        <div className="relative h-14 w-14 overflow-hidden rounded-xl text-center" style={{ border: `2px solid ${tfReady ? '#ff7adf' : h.tfActive ? '#ffd24a' : '#555'}`, background: 'radial-gradient(circle,#ff9edb44,#0c0818)', animation: tfReady ? 'pulseGlow 1s infinite' : undefined, ['--g' as any]: '#ff7adf' }} title="Abyssal Awakening"><div className="mt-1 text-2xl">✨</div><div className="text-[10px] font-black">T</div></div>
+        <div className="rpg-ultimate relative h-14 w-14 overflow-hidden rounded-xl text-center" style={{ border: `2px solid ${tfReady ? '#ff7adf' : h.tfActive ? '#ffd24a' : '#555'}`, background: 'radial-gradient(circle,#ff9edb44,#0c0818)', animation: tfReady ? 'pulseGlow 1s infinite' : undefined, ['--g' as any]: '#ff7adf' }} title="Abyssal Awakening"><div className="mt-1 text-2xl">✨</div><div className="text-[10px] font-black">T</div></div>
       </div>
       {h.combo > 1 && <div className="absolute bottom-28 left-1/2 -translate-x-1/2 text-center"><div className="text-3xl font-black italic text-amber-300 drop-shadow-[0_2px_6px_#000]">{h.combo} HIT</div></div>}
 
       {/* prompt / hints */}
-      {h.prompt && <div className="absolute bottom-36 left-1/2 -translate-x-1/2 rounded-lg border border-amber-300/60 bg-black/70 px-4 py-2 text-base font-bold text-amber-200" style={{ animation: 'fadeUp .2s' }}>{h.prompt}</div>}
-      {h.hint && <div className="absolute bottom-48 left-1/2 -translate-x-1/2 rounded bg-black/60 px-3 py-1 text-sm font-semibold text-rose-200">{h.hint}</div>}
+      {h.prompt && <div className="rpg-prompt absolute bottom-36 left-1/2 -translate-x-1/2 rounded-lg border border-amber-300/60 bg-black/70 px-4 py-2 text-base font-bold text-amber-200" style={{ animation: 'fadeUp .2s' }}>{h.prompt}</div>}
+      {h.hint && <div className="rpg-hint absolute bottom-48 left-1/2 -translate-x-1/2 rounded bg-black/60 px-3 py-1 text-sm font-semibold text-rose-200">{h.hint}</div>}
 
       {/* toasts */}
       <div className="absolute bottom-24 left-4 w-72 space-y-1">
@@ -98,7 +98,7 @@ export default function Hud() {
       {h.locked && <div className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-rose-400/70 opacity-0" />}
 
       {/* controls hint */}
-      <div className="absolute bottom-4 right-4 w-56 rounded-lg bg-black/45 p-2 text-[10px] leading-snug text-zinc-300">
+      <div className="rpg-controls-hint absolute bottom-4 right-4 w-56 rounded-lg bg-black/45 p-2 text-[10px] leading-snug text-zinc-300">
         <b className="text-violet-300">WASD</b> move · <b className="text-violet-300">Mouse</b> camera · <b className="text-violet-300">F/LMB</b> attack · <b className="text-violet-300">S×2</b> sweep · <b className="text-violet-300">E R V T</b> skills · <b className="text-violet-300">Q</b> block/parry · <b className="text-violet-300">Shift</b> sprint/dodge · <b className="text-violet-300">Space</b> jump · <b className="text-violet-300">RMB</b> lock-on · <b className="text-violet-300">G</b> interact · <b className="text-violet-300">I C K J M</b> menus · <b className="text-violet-300">Esc</b> pause
       </div>
       {h.pointer !== 'locked' && h.pointer !== 'failed' && !h.banner && <div className="absolute left-1/2 top-16 -translate-x-1/2 rounded bg-black/70 px-3 py-1 text-xs text-sky-200">Click the game to capture the mouse · press Esc to release it</div>}

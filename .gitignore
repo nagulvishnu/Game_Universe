@@ -11,6 +11,13 @@ next-env.d.ts
 
 # build output — regenerated from /games by src/games/discovery on every build
 /public/play/
+/public/play.tmp-*/
+
+# local tooling / debug output
+.audit/
+.kilo/
+server.log
+server-err.log
 
 # env files
 .env

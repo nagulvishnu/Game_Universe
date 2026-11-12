@@ -94,8 +94,8 @@ export function CityHud() {
   const need = xpForLevel(save.level);
   const dist = obj.target ? Math.round(Math.hypot(obj.target.x - runtime.pos.x, obj.target.z - runtime.pos.z)) : 0;
   return (
-    <div className="pointer-events-none absolute inset-0 z-10">
-      <div className="panel absolute left-4 top-4 w-72 p-3">
+    <div className="arena-city-hud pointer-events-none absolute inset-0 z-10">
+      <div className="arena-player-card panel absolute left-4 top-4 w-72 p-3">
         <div className="flex items-baseline justify-between">
           <div className="title-font text-xl">{save.profile.name}</div>
           <div className="title-font text-2xl text-yellow-300">Lv {save.level}</div>
@@ -108,12 +108,12 @@ export function CityHud() {
         </div>
         <div className="mt-1 text-[10px] text-white/60">Qualification: {Math.min(100, Math.floor((save.points / QUALIFY_TARGET) * 100))}% of {QUALIFY_TARGET.toLocaleString()} pts</div>
       </div>
-      <div className="panel absolute left-1/2 top-4 w-[420px] -translate-x-1/2 px-4 py-2 text-center">
+      <div className="arena-objective panel absolute left-1/2 top-4 w-[420px] -translate-x-1/2 px-4 py-2 text-center">
         <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-yellow-300">Current Objective</div>
         <div className="text-sm font-semibold">{obj.text}</div>
         {obj.target && <div className="text-[11px] text-cyan-200">{dist} m away · see map ★</div>}
       </div>
-      <div className="absolute right-4 top-4 flex flex-col items-end gap-1">
+      <div className="arena-clock absolute right-4 top-4 flex flex-col items-end gap-1">
         <MapCanvas />
         <div className="panel px-3 py-1 text-xs font-bold">{String(hrs).padStart(2, '0')}:{String(mins).padStart(2, '0')} {runtime.night > 0.6 ? '🌙' : '☀'} · M: map</div>
       </div>

@@ -107,7 +107,7 @@ export default function Touch({ game, hud, onPause }: Props) {
       <button className="touch-btn absolute left-1/2 -translate-x-[150%] top-3 w-9 h-9 text-base" style={{ top: 'calc(env(safe-area-inset-top) + 12px)' }} {...press(onPause)}>⏸</button>
 
       {/* action buttons */}
-      <div className="absolute right-0 bottom-0 w-[300px] h-[250px] pointer-events-none" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <div className="br-touch-actions absolute right-0 bottom-0 w-[300px] h-[250px] pointer-events-none" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         {!inAir && !inVeh && (
           <button
             className={`${big} right-5 bottom-8 w-[84px] h-[84px] text-base pointer-events-auto ${firing ? 'on' : ''}`}

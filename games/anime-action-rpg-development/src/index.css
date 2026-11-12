@@ -23,3 +23,47 @@ canvas { display: block; }
 .scroll::-webkit-scrollbar { width: 8px; } .scroll::-webkit-scrollbar-thumb { background: rgba(160,130,240,.4); border-radius: 4px; } .scroll::-webkit-scrollbar-track { background: transparent; }
 input[type=range] { accent-color: #c084fc; }
 .title-grad { background: linear-gradient(180deg, #fff 10%, #e6d4ff 40%, #b07cff 75%, #ff4a8a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 4px 18px rgba(160,90,255,.55)); }
+
+@media (max-width: 760px) {
+  .rpg-player { left: 8px; top: max(8px, env(safe-area-inset-top)); width: calc(100vw - 16px); }
+  .rpg-player .h-14.w-14 { width: 44px; height: 44px; flex: 0 0 44px; font-size: 15px; }
+  .rpg-player .text-2xl { font-size: 1.15rem; }
+  .rpg-player .text-xs { font-size: 10px; }
+  .rpg-objective { left: 8px; right: 8px; top: 116px; width: auto; text-align: left; }
+  .rpg-objective > div { max-width: 100%; }
+  .rpg-boss { top: 182px; width: calc(100vw - 24px); }
+  .rpg-boss .text-2xl { font-size: 1.1rem; }
+  .rpg-target { top: 182px; width: calc(100vw - 24px); }
+  .rpg-skills {
+    left: 8px;
+    right: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    transform: none;
+    max-width: calc(100vw - 16px);
+    overflow-x: auto;
+    gap: 5px;
+    padding: 4px 0;
+    justify-content: flex-start;
+    scrollbar-width: thin;
+  }
+  .rpg-skills > * { flex: 0 0 auto; }
+  .rpg-skills .rpg-skill { width: 44px; height: 44px; }
+  .rpg-skills .rpg-skill .text-2xl { font-size: 1.2rem; }
+  .rpg-skills .rpg-ultimate { width: 58px !important; height: 58px !important; margin-left: 2px; }
+  .rpg-skills .rpg-ultimate svg { width: 58px; height: 58px; }
+  .rpg-skills .rpg-ultimate svg + div svg { width: 34px; height: 34px; }
+  .rpg-skills > .mr-3 { margin-right: 2px; }
+  .rpg-controls-hint { display: none; }
+  .rpg-prompt { bottom: 86px; max-width: calc(100vw - 24px); text-align: center; }
+  .rpg-hint { bottom: 132px; max-width: calc(100vw - 24px); text-align: center; }
+}
+
+@media (max-height: 520px) and (max-width: 900px) {
+  .rpg-player { transform: scale(.88); transform-origin: top left; }
+  .rpg-objective { top: 8px; left: auto; width: 34vw; }
+  .rpg-skills { bottom: max(4px, env(safe-area-inset-bottom)); }
+}
+
+@supports (height: 100dvh) {
+  html, body, #root { height: 100dvh; }
+}

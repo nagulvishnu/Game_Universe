@@ -214,3 +214,34 @@ html, body, #root {
 @media (prefers-reduced-motion: reduce) {
   .mode-card__glow, .float-slow, .pulse-text { animation: none; }
 }
+
+@media (max-width: 760px) {
+  .br-minimap-canvas { width: 112px !important; height: 112px !important; right: 8px !important; top: calc(env(safe-area-inset-top) + 48px) !important; }
+  .br-hud .br-map-controls { right: 8px; top: max(8px, env(safe-area-inset-top)); gap: 5px; padding-top: 0 !important; }
+  .br-hud .br-map-controls #minimap-slot { width: 112px !important; height: 112px !important; }
+  .br-hud .br-stats { left: 8px; top: max(8px, env(safe-area-inset-top)); gap: 5px; max-width: 43vw; padding-top: 0 !important; }
+  .br-hud .br-stats .panel { padding: 4px 7px; }
+  .br-hud .br-team-score { top: 54px; max-width: 48vw; gap: 6px; padding: 5px 8px; font-size: 11px; }
+  .br-hud .br-team-score > span { white-space: nowrap; }
+  .br-hud .br-vitals { left: 8px; bottom: max(8px, env(safe-area-inset-bottom)); width: min(45vw, 260px); }
+  .br-hud .br-weapon-info { right: 8px; bottom: max(8px, env(safe-area-inset-bottom)) !important; max-width: 48vw; }
+  .br-hud .br-weapon-info > div { max-width: 100%; }
+  .br-touch-actions { right: max(4px, env(safe-area-inset-right)); bottom: max(4px, env(safe-area-inset-bottom)); }
+}
+
+@media (max-width: 380px) {
+  .br-minimap-canvas,
+  .br-hud .br-map-controls #minimap-slot { width: 92px !important; height: 92px !important; }
+  .br-hud .br-team-score { top: 48px; }
+  .br-touch-actions { transform: scale(.9); transform-origin: bottom right; }
+}
+
+@media (max-height: 500px) and (max-width: 900px) {
+  .br-minimap-canvas,
+  .br-hud .br-map-controls #minimap-slot { width: 82px !important; height: 82px !important; }
+  .br-hud .br-team-score { top: 4px; }
+}
+
+@supports (height: 100dvh) {
+  html, body, #root { height: 100dvh; }
+}

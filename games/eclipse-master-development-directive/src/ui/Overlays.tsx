@@ -101,8 +101,8 @@ export function Controls({ visible, onConsole, subs, setSubs, quality, setQualit
   const rec = recorder.recording;
   const btn = 'rounded-md px-3 py-1.5 text-sm text-white/90 hover:bg-white/15 transition';
   return (
-    <div className={`absolute inset-x-0 bottom-0 z-40 px-6 pb-3 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}>
-      <div className="mx-auto max-w-5xl rounded-xl bg-black/70 px-4 py-2 backdrop-blur-md">
+    <div className={`absolute inset-x-0 bottom-0 z-40 px-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}>
+      <div className="mx-auto max-w-5xl rounded-xl bg-black/70 px-2 py-2 backdrop-blur-md sm:px-4">
         <div className="mb-2 flex h-2.5 w-full gap-[2px]">
           {film.scenes.map((s, i) => {
             const r = film.report[s.id]; const done = r?.completed; const cur = i === film.sceneIdx;
@@ -115,7 +115,7 @@ export function Controls({ visible, onConsole, subs, setSubs, quality, setQualit
             );
           })}
         </div>
-        <div className="flex items-center gap-1">
+        <div className="eclipse-controls flex items-center gap-1">
           <button className={btn} onClick={() => film.prev()} title="Previous scene">⏮</button>
           <button className={btn + ' text-lg'} onClick={() => film.toggle()}>{playing ? '⏸' : '▶'}</button>
           <button className={btn} onClick={() => film.next()} title="Next scene">⏭</button>

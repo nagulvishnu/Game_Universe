@@ -64,7 +64,7 @@ export const InGameHUD: React.FC<InGameHUDProps> = ({
   const [stickOffset, setStickOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   return (
-    <div className="fixed inset-0 pointer-events-none select-none z-20 overflow-hidden">
+    <div className="sniper-hud fixed inset-0 pointer-events-none select-none z-20 overflow-hidden">
       {/* Low-Light NVG / Thermal Fullscreen Filter Tint when Scoped */}
       {hud.isScoped && hud.opticType === 'lowlight' && (
         <div className="fixed inset-0 bg-emerald-500/18 mix-blend-screen scanline-overlay" />
@@ -249,7 +249,7 @@ export const InGameHUD: React.FC<InGameHUDProps> = ({
       )}
 
       {/* === TOP BAR: STEALTH DETECTION METER, COMPASS, TIMER & CONTROLS === */}
-      <div className="fixed top-3 inset-x-4 flex items-start justify-between gap-4">
+      <div className="sniper-topbar fixed top-3 inset-x-4 flex items-start justify-between gap-4">
         {/* Top-Left: Minimap Radar + Active Mission Objectives */}
         <div className="flex flex-col gap-2.5 max-w-xs">
           <div className="flex items-center gap-3">
@@ -513,7 +513,7 @@ export const InGameHUD: React.FC<InGameHUDProps> = ({
 
       {/* === BOTTOM HUD BAR: HEALTH, STAMINA, EQUIPMENT, WEAPON & AMMO === */}
       {!hud.killcamActive && (
-        <div className="fixed bottom-3 inset-x-4 flex items-end justify-between gap-4">
+        <div className="sniper-bottom-bar fixed bottom-3 inset-x-4 flex items-end justify-between gap-4">
           {/* Bottom-Left: Health, Breath Stamina & Posture */}
           <div className="bg-zinc-950/85 backdrop-blur-md border border-zinc-800 rounded-xl p-3.5 w-64 shadow-xl pointer-events-auto">
             <div className="flex items-center justify-between text-xs font-mono mb-1">
@@ -674,7 +674,7 @@ export const InGameHUD: React.FC<InGameHUDProps> = ({
 
       {/* === RESPONSIVE TOUCH VIRTUAL CONTROLS (MOBILE & TABLET READY) === */}
       {showTouch && (
-        <div className="fixed inset-x-0 bottom-24 pointer-events-none flex items-center justify-between px-6 z-30">
+        <div className="sniper-touch-controls fixed inset-x-0 bottom-24 pointer-events-none flex items-center justify-between px-6 z-30">
           {/* Left Virtual Thumbstick: Movement */}
           <div
             className="w-32 h-32 rounded-full bg-zinc-900/50 border-2 border-zinc-600/60 pointer-events-auto relative flex items-center justify-center touch-none"

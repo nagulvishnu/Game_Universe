@@ -90,10 +90,10 @@ export default function HUD() {
       ))}
 
       {/* ── top left: mission ── */}
-      <div className="absolute top-3 left-4 max-w-xs">
+      <div className="sf-mission-hud absolute top-3 left-4 max-w-xs">
         <div className="text-[10px] tracking-[0.25em] text-cyan-400/80">{config?.name?.toUpperCase()}</div>
         <div className="mt-1 bg-slate-950/60 backdrop-blur border border-cyan-400/25 px-3 py-2 [clip-path:polygon(0_0,100%_0,96%_100%,0_100%)]">
-          <div className="flex items-center gap-1.5 text-cyan-200 text-xs"><Target className="w-3.5 h-3.5 text-cyan-400" />{config?.objectiveText}</div>
+          <div className="sf-objective flex items-center gap-1.5 text-cyan-200 text-xs"><Target className="w-3.5 h-3.5 shrink-0 text-cyan-400" />{config?.objectiveText}</div>
           <div className="text-amber-300 text-[11px] mt-1">{hud.objectiveProgress}</div>
           {hud.timeLeft > 0 && <div className={`text-[11px] mt-0.5 ${hud.timeLeft < 20 ? 'text-red-400 animate-pulse' : 'text-slate-300'}`}>⏱ {Math.ceil(hud.timeLeft)}s remaining</div>}
         </div>
@@ -101,7 +101,7 @@ export default function HUD() {
       </div>
 
       {/* ── top right: wave + minimap-ish ── */}
-      <div className="absolute top-3 right-4 text-right">
+      <div className="sf-hostile-hud absolute top-3 right-4 text-right">
         <div className="bg-slate-950/60 backdrop-blur border border-cyan-400/25 px-3 py-2 inline-block">
           <div className="text-[10px] tracking-[0.25em] text-cyan-400/80">HOSTILES</div>
           <div className="text-2xl font-bold text-red-400 leading-none">{hud.enemiesLeft}{hud.bossName ? ' + ☠' : ''}</div>
@@ -116,7 +116,7 @@ export default function HUD() {
 
       {/* ── boss bar ── */}
       {hud.bossName && (
-        <div className="absolute top-14 left-1/2 -translate-x-1/2 w-[min(640px,80vw)]">
+        <div className="sf-boss-hud absolute top-14 left-1/2 -translate-x-1/2 w-[min(640px,80vw)]">
           <div className="text-center text-red-400 font-bold tracking-[0.3em] text-sm drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">☠ {hud.bossName} {hud.bossPhase > 1 && <span className="text-orange-400">— PHASE {hud.bossPhase}{hud.bossPhase === 3 ? ' · ENRAGED' : ''}</span>}</div>
           <div className="h-2 bg-slate-900/80 border border-sky-400/40 mt-1"><div className="h-full bg-sky-400 transition-all duration-200" style={{ width: `${hud.bossShieldFrac * 100}%` }} /></div>
           <div className="h-3.5 bg-slate-900/80 border border-red-500/60 mt-0.5"><div className="h-full bg-gradient-to-r from-red-700 to-red-400 transition-all duration-200" style={{ width: `${hud.bossFrac * 100}%` }} /></div>
@@ -126,7 +126,7 @@ export default function HUD() {
 
       {/* ── ally bar ── */}
       {hud.allyFrac >= 0 && (
-        <div className="absolute top-40 left-4 w-52 bg-slate-950/60 border border-lime-400/30 px-3 py-2">
+        <div className="sf-ally-hud absolute top-40 left-4 w-52 bg-slate-950/60 border border-lime-400/30 px-3 py-2">
           <div className="text-[10px] tracking-widest text-lime-300 flex justify-between"><span>{hud.allyName}</span><span>{Math.round(hud.allyFrac * 100)}%</span></div>
           <div className="h-2 bg-slate-900 mt-1"><div className={`h-full ${hud.allyFrac < 0.35 ? 'bg-red-500' : 'bg-lime-400'}`} style={{ width: `${hud.allyFrac * 100}%` }} /></div>
           {hud.allyFrac < 0.35 && <div className="text-[10px] text-red-400 animate-pulse mt-1">⚠ PROTECT IT — CRITICAL</div>}
@@ -142,14 +142,14 @@ export default function HUD() {
 
       {/* ── dialogue ── */}
       {hud.dialogue && (
-        <div className="absolute bottom-36 left-1/2 -translate-x-1/2 w-[min(620px,86vw)] bg-slate-950/75 backdrop-blur border border-cyan-400/30 px-4 py-3">
+        <div className="sf-dialogue-hud absolute bottom-36 left-1/2 -translate-x-1/2 w-[min(620px,86vw)] bg-slate-950/75 backdrop-blur border border-cyan-400/30 px-4 py-3">
           <div className="text-[10px] tracking-[0.25em] text-cyan-400">{hud.dialogue.speaker.toUpperCase()} ▸ COMMS</div>
           <div className="text-cyan-100 text-sm mt-1 font-sans">{hud.dialogue.text}</div>
         </div>
       )}
 
       {/* ── bottom left: ship status ── */}
-      <div className="absolute bottom-5 left-4 w-72 space-y-1.5">
+      <div className="sf-ship-hud absolute bottom-5 left-4 w-72 space-y-1.5">
         <div className="flex items-center gap-2">
           <Shield className="w-4 h-4 text-sky-400 shrink-0" />
           <Bar frac={hud.shield / Math.max(1, hud.maxShield)} color="linear-gradient(90deg,#0369a1,#38bdf8)" glow="#38bdf8" />
@@ -174,7 +174,7 @@ export default function HUD() {
       </div>
 
       {/* ── bottom right: weapons + abilities ── */}
-      <div className="absolute bottom-5 right-4 w-80 space-y-1.5 text-right">
+      <div className="sf-weapons-hud absolute bottom-5 right-4 w-80 space-y-1.5 text-right">
         <div className="bg-slate-950/60 backdrop-blur border border-cyan-400/25 px-3 py-2 space-y-1.5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-[9px] text-slate-500 border border-slate-700 px-1">LMB · Q</span>

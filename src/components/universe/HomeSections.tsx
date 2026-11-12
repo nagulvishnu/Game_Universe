@@ -1,71 +1,40 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { useGames } from "@/components/providers/GamesProvider";
-import { useSettings } from "@/components/providers/SettingsProvider";
 import { useUI } from "@/components/providers/UIProvider";
+import { isPlayable } from "@/games/registry/registry";
+import { Reveal } from "@/components/ui/Reveal";
 import { GameArt } from "@/components/games/GameArt";
 import { StatusBadge } from "@/components/games/StatusBadge";
-import { Reveal } from "@/components/ui/Reveal";
-import { isPlayable } from "@/games/registry/registry";
-import type { GameRecord } from "@/games/types";
+import { getGameTheme } from "@/games/theme";
 import { themeStyle } from "@/ui/themeStyle";
 
-function Spotlight({ game, big }: { game: GameRecord; big: boolean }) {
+function Spotlight({ game, big }: { game: import("@/games/types").GameRecord; big: boolean }) {
   const { launch, openDetails } = useUI();
-  const { reducedMotion } = useSettings();
-  const wrap = useRef<HTMLDivElement>(null);
-  const art = useRef<HTMLDivElement>(null);
   const playable = isPlayable(game);
-
-  // Light scroll parallax on the banner (skipped for reduced motion).
-  useEffect(() => {
-    if (reducedMotion) return;
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const w = wrap.current;
-      const a = art.current;
-      if (!w || !a) return;
-      const r = w.getBoundingClientRect();
-      const p = (r.top + r.height / 2 - window.innerHeight / 2) / window.innerHeight;
-      a.style.transform = `translate3d(0, ${p * -40}px, 0) scale(1.12)`;
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [reducedMotion]);
 
   return (
     <div
-      ref={wrap}
-      className={`gu-clip relative isolate overflow-hidden border border-[var(--gu-line)] ${big ? "min-h-[480px]" : "min-h-[340px]"}`}
+      className={`gu-clip gu-spotlight ${big ? "gu-spotlight--big" : ""}`}
       style={themeStyle(game)}
       data-testid="featured-game"
     >
-      <div ref={art} className="absolute inset-0 -z-10 will-change-transform">
+      <div className="gu-spotlight__art">
         <GameArt game={game} variant="banner" className="h-full w-full" />
       </div>
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#07080c] via-[#07080cd9] to-transparent" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#07080c] via-transparent to-[#07080c66]" />
-      <div className="gu-scanlines" />
-      <div className={`relative flex h-full flex-col justify-end gap-4 p-7 sm:p-10 ${big ? "max-w-2xl" : "max-w-lg"}`}>
-        <div className="flex items-center gap-3">
+      <div className="gu-spotlight__veil" aria-hidden />
+      <div className="gu-scanlines" aria-hidden />
+      <div className="gu-spotlight__body min-w-0">
+        <div className="flex flex-wrap items-center gap-3">
           <StatusBadge game={game} />
-          <span
-            className="gu-kicker"
-            style={{ color: "var(--c1)", background: "transparent", letterSpacing: "0.22em" }}
-          >
+          <span className="gu-kicker" style={{ color: "var(--c1)", letterSpacing: "0.22em" }}>
             {game.flagship ? "Flagship" : "Featured"} · {game.category} · {game.genre}
           </span>
         </div>
-        <h3 className={`gu-title gu-glow-text ${big ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl"}`}>{game.title}</h3>
+        <h3 className={`gu-title gu-glow-text ${big ? "text-4xl sm:text-6xl" : "text-3xl sm:text-4xl"}`}>
+          {game.title}
+        </h3>
         <p className="line-clamp-3 text-lg text-[#c8cde0]">{game.description}</p>
         <div className="flex flex-wrap gap-3 pt-2">
           <button
@@ -73,7 +42,7 @@ function Spotlight({ game, big }: { game: GameRecord; big: boolean }) {
             className="gu-btn gu-btn--primary"
             disabled={!playable}
             onClick={() => launch(game.id)}
-            data-cursor="play"
+            data-cursor={playable ? "play" : undefined}
           >
             {playable ? "▶ Play now" : game.status === "development" ? "In development" : "Coming soon"}
           </button>
@@ -86,82 +55,84 @@ function Spotlight({ game, big }: { game: GameRecord; big: boolean }) {
   );
 }
 
-export function FeaturedSection() {
-  const { featured } = useGames();
-  if (featured.length === 0) return null;
-  const [first, ...rest] = featured;
-  return (
-    <section id="featured" aria-labelledby="featured-heading" className="relative scroll-mt-16 px-[clamp(1rem,4vw,4rem)] py-24">
-      <div className="mx-auto max-w-[1400px]">
-        <Reveal>
-          <p className="gu-kicker">Featured</p>
-          <h2 id="featured-heading" className="gu-title mt-3 text-3xl sm:text-5xl">
-            Enter the <span className="gu-gradient-text">spotlight</span>
-          </h2>
-        </Reveal>
-        <Reveal className="mt-10" delay={80}>
-          <Spotlight game={first} big />
-        </Reveal>
-        {rest.length > 0 && (
-          <div className="mt-6 grid gap-6 md:grid-cols-2">
-            {rest.slice(0, 4).map((g, i) => (
-              <Reveal key={g.id} delay={i * 80}>
-                <Spotlight game={g} big={false} />
-              </Reveal>
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
+/** Supporting homepage sections below the holographic stage. */
+export function HomeSections() {
+  const { games, featured } = useGames();
+  if (games.length === 0) return null;
 
-export function AboutSection() {
-  const items = [
-    {
-      n: "01",
-      t: "Discovery",
-      d: "Every folder in /games with a game.json becomes a world. The hub validates it at build time and skips anything broken — without ever crashing.",
-    },
-    {
-      n: "02",
-      t: "Isolation",
-      d: "Games are never merged into the hub. Each one runs in its own sandboxed frame with its own code, controls and save data.",
-    },
-    {
-      n: "03",
-      t: "Launch",
-      d: "One dynamic route — /game/:id — launches any registered game, with real load progress, fullscreen, and a way home.",
-    },
-  ];
+  const [first, ...rest] = featured.length > 0 ? featured : games.slice(0, 3);
+  const categories = [...new Set(games.map((g) => g.category))];
+
   return (
-    <section id="about" aria-labelledby="about-heading" className="relative px-[clamp(1rem,4vw,4rem)] py-24">
-      <div className="mx-auto max-w-[1400px]">
-        <Reveal>
-          <p className="gu-kicker">About the universe</p>
-          <h2 id="about-heading" className="gu-title mt-3 max-w-3xl text-3xl sm:text-5xl">
-            One home for <span className="gu-gradient-text">every game</span> I build
-          </h2>
-        <p className="mt-5 max-w-2xl text-lg text-[#aab2c6]">
-          This is a personal arcade and portfolio: a launcher that grows on its own. Drop a new game into the games
-          folder and a new world appears in the universe.
-        </p>
-      </Reveal>
-      <div className="mt-12 grid gap-6 md:grid-cols-3">
-        {items.map((it, i) => (
-          <Reveal key={it.n} delay={i * 100}>
-            <div className="gu-panel h-full p-7">
-              <p className="font-display text-4xl font-black text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.22)]">
-                {it.n}
-              </p>
-              <h3 className="gu-title mt-4 text-xl">{it.t}</h3>
-              <p className="mt-3 text-[#aab2c6]">{it.d}</p>
-            </div>
+    <>
+      <section id="featured" aria-labelledby="featured-heading" className="gu-page">
+        <div className="mx-auto max-w-[1400px] px-[clamp(1rem,4vw,4rem)] py-24">
+          <Reveal>
+            <p className="gu-kicker">Featured worlds</p>
+            <h2 id="featured-heading" className="gu-title mt-3 text-3xl sm:text-5xl">
+              Enter the <span className="gu-gradient-text">spotlight</span>
+            </h2>
           </Reveal>
-        ))}
-      </div>
-      </div>
-    </section>
+
+          {first && (
+            <Reveal className="mt-10" delay={80}>
+              <Spotlight game={first} big />
+            </Reveal>
+          )}
+
+          {rest.length > 0 && (
+            <div className="mt-6 grid gap-6 md:grid-cols-2">
+              {rest.slice(0, 4).map((g, i) => (
+                <Reveal key={g.id} delay={i * 80}>
+                  <Spotlight game={g} big={false} />
+                </Reveal>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section id="universe-map" aria-labelledby="map-heading" className="gu-page gu-page--alt">
+        <div className="mx-auto max-w-[1400px] px-[clamp(1rem,4vw,4rem)] py-24">
+          <Reveal>
+            <p className="gu-kicker">Universe map</p>
+            <h2 id="map-heading" className="gu-title mt-3 text-3xl sm:text-5xl">
+              Choose a <span className="gu-gradient-text">sector</span>
+            </h2>
+            <p className="mt-4 max-w-2xl text-lg text-[#aab2c6]">
+              Every world sits in a sector of the collection. Pick one to filter the catalogue.
+            </p>
+          </Reveal>
+
+          <div className="gu-sectors mt-10">
+            {categories.map((c, i) => {
+              const inCategory = games.filter((g) => g.category === c);
+              const accent = getGameTheme(inCategory[0]).primary;
+              return (
+                <Reveal key={c} delay={i * 60}>
+                  <Link
+                    href={`/explore?category=${encodeURIComponent(c)}`}
+                    className="gu-sector"
+                    style={{ ["--c1" as string]: accent }}
+                    data-testid="sector-link"
+                  >
+                    <span className="gu-sector__name">{c}</span>
+                    <span className="gu-sector__count">
+                      {inCategory.length} {inCategory.length === 1 ? "world" : "worlds"}
+                    </span>
+                    <span className="gu-sector__arrow" aria-hidden>
+                      →
+                    </span>
+                  </Link>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </>
   );
 }
 
@@ -169,7 +140,21 @@ export function Footer() {
   return (
     <footer className="border-t border-[var(--gu-line)] px-[clamp(1rem,4vw,4rem)] py-8">
       <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-3 text-sm text-dim">
-        <p className="font-display text-[0.65rem] tracking-[0.3em] uppercase">Nagul&apos;s Game Universe</p>
+        <p className="font-display text-[0.65rem] tracking-[0.3em] uppercase">Game Universe</p>
+        <nav aria-label="Footer" className="flex flex-wrap gap-5">
+          <Link href="/" className="hover:text-neon">
+            Home
+          </Link>
+          <Link href="/explore" className="hover:text-neon">
+            Explore Games
+          </Link>
+          <Link href="/categories" className="hover:text-neon">
+            Categories
+          </Link>
+          <Link href="/about" className="hover:text-neon">
+            About
+          </Link>
+        </nav>
         <p>Every world is an independent game.</p>
       </div>
     </footer>

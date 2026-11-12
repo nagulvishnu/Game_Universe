@@ -40,3 +40,14 @@ body { font-family: "Rajdhani", "Trebuchet MS", system-ui, sans-serif; color: #f
 input[type=range] { accent-color: #ffb066; }
 ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-thumb { background: rgba(255,200,120,.35); border-radius: 4px; }
 .scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+
+@media (max-width: 700px) {
+  html, body, #root { height: 100%; height: 100dvh; }
+  .rpg-hud .rpg-vitals { left: max(.5rem, env(safe-area-inset-left)); top: max(.5rem, env(safe-area-inset-top)); width: min(48vw, 12rem) !important; }
+  .rpg-hud .rpg-minimap { right: max(.5rem, env(safe-area-inset-right)); top: max(.5rem, env(safe-area-inset-top)); }
+  .rpg-hud .rpg-touch-controls { inset: 0; }
+  .rpg-hud .rpg-touch-actions { gap: .5rem; bottom: max(.5rem, env(safe-area-inset-bottom)) !important; }
+  .rpg-hud .rpg-touch-menu { top: max(2.5rem, calc(env(safe-area-inset-top) + 1.5rem)) !important; gap: .6rem; }
+  .rpg-hud .rpg-touch-menu-button { width: 46px !important; height: 46px !important; }
+  .rpg-hud button { min-height: 44px; }
+}

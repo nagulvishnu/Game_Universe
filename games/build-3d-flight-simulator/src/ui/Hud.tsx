@@ -321,7 +321,7 @@ export function Hud({ s, engine, settings }: { s: HudSnapshot; engine: GameEngin
     return <div className="absolute text-amber-300 text-2xl" style={{ left: `${x}%`, top: `${y}%`, transform: `translate(-50%,-50%) rotate(${ang + Math.PI / 2}rad)`, ...glow }}>▲</div>;
   };
   return (
-    <div className="absolute left-0 top-0 pointer-events-none select-none text-white" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', width: `${100 / sc}%`, height: `${100 / sc}%`, transform: `scale(${sc})`, transformOrigin: '0 0' }}>
+    <div className="flight-hud absolute left-0 top-0 pointer-events-none select-none text-white" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', width: `${100 / sc}%`, height: `${100 / sc}%`, transform: `scale(${sc})`, transformOrigin: '0 0' }}>
       {/* environment overlays */}
       {s.inCloud > 0.05 && <div className="absolute inset-0 bg-white" style={{ opacity: Math.min(0.55, s.inCloud * 0.6) }} />}
       {s.flash > 0.02 && <div className="absolute inset-0 bg-white" style={{ opacity: s.flash * 0.7 }} />}
@@ -389,13 +389,13 @@ export function Hud({ s, engine, settings }: { s: HudSnapshot; engine: GameEngin
       {s.servicing && <div className="absolute left-1/2 top-[30%] -translate-x-1/2 px-4 py-1 rounded bg-emerald-500/80 text-slate-950 font-black tracking-widest text-sm animate-pulse">REFUELLING & REPAIRING…</div>}
 
       {/* left: speed */}
-      <div className="absolute left-[4%] top-1/2 -translate-y-1/2 flex flex-col items-center gap-1">
+      <div className="flight-speed absolute left-[4%] top-1/2 -translate-y-1/2 flex flex-col items-center gap-1">
         <div className="text-[10px] tracking-widest text-slate-300">IAS {speedUnit(u)}</div>
         <SpeedTape s={s} u={u} />
         <div className="text-[11px] text-slate-300 mt-1">GS {speedStr(s.gs, u)} · M {s.mach.toFixed(2)}</div>
       </div>
       {/* right: altitude */}
-      <div className="absolute right-[4%] top-1/2 -translate-y-1/2 flex flex-col items-center gap-1">
+      <div className="flight-altitude absolute right-[4%] top-1/2 -translate-y-1/2 flex flex-col items-center gap-1">
         <div className="text-[10px] tracking-widest text-slate-300">ALT {altUnit(u)}</div>
         <AltTape s={s} u={u} />
         <div className="text-[11px] text-slate-300 mt-1">AGL {altStr(s.agl, u)}</div>
@@ -403,7 +403,7 @@ export function Hud({ s, engine, settings }: { s: HudSnapshot; engine: GameEngin
       </div>
 
       {/* bottom left: engine & systems */}
-      <div className="absolute bottom-3 left-3 flex items-end gap-3">
+      <div className="flight-engine absolute bottom-3 left-3 flex items-end gap-3">
         <div className="rounded-xl bg-slate-950/70 border border-white/10 backdrop-blur px-4 py-3 w-[250px] space-y-2.5">
           <div>
             <div className="flex justify-between text-[10px] tracking-widest text-slate-300 mb-1">
@@ -429,13 +429,13 @@ export function Hud({ s, engine, settings }: { s: HudSnapshot; engine: GameEngin
       </div>
 
       {/* bottom center: ADI */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-end gap-3">
+      <div className="flight-adi absolute bottom-3 left-1/2 -translate-x-1/2 flex items-end gap-3">
         <Adi s={s} />
         {s.ils && <IlsPanel s={s} />}
       </div>
 
       {/* bottom right: map */}
-      <div className="absolute bottom-3 right-3 flex flex-col items-end gap-1">
+      <div className="flight-map absolute bottom-3 right-3 flex flex-col items-end gap-1">
         {s.nav && <div className="text-[11px] px-2 py-0.5 rounded bg-slate-950/70 border border-white/10 text-slate-200">Nearest {s.nav.icao} · {(s.nav.dist / 1000).toFixed(1)} km · brg {String(Math.round(s.nav.bearing)).padStart(3, '0')}°</div>}
         <MiniMap engine={engine} />
       </div>

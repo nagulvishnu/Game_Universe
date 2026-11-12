@@ -66,7 +66,7 @@ export function Minimap({ size = 210 }: { size?: number }) {
 export function WorldMap() {
   const ref = useRef<HTMLCanvasElement>(null);
   const setOverlay = useStore((s) => s.setOverlay);
-  const S = Math.min(window.innerHeight - 90, window.innerWidth - 360);
+  const S = Math.max(180, Math.min(window.innerHeight - 90, window.innerWidth < 760 ? window.innerWidth - 32 : window.innerWidth - 360));
   useEffect(() => {
     const draw = () => {
       const g = current.game, cv = ref.current;
@@ -104,9 +104,9 @@ export function WorldMap() {
   const g = current.game;
   const inPlane = g?.player.state === 'plane';
   return (
-    <div className="absolute inset-0 bg-black/75 flex items-center justify-center gap-6 pointer-events-auto anim-pop">
+    <div className="anime-br-world-map absolute inset-0 bg-black/75 flex items-center justify-center gap-6 pointer-events-auto anim-pop">
       <canvas ref={ref} width={S} height={S} onClick={click} className="border-2 border-sky-300/60 cursor-crosshair shadow-[0_0_50px_rgba(56,189,248,0.3)]" />
-      <div className="w-72 panel p-5 space-y-3">
+      <div className="anime-br-map-info w-72 panel p-5 space-y-3">
         <div className="logo text-3xl">VANTARA ISLAND</div>
         <div className="text-xs text-white/70 leading-relaxed">{inPlane ? 'Click the map to choose your LANDING MARKER (cyan). Then press SPACE when you are close to jump. The dashed line is the aircraft route.' : 'Click the map to place a navigation marker (yellow). Click it again to remove.'}</div>
         <div className="space-y-1 text-xs">{g?.world.districts.map((d) => <div key={d.id} className="flex items-center gap-2"><span className="w-3 h-3" style={{ background: d.color }} />{d.name}<span className="ml-auto text-white/40">loot {'★'.repeat(Math.max(1, Math.round(d.loot * 1.5)))}</span></div>)}</div>
@@ -207,7 +207,7 @@ export function Hud() {
   const hitAge = hud.time - hud.hitT;
   const lastAge = hud.time - hud.lastHit.t;
   return (
-    <div className="absolute inset-0 pointer-events-none text-white">
+    <div className="anime-br-hud absolute inset-0 pointer-events-none text-white">
       {hud.hurt > 0.02 && <div className="absolute inset-0" style={{ boxShadow: `inset 0 0 160px rgba(255,0,40,${Math.min(0.75, hud.hurt)})` }} />}
       {hud.zone.outside && hud.mode === 'match' && hud.state !== 'plane' && <div className="absolute inset-0" style={{ boxShadow: 'inset 0 0 200px rgba(40,120,255,0.8)', animation: 'zoneflash 1s infinite' }} />}
       {hud.flash > 0.02 && <div className="absolute inset-0 bg-white" style={{ opacity: Math.min(1, hud.flash) }} />}
@@ -215,7 +215,7 @@ export function Hud() {
       {/* damage direction */}
       {hud.dmgInd.map((d, i) => <div key={i} className="absolute left-1/2 top-1/2" style={{ transform: `translate(-50%,-50%) rotate(${(-d.ang * 180) / Math.PI}deg)`, opacity: Math.max(0, 1 - d.age / 2.2) }}><div className="absolute -top-[190px] left-1/2 -translate-x-1/2 w-24 h-8 rounded-t-full bg-gradient-to-b from-red-500/90 to-transparent" /></div>)}
       {/* top */}
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+      <div className="anime-br-compass absolute top-3 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
         <div className="flex gap-1 items-stretch">
           <div className="sk bg-black/55 border border-white/25 px-5 py-1"><div className="font-black tracking-wider">👥 {hud.alivecount}<span className="text-white/50 text-xs"> / {hud.total}</span></div></div>
           <div className="sk bg-rose-600/70 border border-white/25 px-5 py-1"><div className="font-black tracking-wider">☠ {hud.kills}</div></div>
@@ -224,12 +224,12 @@ export function Hud() {
         <Compass yaw={hud.yaw} px={hud.px} pz={hud.pz} landing={hud.landing} nav={hud.nav} />
         {hud.toasts.slice(-3).map((t, i) => <div key={i} className="anim-pop sk bg-black/65 border border-sky-300/40 px-6 py-1 text-sm font-bold tracking-wide text-sky-100">{t}</div>)}
       </div>
-      <div className="absolute top-4 right-5 flex flex-col items-center gap-2"><Minimap />
+      <div className="anime-br-minimap-panel absolute top-4 right-5 flex flex-col items-center gap-2"><Minimap />
         <div className={`sk px-4 py-1 text-xs font-black tracking-widest border ${hud.zone.state === 'shrink' ? 'bg-red-600/70 border-red-300' : 'bg-blue-600/60 border-sky-300'}`}>{zoneTxt}</div>
         {hud.mode === 'match' && <div className="text-[10px] text-white/70">Zone damage {hud.zone.dmg}/s · [M] map</div>}
       </div>
       {/* kill feed */}
-      <div className="absolute top-4 left-4 flex flex-col gap-1 w-80">
+      <div className="anime-br-killfeed absolute top-4 left-4 flex flex-col gap-1 w-80">
         {hud.feed.slice(-6).map((f, i) => (
           <div key={i} className={`anim-slide text-xs px-2 py-1 border-l-4 ${f.me ? 'bg-red-900/70 border-red-400' : f.you ? 'bg-emerald-900/70 border-emerald-400' : 'bg-black/55 border-white/30'}`}>
             {f.killer ? <><b>{f.killer}</b> <span className="text-white/60">▸ {f.weapon}{f.head ? ' ◎' : ''} ▸</span> <b>{f.victim}</b></> : <><b>{f.victim}</b> <span className="text-white/60">was eliminated by {f.weapon === 'zone' ? 'the storm' : f.weapon}</span></>}
@@ -249,7 +249,7 @@ export function Hud() {
         </div>
       )}
       {/* prompt */}
-      <div className="absolute left-1/2 bottom-44 -translate-x-1/2 flex flex-col items-center gap-2">
+      <div className="anime-br-prompt absolute left-1/2 bottom-44 -translate-x-1/2 flex flex-col items-center gap-2">
         {hud.prompt && hud.alive && <div className="anim-pop sk bg-black/70 border-2 px-6 py-2 font-black tracking-wide" style={{ borderColor: hud.prompt.color, color: hud.prompt.color }}>{hud.prompt.text}</div>}
         {hud.reload >= 0 && <div className="w-56"><div className="text-[10px] tracking-widest text-center">RELOADING</div><Bar v={hud.reload * 100} max={100} color="#fbbf24" h="h-2" /></div>}
         {hud.healing && <div className="w-56"><div className="text-[10px] tracking-widest text-center">USING {hud.healing.toUpperCase()}</div><Bar v={(1 - hud.healT / hud.healTotal) * 100} max={100} color="#4ade80" h="h-2" /></div>}
@@ -257,7 +257,7 @@ export function Hud() {
         {(hud.state === 'freefall' || hud.state === 'chute') && g && <div className="text-xs tracking-widest bg-black/50 px-3 py-1">{hud.state === 'freefall' ? 'W DIVE · A/D STEER · SPACE PARACHUTE' : 'W FORWARD · S BRAKE · A/D STEER'}{hud.landing ? ` · MARKER ${Math.round(Math.hypot(hud.landing[0] - hud.px, hud.landing[1] - hud.pz))} m` : ''}</div>}
       </div>
       {/* vitals */}
-      <div className="absolute left-5 bottom-5 w-80 space-y-1.5">
+      <div className="anime-br-vitals absolute left-5 bottom-5 w-80 space-y-1.5">
         <div className="flex items-center gap-2"><span className="text-xs w-12 font-black text-emerald-300">HP</span><div className="flex-1"><Bar v={hud.hp} max={100} color={hud.hp > 35 ? 'linear-gradient(90deg,#22c55e,#86efac)' : 'linear-gradient(90deg,#dc2626,#f87171)'} h="h-4" /></div><span className="w-8 text-right font-black">{hud.hp}</span></div>
         <div className="flex items-center gap-2"><span className="text-xs w-12 font-black text-sky-300">ARMOR</span><div className="flex-1"><Bar v={hud.armorHp} max={hud.armorMax || 1} color="#38bdf8" /></div><span className="w-8 text-right text-xs">L{hud.armor}</span></div>
         <div className="flex items-center gap-2"><span className="text-xs w-12 font-black text-violet-300">HELM</span><div className="flex-1"><Bar v={hud.helmetHp} max={hud.helmetMax || 1} color="#c084fc" /></div><span className="w-8 text-right text-xs">L{hud.helmet}</span></div>
@@ -265,7 +265,7 @@ export function Hud() {
         {hud.vehicle && <div className="sk bg-black/60 border border-sky-300/50 px-3 py-1 mt-2"><div className="flex justify-between text-sm font-black"><span>{hud.vehicle.name}</span><span>{hud.vehicle.speed} km/h</span></div><Bar v={hud.vehicle.hp} max={100} color="#f59e0b" h="h-2" /></div>}
       </div>
       {/* weapons */}
-      <div className="absolute right-5 bottom-5 w-80 flex flex-col items-end gap-2">
+      <div className="anime-br-weapons absolute right-5 bottom-5 w-80 flex flex-col items-end gap-2">
         <div className="flex gap-2">{hud.slots.map((s, i) => (
           <div key={i} className={`sk border px-3 py-1 text-xs ${hud.cur === i ? 'border-amber-300 bg-amber-500/25' : 'border-white/25 bg-black/50'}`}><div className="text-[10px] text-white/50">{i + 1}</div><div className="font-black" style={{ color: s ? RARITY_COLOR[WEAPONS[s.id].rarity] : '#666' }}>{s ? s.name : '—'}</div></div>
         ))}</div>

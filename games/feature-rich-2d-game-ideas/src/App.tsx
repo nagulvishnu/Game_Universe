@@ -73,7 +73,7 @@ export default function App() {
     return (
       <div className="fixed inset-0 flex items-center justify-center overflow-auto bg-slate-950 p-4 text-slate-100">
         <div className="pointer-events-none fixed inset-0" style={{ background: o.win ? 'radial-gradient(circle at 50% 20%, rgba(52,211,153,0.2), transparent 55%)' : 'radial-gradient(circle at 50% 20%, rgba(244,63,94,0.22), transparent 55%)' }} />
-        <div className="relative w-full max-w-xl rounded-3xl border border-slate-700 bg-slate-900/90 p-8 text-center shadow-2xl">
+        <div className="relative w-full max-w-xl rounded-3xl border border-slate-700 bg-slate-900/90 p-4 text-center shadow-2xl sm:p-8">
           <div className="text-6xl">{o.win ? (final ? '👑' : '🏆') : '💀'}</div>
           <h1 className={`mt-2 text-4xl font-black tracking-widest ${o.win ? 'text-emerald-300' : 'text-rose-400'}`}>
             {final ? 'CAMPAIGN COMPLETE' : o.win ? 'MISSION COMPLETE' : 'MISSION FAILED'}
@@ -131,7 +131,7 @@ export default function App() {
       ))}
       <div className="relative mx-auto flex min-h-full max-w-5xl flex-col items-center justify-center px-4 py-10 text-center">
         <div className="text-xs font-bold tracking-[0.6em] text-cyan-300/80">TOP-DOWN ACTION SHOOTER</div>
-        <h1 className="nf-title mt-3 text-6xl font-black leading-none tracking-wider sm:text-8xl">
+        <h1 className="nf-title mt-3 text-4xl font-black leading-none tracking-wider sm:text-8xl">
           <span className="text-cyan-300">NEON</span> <span className="text-fuchsia-400">FRONT</span>
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-slate-300">

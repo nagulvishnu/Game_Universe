@@ -57,7 +57,7 @@ export default function GameView({ charId, levelIdx, save, onEnd, onQuit, onRest
       <canvas ref={canvasRef} className="block" />
       {paused && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/70 backdrop-blur-sm" style={{ cursor: 'default' }}>
-          <div className="w-[min(92vw,640px)] rounded-2xl border border-cyan-400/40 bg-slate-900/95 p-6 shadow-2xl shadow-cyan-500/20">
+          <div className="nf-pause-card w-[min(92vw,640px)] rounded-2xl border border-cyan-400/40 bg-slate-900/95 p-4 shadow-2xl shadow-cyan-500/20 sm:p-6">
             <h2 className="text-center text-3xl font-black tracking-widest text-cyan-300">PAUSED</h2>
             <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm text-slate-300">
               {[

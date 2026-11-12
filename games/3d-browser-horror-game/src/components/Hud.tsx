@@ -39,7 +39,7 @@ export function Hud({ hud, messages, note, showControls }: Props) {
   const lit = Math.round(hud.noise * noiseBars);
   const noiseLabel = hud.noise < 0.12 ? 'Silent' : hud.noise < 0.4 ? 'Quiet' : hud.noise < 0.7 ? 'Noisy' : 'LOUD';
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="horror-hud pointer-events-none absolute inset-0 overflow-hidden">
       {/* fear vignette */}
       <div
         className="absolute inset-0"
@@ -101,7 +101,7 @@ export function Hud({ hud, messages, note, showControls }: Props) {
       )}
 
       {/* top-left: day */}
-      <div className="absolute left-5 top-5">
+      <div className="horror-hud-day absolute left-5 top-5">
         <div className="flex items-center gap-3 rounded-md border border-white/10 bg-black/50 px-3 py-2 backdrop-blur-sm">
           <div>
             <div className="text-[10px] uppercase tracking-[0.3em] text-stone-400">Day</div>
@@ -120,7 +120,7 @@ export function Hud({ hud, messages, note, showControls }: Props) {
       </div>
 
       {/* top-center: objective */}
-      <div className="absolute inset-x-0 top-5 flex justify-center px-40">
+      <div className="horror-hud-objective absolute inset-x-0 top-5 flex justify-center px-40">
         <div className="max-w-xl rounded-md border border-white/5 bg-black/40 px-4 py-1.5 text-center text-[11px] uppercase tracking-[0.18em] text-stone-300/80 backdrop-blur-sm">
           <span className="mr-2 text-red-500">Objective</span>
           {hud.objective}
@@ -129,7 +129,7 @@ export function Hud({ hud, messages, note, showControls }: Props) {
 
       {/* top-right: controls */}
       {showControls && (
-        <div className="anim-fadein absolute right-5 top-5 rounded-md border border-white/10 bg-black/55 p-3 text-[11px] leading-6 text-stone-300 backdrop-blur-sm">
+        <div className="horror-hud-controls anim-fadein absolute right-5 top-5 rounded-md border border-white/10 bg-black/55 p-3 text-[11px] leading-6 text-stone-300 backdrop-blur-sm">
           <div className="mb-1 text-[10px] uppercase tracking-[0.3em] text-stone-500">Controls</div>
           <div><b className="text-amber-200">WASD</b> move · <b className="text-amber-200">Mouse</b> look</div>
           <div><b className="text-amber-200">Shift</b> run · <b className="text-amber-200">C</b> crouch</div>
@@ -140,7 +140,7 @@ export function Hud({ hud, messages, note, showControls }: Props) {
       )}
 
       {/* bottom-left: inventory */}
-      <div className="absolute bottom-5 left-5 flex items-end gap-2 rounded-lg border border-white/10 bg-black/45 p-2.5 backdrop-blur-sm">
+      <div className="horror-hud-inventory absolute bottom-5 left-5 flex items-end gap-2 rounded-lg border border-white/10 bg-black/45 p-2.5 backdrop-blur-sm">
         <Slot owned={hud.brass} label="Brass Key" sub={hud.studyOpen ? 'Study open' : undefined} tint="#d4a72c">
           <KeyIcon color="#d4a72c" />
         </Slot>
@@ -165,7 +165,7 @@ export function Hud({ hud, messages, note, showControls }: Props) {
       </div>
 
       {/* bottom-center: stamina + messages */}
-      <div className="absolute inset-x-0 bottom-5 flex flex-col items-center gap-2">
+      <div className="horror-hud-stamina absolute inset-x-0 bottom-5 flex flex-col items-center gap-2">
         <div className="flex flex-col items-center gap-2">
           {messages.map((m) => (
             <div
@@ -191,7 +191,7 @@ export function Hud({ hud, messages, note, showControls }: Props) {
       </div>
 
       {/* bottom-right: noise + torch */}
-      <div className="absolute bottom-5 right-5 flex flex-col items-end gap-2">
+      <div className="horror-hud-status absolute bottom-5 right-5 flex flex-col items-end gap-2">
         {hud.noLock && (
           <div className="rounded-md border border-amber-500/30 bg-black/60 px-3 py-1.5 text-[10px] uppercase tracking-widest text-amber-200/90 backdrop-blur-sm">
             Drag to look · [Q] throw · [Esc] pause

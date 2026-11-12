@@ -47,3 +47,15 @@ body,
   from { filter: brightness(1); }
   to { filter: brightness(1.25); }
 }
+
+@media (max-width: 640px) {
+  .nf-title {
+    font-size: clamp(2.6rem, 13vw, 4rem);
+    overflow-wrap: anywhere;
+  }
+
+  .nf-pause-card {
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+  }
+}

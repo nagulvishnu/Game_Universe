@@ -107,7 +107,7 @@ export default function App() {
   const showTouch = !!game && touch && game.screen === 'world';
 
   return (
-    <div className="flex h-dvh w-full flex-col overflow-hidden bg-[#0d0b1f] text-white">
+    <div className="pokemon-game flex h-dvh w-full flex-col overflow-hidden bg-[#0d0b1f] text-white">
       <div ref={stageRef} className="relative flex min-h-0 flex-1 items-center justify-center">
         <div className="relative overflow-hidden rounded-xl border-4 border-[#0b0a1e] shadow-[0_0_0_3px_#4a43b0,0_12px_40px_rgba(0,0,0,0.6)]" style={{ width: size.w, height: size.h }}>
           <canvas ref={canvasRef} className="block h-full w-full" />

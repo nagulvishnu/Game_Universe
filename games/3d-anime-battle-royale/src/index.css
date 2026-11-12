@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
-html, body, #root { height: 100%; margin: 0; overflow: hidden; background: #05060f; color: #e8f1ff; font-family: 'Segoe UI', 'Trebuchet MS', system-ui, sans-serif; user-select: none; }
-canvas { display: block; outline: none; }
+html, body, #root { height: 100%; margin: 0; overflow: hidden; background: #05060f; color: #e8f1ff; font-family: 'Segoe UI', 'Trebuchet MS', system-ui, sans-serif; user-select: none; touch-action: none; }
+canvas { display: block; outline: none; touch-action: none; }
 .logo { font-style: italic; font-weight: 900; letter-spacing: 0.03em; background: linear-gradient(95deg, #38bdf8 0%, #a78bfa 45%, #f472b6 75%, #fbbf24 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 5px 0 rgba(0,0,0,0.55)) drop-shadow(0 0 18px rgba(56,189,248,0.35)); }
 .sk { transform: skewX(-12deg); }
 .sk > * { transform: skewX(12deg); }
@@ -26,3 +26,30 @@ canvas { display: block; outline: none; }
 .anim-pop { animation: pop .35s ease-out both; }
 .anim-slide { animation: slide .3s ease-out both; }
 input[type=range] { accent-color: #38bdf8; width: 100%; }
+
+@media (max-width: 760px) {
+  .anime-br-hud .anime-br-minimap-panel canvas { width: 112px; height: 112px; }
+  .anime-br-hud .anime-br-minimap-panel { right: 8px; top: 8px; gap: 4px; max-width: 42vw; }
+  .anime-br-hud .anime-br-minimap-panel > div { max-width: 42vw; text-align: center; font-size: 9px; }
+  .anime-br-hud .anime-br-compass { top: 8px; max-width: 52vw; }
+  .anime-br-hud .anime-br-compass > div:first-child { max-width: 52vw; }
+  .anime-br-hud .anime-br-killfeed { top: 126px; left: 8px; width: min(42vw, 260px); }
+  .anime-br-hud .anime-br-vitals { left: 8px; bottom: max(8px, env(safe-area-inset-bottom)); width: min(43vw, 300px); font-size: 11px; }
+  .anime-br-hud .anime-br-weapons { right: 8px; bottom: max(8px, env(safe-area-inset-bottom)); width: min(52vw, 320px); gap: 4px; }
+  .anime-br-hud .anime-br-weapons > div { max-width: 100%; flex-wrap: wrap; justify-content: flex-end; }
+  .anime-br-hud .anime-br-prompt { bottom: 150px; max-width: 90vw; text-align: center; }
+  .anime-br-world-map { padding: 12px; flex-direction: column; gap: 10px; overflow-y: auto; }
+  .anime-br-world-map canvas { width: min(88vw, 58vh); height: min(88vw, 58vh); max-width: 100%; }
+  .anime-br-map-info { display: none; }
+}
+
+@media (max-height: 520px) and (max-width: 900px) {
+  .anime-br-hud .anime-br-minimap-panel canvas { width: 84px; height: 84px; }
+  .anime-br-hud .anime-br-minimap-panel > div { display: none; }
+  .anime-br-hud .anime-br-vitals,
+  .anime-br-hud .anime-br-weapons { bottom: max(4px, env(safe-area-inset-bottom)); }
+}
+
+@supports (height: 100dvh) {
+  html, body, #root { height: 100dvh; }
+}

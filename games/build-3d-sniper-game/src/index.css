@@ -65,3 +65,29 @@
 .animate-pulse-ring {
   animation: pulse-ring 1.6s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
+
+@media (max-width: 700px) {
+  html, body, #root { height: 100%; height: 100dvh; }
+  .sniper-hud button { min-width: 44px; min-height: 44px; }
+  .sniper-topbar { inset-inline: max(.5rem, env(safe-area-inset-left)); top: max(.5rem, env(safe-area-inset-top)); flex-wrap: wrap; gap: .35rem; }
+  .sniper-topbar > div:first-child { max-width: 100%; }
+  .sniper-topbar > div:first-child > div:first-child { gap: .4rem; }
+  .sniper-topbar > div:first-child .w-28.h-28 { width: clamp(3.75rem, 18vw, 5.25rem); height: clamp(3.75rem, 18vw, 5.25rem); }
+  .sniper-topbar > div:first-child [class*="min-w-[215px]"] { min-width: 0; padding: .5rem; }
+  .sniper-topbar > div:nth-child(2) { order: 3; flex: 1 0 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: .35rem; }
+  .sniper-topbar > div:nth-child(2) > div { padding: .35rem .5rem; }
+  .sniper-topbar > div:nth-child(3) { order: 2; margin-left: auto; }
+  .sniper-bottom-bar { left: .5rem; right: .5rem; bottom: max(.5rem, env(safe-area-inset-bottom)); flex-wrap: wrap; gap: .35rem; }
+  .sniper-bottom-bar > div:first-child { width: min(46vw, 16rem); padding: .5rem; }
+  .sniper-bottom-bar > div:last-child { max-width: 100%; overflow-x: auto; gap: .35rem; }
+  .sniper-bottom-bar > div:last-child > div:first-child { flex-wrap: nowrap; gap: .35rem; }
+  .sniper-bottom-bar > div:last-child button { min-width: 48px; min-height: 48px; padding: .35rem; }
+  .sniper-bottom-bar > div:last-child > div:last-child { min-width: 0; width: clamp(9rem, 40vw, 13.5rem); padding: .5rem; }
+  .sniper-touch-controls { bottom: calc(8rem + env(safe-area-inset-bottom)) !important; padding-inline: max(.75rem, env(safe-area-inset-left)); }
+  .sniper-touch-controls > div { width: clamp(6rem, 30vw, 8rem); height: clamp(6rem, 30vw, 8rem); }
+}
+
+@media (max-width: 700px) and (max-height: 500px) {
+  .sniper-touch-controls { bottom: calc(6.5rem + env(safe-area-inset-bottom)) !important; }
+  .sniper-topbar > div:nth-child(2) { flex-basis: auto; }
+}

@@ -216,9 +216,9 @@ export default function GameScreen({ level, diffId, onExit, onRetry, onNext, onW
   const nextLevelAvailable = !!onNext;
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-950 text-slate-100 select-none">
+    <div className="strategy-game-root flex min-h-screen flex-col bg-slate-950 text-slate-100 select-none">
       {/* Top bar */}
-      <header className="flex flex-wrap items-center gap-2 border-b border-slate-800 bg-slate-900/90 px-3 py-2 backdrop-blur">
+      <header className="strategy-header flex flex-wrap items-center gap-2 border-b border-slate-800 bg-slate-900/90 px-3 py-2 backdrop-blur">
         <button
           onClick={() => {
             sfx.click();
@@ -243,7 +243,7 @@ export default function GameScreen({ level, diffId, onExit, onRetry, onNext, onW
           </div>
         </div>
 
-        <div className="flex flex-1 flex-wrap items-center justify-end gap-2">
+        <div className="strategy-header-actions flex flex-1 flex-wrap items-center justify-end gap-2">
           <Stat icon="🪙" value={snap.gold} className="text-yellow-300" />
           <div className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-1.5">
             <span>❤️</span>
@@ -283,7 +283,7 @@ export default function GameScreen({ level, diffId, onExit, onRetry, onNext, onW
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-3 p-3 lg:flex-row">
+      <div className="strategy-game-layout mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-3 p-3 lg:flex-row">
         {/* Board */}
         <div className="relative min-w-0 flex-1">
           <canvas
@@ -295,7 +295,7 @@ export default function GameScreen({ level, diffId, onExit, onRetry, onNext, onW
             onPointerLeave={() => (game.hover = null)}
             onClick={onClick}
             onContextMenu={onContext}
-            className={`w-full touch-none rounded-xl border-4 border-slate-800 shadow-2xl ${snap.aim ? 'cursor-crosshair' : snap.buildType ? 'cursor-copy' : 'cursor-pointer'}`}
+            className={`strategy-game-board w-full touch-none rounded-xl border-4 border-slate-800 shadow-2xl ${snap.aim ? 'cursor-crosshair' : snap.buildType ? 'cursor-copy' : 'cursor-pointer'}`}
             style={{ aspectRatio: `${COLS * TILE} / ${ROWS * TILE}` }}
           />
 
@@ -633,7 +633,7 @@ function Briefing({ level, diffId, onStart }: { level: LevelDef; diffId: number;
   const towers = TOWER_ORDER.filter((t) => TOWERS[t].unlock <= level.id - 1);
   const justUnlocked = TOWER_ORDER.filter((t) => TOWERS[t].unlock === level.id - 1 && level.id > 1);
   return (
-    <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-slate-950/80 p-3 backdrop-blur-sm">
+    <div className="strategy-briefing absolute inset-0 flex items-center justify-center rounded-xl bg-slate-950/80 p-3 backdrop-blur-sm">
       <div className="pop-in max-h-full w-full max-w-md overflow-auto rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-2xl">
         <div className="text-xs font-bold uppercase tracking-widest text-amber-400">Mission {level.id}</div>
         <h2 className="text-2xl font-black">{level.name}</h2>

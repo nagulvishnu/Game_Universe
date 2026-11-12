@@ -154,7 +154,7 @@ export function CombatHud({
   const charge = hud.p1.charge;
 
   return (
-    <div className="pointer-events-none absolute inset-0 flex flex-col p-3 sm:p-4">
+    <div className="ss-combat-hud pointer-events-none absolute inset-0 flex flex-col p-3 sm:p-4">
       {/* top row */}
       <div className="flex items-start gap-2 sm:gap-4">
         {/* player */}
@@ -218,7 +218,7 @@ export function CombatHud({
       )}
 
       {/* bottom row */}
-      <div className="mt-auto flex items-end justify-between gap-3">
+      <div className="ss-combat-bottom mt-auto flex items-end justify-between gap-3">
         <div className="pointer-events-auto flex items-center gap-2 pb-1">
           <button
             onClick={onPause}
@@ -230,7 +230,7 @@ export function CombatHud({
         </div>
 
         <div className="pointer-events-auto flex items-end gap-3 pb-1">
-          <SkillPad hud={hud.p1} keys={skillKeys} onSkill={onSkill} />
+          <div className="ss-combat-skills flex items-end gap-2"><SkillPad hud={hud.p1} keys={skillKeys} onSkill={onSkill} /></div>
           {/* charge gauge */}
           <div className="relative grid h-16 w-16 place-items-center">
             <span
@@ -352,7 +352,7 @@ export function CombatScreen() {
 
       {/* ---------------- Training HUD ---------------- */}
       {match.mode === 'training' && training && !paused && (
-        <div className="absolute right-4 top-1/2 w-56 -translate-y-1/2">
+        <div className="ss-training-panel absolute right-4 top-1/2 w-56 -translate-y-1/2">
           <Panel title="Training" className="space-y-2 p-3">
             {([
               ['showHitboxes', 'Hitboxes'],

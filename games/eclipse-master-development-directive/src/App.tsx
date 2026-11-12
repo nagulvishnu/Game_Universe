@@ -35,7 +35,7 @@ export default function App() {
   const begin = (i: number) => { film.start(i); poke(); };
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-black select-none" onMouseMove={poke} style={{ cursor: ui || idle ? 'default' : 'none' }}>
+    <div className="relative h-[100dvh] w-screen overflow-hidden bg-black select-none" onMouseMove={poke} style={{ cursor: ui || idle ? 'default' : 'none' }}>
       <style>{`
         @keyframes titleFade { 0% {opacity:0; transform:scale(.97)} 18% {opacity:1; transform:scale(1)} 82% {opacity:1} 100% {opacity:0; transform:scale(1.03)} }
         @keyframes bannerFade { 0% {opacity:0; transform:translateX(-12px)} 15% {opacity:1; transform:none} 80% {opacity:1} 100% {opacity:0} }
@@ -59,11 +59,11 @@ export default function App() {
       {!idle && <Controls visible={ui || film.status === 'paused'} onConsole={() => setPanel((p) => !p)} subs={subs} setSubs={setSubs} quality={quality} setQuality={setQuality} />}
       {!idle && panel && <Console onClose={() => setPanel(false)} />}
       {idle && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center text-white" style={{ background: 'radial-gradient(circle at 50% 40%, #2a1650 0%, #0a0714 60%, #000 100%)' }}>
-          <div className="absolute h-72 w-72 rounded-full bg-black shadow-[0_0_120px_30px_rgba(255,190,100,0.55)] ring-8 ring-amber-200/60" style={{ top: '9%' }} />
-          <div className="z-10 mt-56 text-center">
-            <div className="text-7xl font-extralight tracking-[0.55em] pl-[0.55em]">ECLIPSE</div>
-            <div className="mt-3 text-lg tracking-[0.6em] pl-[0.6em] text-amber-200">THE LAST AWAKENING</div>
+        <div className="eclipse-start-screen absolute inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto text-white" style={{ background: 'radial-gradient(circle at 50% 40%, #2a1650 0%, #0a0714 60%, #000 100%)' }}>
+          <div className="eclipse-start-sun absolute h-72 w-72 rounded-full bg-black shadow-[0_0_120px_30px_rgba(255,190,100,0.55)] ring-8 ring-amber-200/60" style={{ top: '9%' }} />
+          <div className="eclipse-start-content z-10 mt-56 w-full px-4 text-center">
+            <div className="eclipse-start-title text-7xl font-extralight tracking-[0.55em] pl-[0.55em]">ECLIPSE</div>
+            <div className="eclipse-start-subtitle mt-3 text-lg tracking-[0.6em] pl-[0.6em] text-amber-200">THE LAST AWAKENING</div>
             <div className="mx-auto mt-6 max-w-lg text-sm leading-relaxed text-white/60">An autonomous 3D anime film. There is no player: every character is an independent NPC agent, directed by an automatic camera. You are the audience.</div>
             <div className="mt-8 flex items-center justify-center gap-3">
               <button className="rounded-lg bg-amber-500 px-8 py-3 text-lg font-semibold text-black shadow-lg hover:bg-amber-400" onClick={() => begin(0)}>▶ Play film</button>

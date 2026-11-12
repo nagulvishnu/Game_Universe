@@ -31,11 +31,11 @@ export function BattleHud() {
   const label = { rival: 'RIVAL ENCOUNTER', tournament: 'TOURNAMENT MATCH', quick: 'QUICK BATTLE', training: 'TRAINING' }[setup.mode];
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-10">
+    <div className="arena-battle-hud pointer-events-none absolute inset-0 z-10">
       {/* top HUD */}
       {phase !== 'intro' && (
-        <div className="absolute inset-x-0 top-3 flex items-start justify-center gap-4 px-6">
-          <div className="panel w-[min(430px,38vw)] p-3">
+        <div className="arena-battle-top absolute inset-x-0 top-3 flex items-start justify-center gap-4 px-6">
+          <div className="arena-battle-player panel w-[min(430px,38vw)] p-3">
             <div className="flex items-baseline justify-between"><span className="title-font text-lg text-cyan-300">{save.profile.name}</span><span className="text-xs text-white/70">{setup.playerBey.name}</span></div>
             <Bar value={L.stamina[0]} color={L.stamina[0] < 25 ? '#ff4d6d' : '#35d0ff'} />
             <div className="mt-1 flex items-center justify-between text-[10px]"><span>STAMINA {Math.round(L.stamina[0])}%</span><span className="flex items-center gap-1">BURST<span className="inline-block w-20"><Bar value={L.burst[0]} max={BATTLE_CFG.burstThreshold} color="#ff9d2e" /></span></span></div>
@@ -48,7 +48,7 @@ export function BattleHud() {
             )}
             {setup.round && <div className="text-[10px] text-pink-300">{setup.round}</div>}
           </div>
-          <div className="panel w-[min(430px,38vw)] p-3">
+          <div className="arena-battle-player panel w-[min(430px,38vw)] p-3">
             <div className="flex items-baseline justify-between"><span className="text-xs text-white/70">{opp.bey.name}</span><span className="title-font text-lg text-pink-300">{opp.name}</span></div>
             <Bar value={L.stamina[1]} color={L.stamina[1] < 25 ? '#ff4d6d' : '#ff3d9a'} />
             <div className="mt-1 flex items-center justify-between text-[10px]"><span className="flex items-center gap-1">BURST<span className="inline-block w-20"><Bar value={L.burst[1]} max={BATTLE_CFG.burstThreshold} color="#ff9d2e" /></span></span><span>STAMINA {Math.round(L.stamina[1])}%</span></div>
@@ -85,7 +85,7 @@ export function BattleHud() {
 
       {phase === 'fight' && (
         <>
-          <div className="absolute inset-x-0 bottom-4 flex flex-col items-center gap-2">
+          <div className="arena-battle-help absolute inset-x-0 bottom-4 flex flex-col items-center gap-2">
             <div className="panel flex items-center gap-4 px-5 py-2 text-xs">
               <span><b className="text-yellow-300">WASD / Arrows</b> steer</span>
               <span className="flex items-center gap-2"><b className="text-yellow-300">SPACE</b> dash<span className="inline-block w-24"><Bar value={BATTLE_CFG.dashCooldown - L.dashCd} max={BATTLE_CFG.dashCooldown} color={L.dashCd > 0 ? '#888' : '#ffd24a'} /></span></span>
