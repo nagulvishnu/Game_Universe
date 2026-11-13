@@ -1,44 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Demon Slayer: The Breathing World">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#061426"/>
-      <stop offset="100%" stop-color="#0a2a4a"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.38" r="0.72">
-      <stop offset="0%" stop-color="#38e8ff" stop-opacity="0.5"/>
-      <stop offset="55%" stop-color="#a0f0ff" stop-opacity="0.14"/>
-      <stop offset="100%" stop-color="#0a2a4a" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#38e8ff"/>
-      <stop offset="100%" stop-color="#a0f0ff"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.91" y2="1"><stop offset="0%" stop-color="hsla(255, 73%, 15%, 1)"/><stop offset="100%" stop-color="hsla(23, 68%, 20%, 1)"/></linearGradient>
+    <radialGradient id="glow" cx="33%" cy="21%" r="65%"><stop offset="0%" stop-color="hsla(155, 83%, 67%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(23, 68%, 20%, 1)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="hsla(155, 83%, 67%, 1)" stop-opacity="0.0"/><stop offset="50%" stop-color="hsla(155, 83%, 67%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(189, 85%, 59%, 1)" stop-opacity="0.0"/></linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
   <rect width="1200" height="630" fill="url(#glow)"/>
-  <g fill="#ffffff">
-    <circle cx="140" cy="80" r="1.5" opacity="0.7"/>
-    <circle cx="380" cy="60" r="1.3" opacity="0.6"/>
-    <circle cx="700" cy="90" r="1.6" opacity="0.8"/>
-    <circle cx="1040" cy="70" r="1.4" opacity="0.7"/>
-    <circle cx="1150" cy="140" r="1.2" opacity="0.5"/>
-    <circle cx="90" cy="180" r="1.2" opacity="0.5"/>
-    <circle cx="260" cy="150" r="1.3" opacity="0.55"/>
-    <circle cx="860" cy="170" r="1.4" opacity="0.6"/>
-    <circle cx="520" cy="55" r="1.2" opacity="0.5"/>
-    <circle cx="980" cy="300" r="1.3" opacity="0.45"/>
-    <circle cx="160" cy="340" r="1.2" opacity="0.4"/>
-    <circle cx="1080" cy="420" r="1.3" opacity="0.45"/>
-  </g>
-  <circle cx="600" cy="252" r="158" fill="none" stroke="url(#accent)" stroke-opacity="0.55" stroke-width="4"/>
-  <circle cx="600" cy="252" r="118" fill="none" stroke="#38e8ff" stroke-opacity="0.35" stroke-width="2.5"/>
-  <circle cx="600" cy="252" r="74" fill="#38e8ff" opacity="0.16"/>
-  <circle cx="600" cy="252" r="40" fill="url(#accent)"/>
-  <path d="M600 62 L612 96 L600 88 L588 96 Z" fill="#a0f0ff" opacity="0.9"/>
-  <path d="M420 252 a180 180 0 0 1 60 -130" stroke="#a0f0ff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
-  <path d="M780 252 a180 180 0 0 0 -60 -130" stroke="#38e8ff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
-  <ellipse cx="600" cy="430" rx="380" ry="34" fill="#38e8ff" opacity="0.08"/>
-  <text x="600" y="522" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="60" font-weight="bold" letter-spacing="6" fill="#f8fafc">DEMON SLAYER: THE BREATHING WORLD</text>
-  <text x="600" y="572" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="bold" letter-spacing="10" fill="#a0f0ff">BREATHE · SLASH · PROTECT</text>
-  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="url(#accent)" stroke-opacity="0.55" stroke-width="3"/>
+  <rect x="943" y="254" width="111.89018420875072" height="3.5955709111876786" rx="3" fill="hsla(189, 85%, 59%, 1)" opacity="0.09890633291564882" transform="rotate(141 600 210)"/><rect x="537" y="284" width="73.12321156263351" height="6.7439864138141274" rx="3" fill="hsla(155, 83%, 67%, 1)" opacity="0.14638124505989253" transform="rotate(246 600 210)"/><rect x="746" y="337" width="87.24883109331131" height="5.719634460285306" rx="3" fill="hsla(189, 85%, 59%, 1)" opacity="0.1677696279808879" transform="rotate(291 600 210)"/><rect x="998" y="14" width="178.2935656607151" height="2.263296031858772" rx="3" fill="hsla(155, 83%, 67%, 1)" opacity="0.1475475809071213" transform="rotate(256 600 210)"/><rect x="461" y="131" width="94.17851623147726" height="4.955684395972639" rx="3" fill="hsla(189, 85%, 59%, 1)" opacity="0.14966555889695882" transform="rotate(57 600 210)"/><rect x="632" y="149" width="159.73293416202068" height="5.0564741510897875" rx="3" fill="hsla(155, 83%, 67%, 1)" opacity="0.17634871972724797" transform="rotate(97 600 210)"/>
+  <circle cx="1033.6" cy="17.2" r="1.23" fill="#fff" opacity="0.42"/><circle cx="1135.3" cy="271.8" r="2.11" fill="#fff" opacity="0.37"/><circle cx="646.9" cy="85.7" r="2.95" fill="#fff" opacity="0.38"/><circle cx="358.4" cy="284.5" r="2.24" fill="#fff" opacity="0.45"/><circle cx="729.1" cy="351.8" r="1.51" fill="#fff" opacity="0.63"/><circle cx="1188.7" cy="156.9" r="2.37" fill="#fff" opacity="0.46"/><circle cx="506.1" cy="3.7" r="1.51" fill="#fff" opacity="0.68"/><circle cx="762.6" cy="395.7" r="2.49" fill="#fff" opacity="0.25"/><circle cx="954.9" cy="89.6" r="2.24" fill="#fff" opacity="0.28"/><circle cx="147.1" cy="276.5" r="1.34" fill="#fff" opacity="0.74"/><circle cx="388.9" cy="20.6" r="1.97" fill="#fff" opacity="0.76"/><circle cx="463.4" cy="181.9" r="1.23" fill="#fff" opacity="0.50"/><circle cx="869.7" cy="111.9" r="2.03" fill="#fff" opacity="0.34"/><circle cx="510.4" cy="323.0" r="2.75" fill="#fff" opacity="0.70"/><circle cx="1144.9" cy="286.0" r="1.13" fill="#fff" opacity="0.63"/><circle cx="696.8" cy="404.5" r="1.45" fill="#fff" opacity="0.84"/><circle cx="173.5" cy="411.2" r="2.91" fill="#fff" opacity="0.71"/><circle cx="365.3" cy="365.5" r="2.90" fill="#fff" opacity="0.51"/><circle cx="1133.3" cy="360.2" r="0.97" fill="#fff" opacity="0.31"/><circle cx="167.6" cy="64.4" r="0.85" fill="#fff" opacity="0.44"/><circle cx="435.6" cy="399.2" r="1.03" fill="#fff" opacity="0.79"/><circle cx="499.8" cy="322.7" r="1.22" fill="#fff" opacity="0.75"/><circle cx="748.1" cy="227.0" r="1.44" fill="#fff" opacity="0.80"/><circle cx="390.1" cy="181.5" r="2.63" fill="#fff" opacity="0.59"/><circle cx="236.4" cy="142.2" r="2.72" fill="#fff" opacity="0.85"/><circle cx="600" cy="280" r="109.34068301226944" fill="none" stroke="hsla(155, 83%, 67%, 1)" stroke-opacity="0.18" stroke-width="2"/><circle cx="600" cy="280" r="153.6821630364284" fill="none" stroke="hsla(155, 83%, 67%, 1)" stroke-opacity="0.3" stroke-width="3"/><circle cx="600" cy="280" r="219.64624611195177" fill="none" stroke="hsla(155, 83%, 67%, 1)" stroke-opacity="0.42" stroke-width="4"/>
+    <g transform="translate(600,280)">
+      <path d="M0 -150 L25 -35 L140 -15 L38 35 L65 140 L0 80 L-65 140 L-38 35 L-140 -15 L-25 -35 Z" fill="hsla(23, 68%, 20%, 1)" opacity="0.22" stroke="hsla(155, 83%, 67%, 1)" stroke-width="4"/>
+      <g transform="translate(-50,20) rotate(-20)"><rect x="-9" y="-150" width="18" height="200" rx="6" fill="#cbd5e1"/><rect x="-34" y="40" width="68" height="14" rx="6" fill="hsla(189, 85%, 59%, 1)"/><rect x="-10" y="54" width="20" height="44" rx="6" fill="#78350f"/></g>
+      <g transform="translate(70,10)"><ellipse rx="65" ry="90" fill="hsla(23, 68%, 20%, 1)" opacity="0.85" stroke="hsla(155, 83%, 67%, 1)" stroke-width="5"/><path d="M0 -90 L65 0 L0 90 L-65 0 Z" fill="hsla(155, 83%, 67%, 1)" opacity="0.25"/></g>
+      <circle cx="-220" cy="120" r="4" fill="hsla(155, 83%, 67%, 1)" opacity="0.7"/><circle cx="-110" cy="140" r="4" fill="hsla(155, 83%, 67%, 1)" opacity="0.7"/><circle cx="0" cy="120" r="4" fill="hsla(155, 83%, 67%, 1)" opacity="0.7"/><circle cx="110" cy="140" r="4" fill="hsla(155, 83%, 67%, 1)" opacity="0.7"/><circle cx="220" cy="120" r="4" fill="hsla(155, 83%, 67%, 1)" opacity="0.7"/>
+    </g>
+  <rect x="18" y="18" width="1164" height="384" rx="18" fill="none" stroke="hsla(155, 83%, 67%, 1)" stroke-opacity="0.18" stroke-width="2"/>
+  <rect x="0" y="430" width="1200" height="200" fill="#020617" opacity="0.35"/>
+  <rect x="120" y="455" width="960" height="3" rx="2" fill="url(#bar)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="52" font-weight="800" letter-spacing="2" fill="#f8fafc">Demon Slayer: The Breathing World</text>
+  <text x="600" y="582" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="700" letter-spacing="8" fill="hsla(155, 83%, 67%, 1)">RPG • 3D</text>
+  <rect x="1.5" y="1.5" width="1197" height="627" fill="none" stroke="hsla(155, 83%, 67%, 1)" stroke-opacity="0.45" stroke-width="3"/>
 </svg>

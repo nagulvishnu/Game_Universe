@@ -1,43 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Bastion Defense">
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#3a1a08"/>
-      <stop offset="52%" stop-color="#a8471a"/>
-      <stop offset="100%" stop-color="#f0913c"/>
-    </linearGradient>
-    <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#6d5138"/>
-      <stop offset="100%" stop-color="#3a2a1c"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.88" y2="1"><stop offset="0%" stop-color="hsla(164, 72%, 11%, 1)"/><stop offset="100%" stop-color="hsla(305, 53%, 23%, 1)"/></linearGradient>
+    <radialGradient id="glow" cx="44%" cy="23%" r="65%"><stop offset="0%" stop-color="hsla(71, 84%, 67%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(305, 53%, 23%, 1)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="hsla(71, 84%, 67%, 1)" stop-opacity="0.0"/><stop offset="50%" stop-color="hsla(71, 84%, 67%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(134, 89%, 67%, 1)" stop-opacity="0.0"/></linearGradient>
   </defs>
-  <rect width="1200" height="630" fill="url(#sky)"/>
-  <circle cx="230" cy="140" r="52" fill="#ffd9a0" opacity="0.85"/>
-  <g fill="#2a1608" opacity="0.3">
-    <ellipse cx="880" cy="180" rx="150" ry="34"/>
-    <ellipse cx="1010" cy="212" rx="96" ry="24"/>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="720" y="247" width="56.77965797483921" height="3.8687777291052043" rx="3" fill="hsla(134, 89%, 67%, 1)" opacity="0.16796993196941912" transform="rotate(183 600 210)"/><rect x="201" y="287" width="179.0814060345292" height="5.806637665256858" rx="3" fill="hsla(71, 84%, 67%, 1)" opacity="0.18233869335614145" transform="rotate(93 600 210)"/><rect x="973" y="384" width="132.68577620387077" height="6.0847954750061035" rx="3" fill="hsla(134, 89%, 67%, 1)" opacity="0.19371988743543625" transform="rotate(226 600 210)"/><rect x="1131" y="378" width="86.67632706463337" height="2.3398210238665342" rx="3" fill="hsla(71, 84%, 67%, 1)" opacity="0.08746211824007333" transform="rotate(309 600 210)"/>
+  <ellipse cx="316" cy="419" rx="117.3573760362342" ry="122.45189326815307" fill="hsla(71, 84%, 67%, 1)" opacity="0.12660675056278706"/><ellipse cx="1055" cy="365" rx="124.68888642732054" ry="79.38350204378366" fill="hsla(134, 89%, 67%, 1)" opacity="0.1285676625929773"/><ellipse cx="859" cy="335" rx="146.9610443804413" ry="105.93466818332672" fill="hsla(134, 89%, 67%, 1)" opacity="0.06923447165638208"/><ellipse cx="493" cy="493" rx="86.4259939873591" ry="106.14425937645137" fill="hsla(71, 84%, 67%, 1)" opacity="0.08262653471902012"/><g><line x1="0" y1="0" x2="0" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="51" y1="0" x2="51" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="102" y1="0" x2="102" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="153" y1="0" x2="153" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="204" y1="0" x2="204" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="255" y1="0" x2="255" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="306" y1="0" x2="306" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="357" y1="0" x2="357" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="408" y1="0" x2="408" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="459" y1="0" x2="459" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="510" y1="0" x2="510" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="561" y1="0" x2="561" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="612" y1="0" x2="612" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="663" y1="0" x2="663" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="714" y1="0" x2="714" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="765" y1="0" x2="765" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="816" y1="0" x2="816" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="867" y1="0" x2="867" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="918" y1="0" x2="918" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="969" y1="0" x2="969" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="1020" y1="0" x2="1020" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="1071" y1="0" x2="1071" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="1122" y1="0" x2="1122" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="1173" y1="0" x2="1173" y2="430" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="0" y1="0" x2="1200" y2="0" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="0" y1="51" x2="1200" y2="51" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="0" y1="102" x2="1200" y2="102" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="0" y1="153" x2="1200" y2="153" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="0" y1="204" x2="1200" y2="204" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="0" y1="255" x2="1200" y2="255" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="0" y1="306" x2="1200" y2="306" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="0" y1="357" x2="1200" y2="357" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/><line x1="0" y1="408" x2="1200" y2="408" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.08858467786572874" stroke-width="1"/></g><g transform="translate(600,280)">
+    <circle cx="166.9" cy="0.0" r="27.612648502923548" fill="hsla(71, 84%, 67%, 1)" opacity="0.7"/><circle cx="34.4" cy="59.5" r="22.898968022316694" fill="hsla(71, 84%, 67%, 1)" opacity="0.7"/><circle cx="-51.3" cy="88.9" r="33.216379564255476" fill="hsla(305, 53%, 23%, 1)" opacity="0.7"/><circle cx="-156.7" cy="0.0" r="24.82027126662433" fill="hsla(134, 89%, 67%, 1)" opacity="0.7"/><circle cx="-35.9" cy="-62.2" r="38.81563778873533" fill="hsla(134, 89%, 67%, 1)" opacity="0.7"/><circle cx="51.1" cy="-88.5" r="18.513932165689766" fill="hsla(134, 89%, 67%, 1)" opacity="0.7"/>
+    <polygon points="0.0,-120.0 114.1,-37.1 70.5,97.1 -70.5,97.1 -114.1,-37.1" fill="hsla(71, 84%, 67%, 1)" opacity="0.25" stroke="hsla(71, 84%, 67%, 1)" stroke-width="4"/>
+    <circle r="36" fill="hsla(305, 53%, 23%, 1)"/>
   </g>
-  <g fill="url(#stone)" stroke="#241609" stroke-width="4">
-    <path d="M420 470 L420 300 L470 300 L470 250 L520 250 L520 300 L570 300 L570 470 Z"/>
-    <path d="M630 470 L630 330 L676 330 L676 268 L722 268 L722 330 L768 330 L768 470 Z"/>
-  </g>
-  <rect x="360" y="462" width="470" height="52" rx="8" fill="url(#stone)" stroke="#241609" stroke-width="4"/>
-  <path d="M300 514 L890 514 L836 566 L354 566 Z" fill="#8a663f" stroke="#241609" stroke-width="4"/>
-  <g fill="#ffb24d">
-    <rect x="438" y="318" width="26" height="40" rx="4"/>
-    <rect x="508" y="318" width="26" height="40" rx="4"/>
-    <rect x="692" y="348" width="24" height="38" rx="4"/>
-  </g>
-  <g stroke="#ffb24d" stroke-width="6" stroke-linecap="round" opacity="0.9" fill="none">
-    <path d="M595 236 q34 -30 68 0 q-34 26 -68 0Z"/>
-    <path d="M595 236 v-34"/>
-  </g>
-  <g fill="#3a1a08" opacity="0.85">
-    <path d="M60 520 q40 -70 80 0Z"/>
-    <path d="M150 520 q40 -58 80 0Z"/>
-    <path d="M980 520 q40 -76 80 0Z"/>
-    <path d="M1070 520 q40 -60 80 0Z"/>
-  </g>
-  <text x="600" y="118" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="58" font-weight="bold" letter-spacing="4" fill="#fff2dc">BASTION DEFENSE</text>
-  <text x="600" y="614" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="bold" letter-spacing="10" fill="#2a1608" opacity="0.8">STRATEGY TOWER DEFENSE</text>
-  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#ffb24d" stroke-opacity="0.55" stroke-width="3"/>
+  <rect x="18" y="18" width="1164" height="384" rx="18" fill="none" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.18" stroke-width="2"/>
+  <rect x="0" y="430" width="1200" height="200" fill="#020617" opacity="0.35"/>
+  <rect x="120" y="455" width="960" height="3" rx="2" fill="url(#bar)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="62" font-weight="800" letter-spacing="4" fill="#f8fafc">Bastion Defense</text>
+  <text x="600" y="582" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="700" letter-spacing="8" fill="hsla(71, 84%, 67%, 1)">STRATEGY • 2D</text>
+  <rect x="1.5" y="1.5" width="1197" height="627" fill="none" stroke="hsla(71, 84%, 67%, 1)" stroke-opacity="0.45" stroke-width="3"/>
 </svg>

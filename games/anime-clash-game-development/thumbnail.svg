@@ -1,44 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Anime Clash: 3D Local Multiplayer Fighter">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0a1030"/>
-      <stop offset="100%" stop-color="#1a2a55"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.38" r="0.72">
-      <stop offset="0%" stop-color="#38e8ff" stop-opacity="0.5"/>
-      <stop offset="55%" stop-color="#ff8a2d" stop-opacity="0.14"/>
-      <stop offset="100%" stop-color="#1a2a55" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#38e8ff"/>
-      <stop offset="100%" stop-color="#ff8a2d"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.82" y2="1"><stop offset="0%" stop-color="hsla(62, 59%, 12%, 1)"/><stop offset="100%" stop-color="hsla(211, 56%, 19%, 1)"/></linearGradient>
+    <radialGradient id="glow" cx="58%" cy="32%" r="65%"><stop offset="0%" stop-color="hsla(254, 86%, 69%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(211, 56%, 19%, 1)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="hsla(254, 86%, 69%, 1)" stop-opacity="0.0"/><stop offset="50%" stop-color="hsla(254, 86%, 69%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(0, 79%, 58%, 1)" stop-opacity="0.0"/></linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
   <rect width="1200" height="630" fill="url(#glow)"/>
-  <g fill="#ffffff">
-    <circle cx="140" cy="80" r="1.5" opacity="0.7"/>
-    <circle cx="380" cy="60" r="1.3" opacity="0.6"/>
-    <circle cx="700" cy="90" r="1.6" opacity="0.8"/>
-    <circle cx="1040" cy="70" r="1.4" opacity="0.7"/>
-    <circle cx="1150" cy="140" r="1.2" opacity="0.5"/>
-    <circle cx="90" cy="180" r="1.2" opacity="0.5"/>
-    <circle cx="260" cy="150" r="1.3" opacity="0.55"/>
-    <circle cx="860" cy="170" r="1.4" opacity="0.6"/>
-    <circle cx="520" cy="55" r="1.2" opacity="0.5"/>
-    <circle cx="980" cy="300" r="1.3" opacity="0.45"/>
-    <circle cx="160" cy="340" r="1.2" opacity="0.4"/>
-    <circle cx="1080" cy="420" r="1.3" opacity="0.45"/>
-  </g>
-  <circle cx="600" cy="252" r="158" fill="none" stroke="url(#accent)" stroke-opacity="0.55" stroke-width="4"/>
-  <circle cx="600" cy="252" r="118" fill="none" stroke="#38e8ff" stroke-opacity="0.35" stroke-width="2.5"/>
-  <circle cx="600" cy="252" r="74" fill="#38e8ff" opacity="0.16"/>
-  <circle cx="600" cy="252" r="40" fill="url(#accent)"/>
-  <path d="M600 62 L612 96 L600 88 L588 96 Z" fill="#ff8a2d" opacity="0.9"/>
-  <path d="M420 252 a180 180 0 0 1 60 -130" stroke="#ff8a2d" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
-  <path d="M780 252 a180 180 0 0 0 -60 -130" stroke="#38e8ff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
-  <ellipse cx="600" cy="430" rx="380" ry="34" fill="#38e8ff" opacity="0.08"/>
-  <text x="600" y="522" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="52" font-weight="bold" letter-spacing="4" fill="#f8fafc">ANIME CLASH: 3D LOCAL MULTIPLAYER FIGHTER</text>
-  <text x="600" y="572" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="bold" letter-spacing="10" fill="#ff8a2d">CLASH · COMBO · CONQUER</text>
-  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="url(#accent)" stroke-opacity="0.55" stroke-width="3"/>
+  <rect x="548" y="169" width="49.35011103749275" height="4.231200443115085" rx="3" fill="hsla(0, 79%, 58%, 1)" opacity="0.11492755332030355" transform="rotate(5 600 210)"/><rect x="494" y="280" width="118.51829383522272" height="4.573299995157868" rx="3" fill="hsla(254, 86%, 69%, 1)" opacity="0.14560258746147156" transform="rotate(137 600 210)"/><rect x="1092" y="364" width="107.86158956587315" height="2.3938795146532357" rx="3" fill="hsla(0, 79%, 58%, 1)" opacity="0.17666087800636887" transform="rotate(298 600 210)"/><rect x="912" y="174" width="82.61855609714985" height="5.710213092155755" rx="3" fill="hsla(254, 86%, 69%, 1)" opacity="0.13806176292710007" transform="rotate(141 600 210)"/><rect x="569" y="154" width="131.63883730769157" height="5.588049320504069" rx="3" fill="hsla(0, 79%, 58%, 1)" opacity="0.1901307889074087" transform="rotate(260 600 210)"/><rect x="1137" y="225" width="61.17298014461994" height="6.850126969162375" rx="3" fill="hsla(254, 86%, 69%, 1)" opacity="0.17147949816659092" transform="rotate(14 600 210)"/>
+  <circle cx="600" cy="280" r="99.49893028009683" fill="none" stroke="hsla(254, 86%, 69%, 1)" stroke-opacity="0.18" stroke-width="2"/><circle cx="600" cy="280" r="145.27481370139867" fill="none" stroke="hsla(254, 86%, 69%, 1)" stroke-opacity="0.3" stroke-width="3"/><circle cx="600" cy="280" r="208.74905973672867" fill="none" stroke="hsla(254, 86%, 69%, 1)" stroke-opacity="0.42" stroke-width="4"/><circle cx="600" cy="280" r="273.1431734142825" fill="none" stroke="hsla(254, 86%, 69%, 1)" stroke-opacity="0.54" stroke-width="5"/><g transform="translate(460,300)"><circle cx="0" cy="-110" r="32" fill="#fde68a"/><rect x="-26" y="-78" width="52" height="100" rx="18" fill="hsla(211, 56%, 19%, 1)"/><rect x="-80" y="-60" width="60" height="16" rx="8" fill="hsla(211, 56%, 19%, 1)" transform="rotate(-25)"/><rect x="20" y="-70" width="70" height="16" rx="8" fill="hsla(211, 56%, 19%, 1)" transform="rotate(35)"/><rect x="-22" y="20" width="18" height="80" rx="9" fill="#1e293b"/><rect x="4" y="20" width="18" height="80" rx="9" fill="#1e293b"/></g>
+    <g transform="translate(740,300) scale(-1,1)"><circle cx="0" cy="-110" r="32" fill="#fca5a5"/><rect x="-26" y="-78" width="52" height="100" rx="18" fill="hsla(0, 79%, 58%, 1)"/><rect x="-80" y="-60" width="60" height="16" rx="8" fill="hsla(0, 79%, 58%, 1)" transform="rotate(-25)"/><rect x="20" y="-70" width="70" height="16" rx="8" fill="hsla(0, 79%, 58%, 1)" transform="rotate(35)"/><rect x="-22" y="20" width="18" height="80" rx="9" fill="#1e293b"/><rect x="4" y="20" width="18" height="80" rx="9" fill="#1e293b"/></g>
+    <g fill="hsla(254, 86%, 69%, 1)" opacity="0.8"><path d="M600 240 l26 18 -26 18 -10-18z"/><path d="M600 240 l-26 18 26 18 10-18z"/></g>
+  <rect x="18" y="18" width="1164" height="384" rx="18" fill="none" stroke="hsla(254, 86%, 69%, 1)" stroke-opacity="0.18" stroke-width="2"/>
+  <rect x="0" y="430" width="1200" height="200" fill="#020617" opacity="0.35"/>
+  <rect x="120" y="455" width="960" height="3" rx="2" fill="url(#bar)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="52" font-weight="800" letter-spacing="2" fill="#f8fafc">Anime Clash: 3D Local Multiplayer Fighter</text>
+  <text x="600" y="582" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="700" letter-spacing="8" fill="hsla(254, 86%, 69%, 1)">FIGHTING • 3D</text>
+  <rect x="1.5" y="1.5" width="1197" height="627" fill="none" stroke="hsla(254, 86%, 69%, 1)" stroke-opacity="0.45" stroke-width="3"/>
 </svg>

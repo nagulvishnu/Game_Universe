@@ -1,98 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="SKYBOUND: Flight Simulator">
   <defs>
-    <linearGradient id="high" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0b1e5b"/>
-      <stop offset="45%" stop-color="#1d63d1"/>
-      <stop offset="100%" stop-color="#9fd0ff"/>
-    </linearGradient>
-    <linearGradient id="wing" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#f8fafc"/>
-      <stop offset="100%" stop-color="#94a3b8"/>
-    </linearGradient>
-    <linearGradient id="contrail" x1="1" y1="0" x2="0" y2="0">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
-      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.29" y2="1"><stop offset="0%" stop-color="hsla(128, 62%, 14%, 1)"/><stop offset="100%" stop-color="hsla(252, 58%, 21%, 1)"/></linearGradient>
+    <radialGradient id="glow" cx="56%" cy="32%" r="65%"><stop offset="0%" stop-color="hsla(344, 93%, 63%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(252, 58%, 21%, 1)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="hsla(344, 93%, 63%, 1)" stop-opacity="0.0"/><stop offset="50%" stop-color="hsla(344, 93%, 63%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(35, 76%, 62%, 1)" stop-opacity="0.0"/></linearGradient>
   </defs>
-
-  <rect width="1200" height="630" fill="url(#high)"/>
-
-  <!-- sun -->
-  <circle cx="980" cy="130" r="60" fill="#fef9c3" opacity="0.95"/>
-  <circle cx="980" cy="130" r="90" fill="#fef9c3" opacity="0.25"/>
-
-  <!-- clouds -->
-  <g fill="#ffffff">
-    <ellipse cx="180" cy="200" rx="120" ry="38" opacity="0.9"/>
-    <ellipse cx="280" cy="182" rx="80" ry="30" opacity="0.9"/>
-    <ellipse cx="110" cy="214" rx="70" ry="26" opacity="0.85"/>
-    <ellipse cx="1020" cy="330" rx="130" ry="40" opacity="0.85"/>
-    <ellipse cx="920" cy="350" rx="80" ry="28" opacity="0.8"/>
-    <ellipse cx="560" cy="470" rx="170" ry="46" opacity="0.9"/>
-    <ellipse cx="700" cy="486" rx="110" ry="34" opacity="0.85"/>
-    <ellipse cx="430" cy="494" rx="90" ry="30" opacity="0.85"/>
-    <ellipse cx="80" cy="440" rx="100" ry="32" opacity="0.8"/>
-    <ellipse cx="1140" cy="470" rx="110" ry="34" opacity="0.8"/>
-  </g>
-
-  <!-- contrails -->
-  <g stroke="url(#contrail)" stroke-width="10" stroke-linecap="round">
-    <line x1="520" y1="268" x2="140" y2="300"/>
-    <line x1="540" y1="292" x2="220" y2="340"/>
-  </g>
-
-  <!-- airliner -->
-  <g transform="translate(660 270) rotate(-10)">
-    <!-- fuselage -->
-    <ellipse cx="0" cy="0" rx="180" ry="26" fill="url(#wing)"/>
-    <path d="M180 0 Q214 -6 220 0 Q214 8 180 4 Z" fill="#e2e8f0"/>
-    <!-- windows -->
-    <g fill="#0b1e5b">
-      <circle cx="-120" cy="-4" r="4"/><circle cx="-100" cy="-4" r="4"/><circle cx="-80" cy="-4" r="4"/>
-      <circle cx="-60" cy="-4" r="4"/><circle cx="-40" cy="-4" r="4"/><circle cx="-20" cy="-4" r="4"/>
-      <circle cx="0" cy="-4" r="4"/><circle cx="20" cy="-4" r="4"/><circle cx="40" cy="-4" r="4"/>
-      <circle cx="60" cy="-4" r="4"/><circle cx="80" cy="-4" r="4"/>
-    </g>
-    <path d="M120 -14 L168 -12 L168 -2 L126 -4 Z" fill="#38bdf8"/>
-    <!-- wings -->
-    <polygon points="-30,6 -130,74 -96,74 10,14" fill="#cbd5e1"/>
-    <polygon points="-30,-6 -130,-70 -96,-70 10,-12" fill="#e2e8f0"/>
-    <!-- engines -->
-    <ellipse cx="-86" cy="52" rx="24" ry="11" fill="#64748b"/>
-    <ellipse cx="-86" cy="-50" rx="24" ry="11" fill="#94a3b8"/>
-    <!-- tail -->
-    <polygon points="-160,0 -196,-52 -172,-52 -146,-6" fill="#1d63d1"/>
-    <polygon points="-164,4 -196,44 -176,44 -150,8" fill="#1e40af"/>
-    <!-- nose -->
-    <ellipse cx="176" cy="0" rx="18" ry="16" fill="#e2e8f0"/>
-  </g>
-
-  <!-- small jets in formation -->
-  <g fill="#e2e8f0" opacity="0.9" transform="translate(300 120) rotate(-8) scale(0.5)">
-    <ellipse cx="0" cy="0" rx="70" ry="12"/>
-    <polygon points="-10,4 -50,30 -34,30 4,8"/>
-    <polygon points="-10,-4 -50,-28 -34,-28 4,-8"/>
-    <polygon points="-60,0 -84,-22 -74,-22 -52,-2"/>
-  </g>
-  <g fill="#e2e8f0" opacity="0.75" transform="translate(400 90) rotate(-8) scale(0.4)">
-    <ellipse cx="0" cy="0" rx="70" ry="12"/>
-    <polygon points="-10,4 -50,30 -34,30 4,8"/>
-    <polygon points="-10,-4 -50,-28 -34,-28 4,-8"/>
-    <polygon points="-60,0 -84,-22 -74,-22 -52,-2"/>
-  </g>
-
-  <!-- HUD reticle -->
-  <g stroke="#7dd3fc" stroke-width="3" fill="none" opacity="0.85">
-    <circle cx="600" cy="315" r="46"/>
-    <line x1="600" y1="253" x2="600" y2="273"/>
-    <line x1="600" y1="357" x2="600" y2="377"/>
-    <line x1="538" y1="315" x2="558" y2="315"/>
-    <line x1="642" y1="315" x2="662" y2="315"/>
-    <circle cx="600" cy="315" r="4" fill="#7dd3fc"/>
-  </g>
-
-  <text x="600" y="560" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="92" font-weight="bold" letter-spacing="16" fill="#ffffff">SKYBOUND</text>
-  <text x="600" y="604" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="bold" letter-spacing="12" fill="#0b1e5b">FLIGHT SIMULATOR</text>
-
-  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#1d63d1" stroke-opacity="0.6" stroke-width="3"/>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="418" y="406" width="139.63256172835827" height="7.341193716507405" rx="3" fill="hsla(35, 76%, 62%, 1)" opacity="0.1089590451028198" transform="rotate(168 600 210)"/><rect x="1096" y="60" width="41.22190449386835" height="3.2848915294744074" rx="3" fill="hsla(344, 93%, 63%, 1)" opacity="0.09677157133817672" transform="rotate(343 600 210)"/><rect x="213" y="326" width="192.85462193191051" height="3.470751434098929" rx="3" fill="hsla(35, 76%, 62%, 1)" opacity="0.15337503521703183" transform="rotate(74 600 210)"/><rect x="725" y="335" width="74.86317999660969" height="7.9351343610323966" rx="3" fill="hsla(344, 93%, 63%, 1)" opacity="0.17412150637246668" transform="rotate(333 600 210)"/><rect x="1172" y="178" width="98.55079676955938" height="2.857327284757048" rx="3" fill="hsla(35, 76%, 62%, 1)" opacity="0.0846224623825401" transform="rotate(290 600 210)"/><rect x="926" y="40" width="102.84315776079893" height="4.299320314079523" rx="3" fill="hsla(344, 93%, 63%, 1)" opacity="0.17664549444802105" transform="rotate(328 600 210)"/>
+  <ellipse cx="612.6411172561347" cy="109.99712292570621" rx="141.26129636075348" ry="36.64034335594624" fill="#fff" opacity="0.24478059434797614"/><ellipse cx="664.7025584243238" cy="225.57679319754243" rx="82.54214094951749" ry="31.47556980792433" fill="#fff" opacity="0.25947771937586367"/><ellipse cx="370.3935141675174" cy="164.84608160797507" rx="80.48281270079315" ry="24.569058899767697" fill="#fff" opacity="0.23010161224287"/><ellipse cx="243.4755756519735" cy="145.67574503365904" rx="156.45715101854876" ry="29.608274946920574" fill="#fff" opacity="0.2845140416175127"/><ellipse cx="288.2404147647321" cy="100.14000580180436" rx="140.95352576347068" ry="25.814991804771125" fill="#fff" opacity="0.22759392983280122"/><ellipse cx="282.50284055247903" cy="174.39772228244692" rx="116.15051134489477" ry="28.66209197510034" fill="#fff" opacity="0.23538298736326396"/>
+    <g transform="translate(600,280) rotate(-8.318725239951164)"><ellipse cx="0" cy="0" rx="230" ry="34" fill="#e2e8f0"/><path d="M-40 -8 L-230 -110 L-150 -110 L30 -8 Z" fill="#cbd5e1"/><path d="M-40 8 L-230 110 L-150 110 L30 8 Z" fill="#cbd5e1"/><path d="M150 0 L250 -45 L230 0 L250 45 Z" fill="#94a3b8"/><rect x="-80" y="-16" width="60" height="10" rx="5" fill="hsla(344, 93%, 63%, 1)"/><rect x="0" y="-16" width="60" height="10" rx="5" fill="hsla(344, 93%, 63%, 1)"/></g>
+    <path d="M80 380 Q 350 317.2106948494911 560 340.3518824931234 T 1100 276.64751500822604" stroke="hsla(344, 93%, 63%, 1)" stroke-width="5" fill="none" stroke-dasharray="16 14" opacity="0.6"/>
+  <rect x="18" y="18" width="1164" height="384" rx="18" fill="none" stroke="hsla(344, 93%, 63%, 1)" stroke-opacity="0.18" stroke-width="2"/>
+  <rect x="0" y="430" width="1200" height="200" fill="#020617" opacity="0.35"/>
+  <rect x="120" y="455" width="960" height="3" rx="2" fill="url(#bar)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="52" font-weight="800" letter-spacing="2" fill="#f8fafc">SKYBOUND: Flight Simulator</text>
+  <text x="600" y="582" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="700" letter-spacing="8" fill="hsla(344, 93%, 63%, 1)">SIMULATION • 3D</text>
+  <rect x="1.5" y="1.5" width="1197" height="627" fill="none" stroke="hsla(344, 93%, 63%, 1)" stroke-opacity="0.45" stroke-width="3"/>
 </svg>

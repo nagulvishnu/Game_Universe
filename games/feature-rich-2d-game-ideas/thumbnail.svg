@@ -1,39 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Neon Front">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#2a0a06"/>
-      <stop offset="60%" stop-color="#16060b"/>
-      <stop offset="100%" stop-color="#080308"/>
-    </linearGradient>
-    <linearGradient id="tracer" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#ff7a2d" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#ffd24d"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.55" y2="1"><stop offset="0%" stop-color="hsla(177, 73%, 12%, 1)"/><stop offset="100%" stop-color="hsla(237, 66%, 24%, 1)"/></linearGradient>
+    <radialGradient id="glow" cx="42%" cy="31%" r="65%"><stop offset="0%" stop-color="hsla(292, 80%, 61%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(237, 66%, 24%, 1)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="hsla(292, 80%, 61%, 1)" stop-opacity="0.0"/><stop offset="50%" stop-color="hsla(292, 80%, 61%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(325, 75%, 62%, 1)" stop-opacity="0.0"/></linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
-  <g stroke="#ff7a2d" stroke-width="7" stroke-linecap="round" opacity="0.95">
-    <line x1="40" y1="196" x2="470" y2="196"/>
-    <line x1="60" y1="252" x2="360" y2="252"/>
-    <line x1="20" y1="432" x2="430" y2="432"/>
-  </g>
-  <g stroke="#ffd24d" stroke-width="5" stroke-linecap="round" opacity="0.85">
-    <line x1="730" y1="222" x2="1170" y2="222"/>
-    <line x1="840" y1="278" x2="1170" y2="278"/>
-    <line x1="770" y1="410" x2="1150" y2="410"/>
-  </g>
-  <g stroke="url(#tracer)" stroke-width="3" opacity="0.7">
-    <line x1="200" y1="330" x2="520" y2="330"/>
-  </g>
-  <g transform="translate(600 300)" fill="none" stroke="#ffd24d" stroke-width="7">
-    <circle r="86"/>
-    <path d="M0 -128 v46 M0 128 v-46 M-128 0 h46 M128 0 h-46"/>
-    <circle r="7" fill="#ff7a2d" stroke="none"/>
-  </g>
-  <g fill="#ff7a2d" opacity="0.9">
-    <circle cx="452" cy="252" r="7"/><circle cx="760" cy="278" r="6"/>
-    <circle cx="520" cy="368" r="5"/><circle cx="694" cy="330" r="5"/>
-  </g>
-  <text x="600" y="128" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="64" font-weight="bold" letter-spacing="8" fill="#ffffff">NEON FRONT</text>
-  <text x="600" y="512" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="26" font-weight="bold" letter-spacing="10" fill="#ff7a2d">2D ACTION SHOOTER</text>
-  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#ff7a2d" stroke-opacity="0.5" stroke-width="3"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="892" y="23" width="190.90329602360725" height="6.200125489383936" rx="3" fill="hsla(325, 75%, 62%, 1)" opacity="0.09262251663953067" transform="rotate(63 600 210)"/><rect x="215" y="264" width="150.6201559305191" height="5.841511046979576" rx="3" fill="hsla(292, 80%, 61%, 1)" opacity="0.18376603331416846" transform="rotate(212 600 210)"/><rect x="246" y="26" width="164.18932169675827" height="5.108860739972442" rx="3" fill="hsla(325, 75%, 62%, 1)" opacity="0.13260777537710966" transform="rotate(100 600 210)"/><rect x="541" y="161" width="139.98213786631823" height="3.224471586290747" rx="3" fill="hsla(292, 80%, 61%, 1)" opacity="0.17384499006904663" transform="rotate(186 600 210)"/><rect x="747" y="99" width="176.08815107494593" height="7.908513492438942" rx="3" fill="hsla(325, 75%, 62%, 1)" opacity="0.08501938450150191" transform="rotate(352 600 210)"/>
+  <circle cx="1063.2" cy="165.7" r="0.89" fill="#fff" opacity="0.26"/><circle cx="522.3" cy="24.8" r="2.25" fill="#fff" opacity="0.73"/><circle cx="385.5" cy="258.3" r="2.77" fill="#fff" opacity="0.74"/><circle cx="807.4" cy="324.2" r="1.71" fill="#fff" opacity="0.63"/><circle cx="487.9" cy="390.4" r="2.24" fill="#fff" opacity="0.78"/><circle cx="884.2" cy="131.6" r="1.49" fill="#fff" opacity="0.56"/><circle cx="358.8" cy="57.9" r="0.81" fill="#fff" opacity="0.38"/><circle cx="133.0" cy="325.9" r="1.36" fill="#fff" opacity="0.52"/><circle cx="1020.7" cy="59.4" r="1.78" fill="#fff" opacity="0.26"/><circle cx="361.1" cy="21.4" r="1.52" fill="#fff" opacity="0.59"/><circle cx="104.7" cy="203.9" r="2.36" fill="#fff" opacity="0.40"/><circle cx="27.1" cy="44.7" r="1.97" fill="#fff" opacity="0.43"/><g opacity="0.25"><path d="M0 320 L200 260 L400 360 L1200 300" fill="none" stroke="hsla(325, 75%, 62%, 1)" stroke-width="40"/><path d="M0 355 L320 280 L500 370 L1200 325" fill="none" stroke="hsla(325, 75%, 62%, 1)" stroke-width="40"/><path d="M0 390 L440 300 L600 380 L1200 350" fill="none" stroke="hsla(325, 75%, 62%, 1)" stroke-width="40"/><path d="M0 425 L560 320 L700 390 L1200 375" fill="none" stroke="hsla(325, 75%, 62%, 1)" stroke-width="40"/><path d="M0 460 L680 340 L800 400 L1200 400" fill="none" stroke="hsla(325, 75%, 62%, 1)" stroke-width="40"/><path d="M0 495 L800 360 L900 410 L1200 425" fill="none" stroke="hsla(325, 75%, 62%, 1)" stroke-width="40"/></g>
+    <g transform="translate(600,280)">
+      <circle r="185" fill="none" stroke="hsla(292, 80%, 61%, 1)" stroke-opacity="0.8" stroke-width="5"/><circle r="120" fill="none" stroke="hsla(292, 80%, 61%, 1)" stroke-opacity="0.5" stroke-width="3"/><circle r="55" fill="none" stroke="hsla(292, 80%, 61%, 1)" stroke-opacity="0.35" stroke-width="2"/>
+      <line x1="-210" y1="0" x2="-30" y2="0" stroke="#e2e8f0" stroke-width="3"/><line x1="30" y1="0" x2="210" y2="0" stroke="#e2e8f0" stroke-width="3"/>
+      <line x1="0" y1="-210" x2="0" y2="-30" stroke="#e2e8f0" stroke-width="3"/><line x1="0" y1="30" x2="0" y2="210" stroke="#e2e8f0" stroke-width="3"/>
+      <circle r="10" fill="none" stroke="#ef4444" stroke-width="4"/><circle r="3" fill="#ef4444"/>
+      <g transform="translate(170,95) rotate(12)"><rect x="-210" y="-14" width="300" height="22" rx="6" fill="#334155"/><rect x="80" y="-8" width="70" height="10" rx="3" fill="#0f172a"/><rect x="-230" y="-8" width="30" height="24" rx="4" fill="#1f2937"/></g>
+    </g>
+  <rect x="18" y="18" width="1164" height="384" rx="18" fill="none" stroke="hsla(292, 80%, 61%, 1)" stroke-opacity="0.18" stroke-width="2"/>
+  <rect x="0" y="430" width="1200" height="200" fill="#020617" opacity="0.35"/>
+  <rect x="120" y="455" width="960" height="3" rx="2" fill="url(#bar)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="62" font-weight="800" letter-spacing="4" fill="#f8fafc">Neon Front</text>
+  <text x="600" y="582" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="700" letter-spacing="8" fill="hsla(292, 80%, 61%, 1)">SHOOTER • 2D</text>
+  <rect x="1.5" y="1.5" width="1197" height="627" fill="none" stroke="hsla(292, 80%, 61%, 1)" stroke-opacity="0.45" stroke-width="3"/>
 </svg>

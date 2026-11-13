@@ -1,92 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="HERO CITY">
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0ea5e9"/>
-      <stop offset="55%" stop-color="#38bdf8"/>
-      <stop offset="100%" stop-color="#e0f2fe"/>
-    </linearGradient>
-    <radialGradient id="burst" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
-      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="cape" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ef4444"/>
-      <stop offset="100%" stop-color="#991b1b"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.56" y2="1"><stop offset="0%" stop-color="hsla(120, 72%, 13%, 1)"/><stop offset="100%" stop-color="hsla(222, 54%, 22%, 1)"/></linearGradient>
+    <radialGradient id="glow" cx="43%" cy="49%" r="65%"><stop offset="0%" stop-color="hsla(325, 84%, 60%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(222, 54%, 22%, 1)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="hsla(325, 84%, 60%, 1)" stop-opacity="0.0"/><stop offset="50%" stop-color="hsla(325, 84%, 60%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(0, 86%, 62%, 1)" stop-opacity="0.0"/></linearGradient>
   </defs>
-
-  <rect width="1200" height="630" fill="url(#sky)"/>
-
-  <!-- sunburst -->
-  <g transform="translate(600 260)" opacity="0.55">
-    <g fill="#fef9c3">
-      <polygon points="0,-260 26,-60 -26,-60"/>
-      <polygon points="0,260 26,60 -26,60"/>
-      <polygon points="-260,0 -60,26 -60,-26"/>
-      <polygon points="260,0 60,26 60,-26"/>
-      <polygon points="-184,-184 -30,-50 -50,-30"/>
-      <polygon points="184,184 30,50 50,30"/>
-      <polygon points="184,-184 50,-30 30,-50"/>
-      <polygon points="-184,184 -50,30 -30,50"/>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="1028" y="340" width="149.31090336292982" height="6.627007659524679" rx="3" fill="hsla(0, 86%, 62%, 1)" opacity="0.18882377499714492" transform="rotate(213 600 210)"/><rect x="772" y="350" width="68.35913140326738" height="5.247463790234178" rx="3" fill="hsla(325, 84%, 60%, 1)" opacity="0.11626266823150218" transform="rotate(342 600 210)"/><rect x="520" y="365" width="80.4077409952879" height="7.1681672795675695" rx="3" fill="hsla(0, 86%, 62%, 1)" opacity="0.08345997156575322" transform="rotate(263 600 210)"/>
+  <circle cx="957.7" cy="125.1" r="2.63" fill="#fff" opacity="0.79"/><circle cx="399.0" cy="95.8" r="2.76" fill="#fff" opacity="0.36"/><circle cx="487.6" cy="14.0" r="2.06" fill="#fff" opacity="0.69"/><circle cx="738.2" cy="348.9" r="1.76" fill="#fff" opacity="0.79"/><circle cx="152.6" cy="159.7" r="1.88" fill="#fff" opacity="0.40"/><circle cx="1185.2" cy="211.0" r="2.82" fill="#fff" opacity="0.59"/><circle cx="1003.0" cy="410.2" r="2.44" fill="#fff" opacity="0.43"/><circle cx="787.6" cy="28.7" r="0.98" fill="#fff" opacity="0.71"/><circle cx="260.0" cy="125.7" r="1.78" fill="#fff" opacity="0.33"/><circle cx="943.0" cy="67.6" r="1.95" fill="#fff" opacity="0.34"/><circle cx="1141.9" cy="172.6" r="1.26" fill="#fff" opacity="0.78"/><circle cx="704.2" cy="255.8" r="1.40" fill="#fff" opacity="0.34"/><circle cx="1067.0" cy="96.7" r="2.61" fill="#fff" opacity="0.38"/><circle cx="341.8" cy="188.9" r="1.74" fill="#fff" opacity="0.76"/><circle cx="910.4" cy="151.9" r="1.33" fill="#fff" opacity="0.71"/><circle cx="386.9" cy="357.7" r="1.39" fill="#fff" opacity="0.29"/><circle cx="312.8" cy="261.0" r="2.76" fill="#fff" opacity="0.61"/><circle cx="277.9" cy="388.2" r="2.80" fill="#fff" opacity="0.25"/><circle cx="873.1" cy="327.6" r="2.95" fill="#fff" opacity="0.78"/><circle cx="341.1" cy="49.9" r="2.31" fill="#fff" opacity="0.58"/><circle cx="458.9" cy="177.9" r="1.71" fill="#fff" opacity="0.67"/><circle cx="744.6" cy="266.6" r="2.48" fill="#fff" opacity="0.75"/><circle cx="549.2" cy="22.3" r="2.56" fill="#fff" opacity="0.51"/><circle cx="756.0" cy="132.6" r="2.78" fill="#fff" opacity="0.26"/><circle cx="621.4" cy="372.0" r="2.23" fill="#fff" opacity="0.63"/><circle cx="600" cy="280" r="91.35260222479701" fill="none" stroke="hsla(325, 84%, 60%, 1)" stroke-opacity="0.18" stroke-width="2"/><circle cx="600" cy="280" r="162.67709719017148" fill="none" stroke="hsla(325, 84%, 60%, 1)" stroke-opacity="0.3" stroke-width="3"/><circle cx="600" cy="280" r="213.9320267410949" fill="none" stroke="hsla(325, 84%, 60%, 1)" stroke-opacity="0.42" stroke-width="4"/>
+    <g transform="translate(600,280)">
+      <path d="M0 -150 L25 -35 L140 -15 L38 35 L65 140 L0 80 L-65 140 L-38 35 L-140 -15 L-25 -35 Z" fill="hsla(222, 54%, 22%, 1)" opacity="0.22" stroke="hsla(325, 84%, 60%, 1)" stroke-width="4"/>
+      <g transform="translate(-50,20) rotate(-20)"><rect x="-9" y="-150" width="18" height="200" rx="6" fill="#cbd5e1"/><rect x="-34" y="40" width="68" height="14" rx="6" fill="hsla(0, 86%, 62%, 1)"/><rect x="-10" y="54" width="20" height="44" rx="6" fill="#78350f"/></g>
+      <g transform="translate(70,10)"><ellipse rx="65" ry="90" fill="hsla(222, 54%, 22%, 1)" opacity="0.85" stroke="hsla(325, 84%, 60%, 1)" stroke-width="5"/><path d="M0 -90 L65 0 L0 90 L-65 0 Z" fill="hsla(325, 84%, 60%, 1)" opacity="0.25"/></g>
+      <circle cx="-220" cy="120" r="4" fill="hsla(325, 84%, 60%, 1)" opacity="0.7"/><circle cx="-110" cy="140" r="4" fill="hsla(325, 84%, 60%, 1)" opacity="0.7"/><circle cx="0" cy="120" r="4" fill="hsla(325, 84%, 60%, 1)" opacity="0.7"/><circle cx="110" cy="140" r="4" fill="hsla(325, 84%, 60%, 1)" opacity="0.7"/><circle cx="220" cy="120" r="4" fill="hsla(325, 84%, 60%, 1)" opacity="0.7"/>
     </g>
-  </g>
-  <circle cx="600" cy="260" r="130" fill="url(#burst)"/>
-
-  <!-- clouds -->
-  <g fill="#ffffff" opacity="0.85">
-    <ellipse cx="180" cy="150" rx="95" ry="32"/><ellipse cx="260" cy="135" rx="65" ry="26"/>
-    <ellipse cx="1010" cy="130" rx="100" ry="30"/><ellipse cx="930" cy="150" rx="60" ry="24"/>
-    <ellipse cx="620" cy="110" rx="80" ry="24" opacity="0.7"/>
-  </g>
-
-  <!-- city skyline (bottom) -->
-  <g fill="#0c4a6e" opacity="0.95">
-    <rect x="0" y="420" width="90" height="210"/><rect x="100" y="380" width="70" height="250"/>
-    <rect x="185" y="440" width="110" height="190"/><rect x="310" y="360" width="80" height="270"/>
-    <rect x="405" y="430" width="95" height="200"/><rect x="515" y="390" width="70" height="240"/>
-    <rect x="600" y="450" width="120" height="180"/><rect x="735" y="370" width="85" height="260"/>
-    <rect x="835" y="430" width="100" height="200"/><rect x="950" y="395" width="75" height="235"/>
-    <rect x="1040" y="440" width="160" height="190"/>
-  </g>
-  <g fill="#38bdf8" opacity="0.9">
-    <rect x="30" y="450" width="12" height="16"/><rect x="54" y="450" width="12" height="16"/>
-    <rect x="330" y="385" width="12" height="16"/><rect x="354" y="415" width="12" height="16"/>
-    <rect x="539" y="415" width="12" height="16"/><rect x="760" y="395" width="12" height="16"/>
-    <rect x="784" y="430" width="12" height="16"/><rect x="975" y="420" width="12" height="16"/>
-    <rect x="1080" y="465" width="12" height="16"/><rect x="1104" y="465" width="12" height="16"/>
-  </g>
-
-  <!-- flying hero -->
-  <g transform="translate(600 255) rotate(-16)">
-    <!-- cape -->
-    <path d="M-10 -6 Q-90 26 -120 74 Q-70 56 -14 42 Z" fill="url(#cape)"/>
-    <!-- body -->
-    <ellipse cx="0" cy="10" rx="30" ry="44" fill="#1d4ed8"/>
-    <circle cx="6" cy="-44" r="22" fill="#fcd34d"/>
-    <path d="M-16 -52 Q6 -74 28 -52 Q14 -62 -4 -60 Z" fill="#0f172a"/>
-    <!-- arms -->
-    <path d="M22 -14 L66 -34 L72 -18 L28 4 Z" fill="#1d4ed8"/>
-    <circle cx="70" cy="-26" r="10" fill="#fcd34d"/>
-    <path d="M-24 -8 L-64 10 L-56 26 L-16 10 Z" fill="#1d4ed8"/>
-    <circle cx="-62" cy="18" r="10" fill="#fcd34d"/>
-    <!-- legs -->
-    <path d="M-14 44 L-44 88 L-28 96 L2 56 Z" fill="#1e3a8a"/>
-    <path d="M14 44 L48 82 L62 70 L28 40 Z" fill="#1e3a8a"/>
-    <!-- emblem -->
-    <circle cx="4" cy="6" r="13" fill="#fef9c3"/>
-    <path d="M4 -4 L8 4 L16 6 L10 12 L11 20 L4 16 L-3 20 L-2 12 L-8 6 L0 4 Z" fill="#dc2626"/>
-  </g>
-
-  <!-- speed lines -->
-  <g stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.75">
-    <line x1="360" y1="250" x2="200" y2="278"/>
-    <line x1="390" y1="300" x2="260" y2="322"/>
-    <line x1="820" y1="220" x2="960" y2="204"/>
-    <line x1="810" y1="280" x2="930" y2="272"/>
-  </g>
-
-  <text x="600" y="560" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="92" font-weight="bold" letter-spacing="14" fill="#ffffff">HERO CITY</text>
-  <text x="600" y="604" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="bold" letter-spacing="12" fill="#0c4a6e">3D SUPERHERO ACTION</text>
-
-  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#0ea5e9" stroke-opacity="0.6" stroke-width="3"/>
+  <rect x="18" y="18" width="1164" height="384" rx="18" fill="none" stroke="hsla(325, 84%, 60%, 1)" stroke-opacity="0.18" stroke-width="2"/>
+  <rect x="0" y="430" width="1200" height="200" fill="#020617" opacity="0.35"/>
+  <rect x="120" y="455" width="960" height="3" rx="2" fill="url(#bar)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="62" font-weight="800" letter-spacing="4" fill="#f8fafc">HERO CITY</text>
+  <text x="600" y="582" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="700" letter-spacing="8" fill="hsla(325, 84%, 60%, 1)">ACTION • 3D</text>
+  <rect x="1.5" y="1.5" width="1197" height="627" fill="none" stroke="hsla(325, 84%, 60%, 1)" stroke-opacity="0.45" stroke-width="3"/>
 </svg>

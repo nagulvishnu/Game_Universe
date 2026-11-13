@@ -1,61 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="AI Beast World">
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#150a30"/>
-      <stop offset="48%" stop-color="#3d1a63"/>
-      <stop offset="76%" stop-color="#8a3a86"/>
-      <stop offset="100%" stop-color="#2a1038"/>
-    </linearGradient>
-    <radialGradient id="moon" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#fff6dc"/>
-      <stop offset="70%" stop-color="#ffd9a0"/>
-      <stop offset="100%" stop-color="#ffb45a"/>
-    </radialGradient>
-    <linearGradient id="far" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#4a2a7a"/>
-      <stop offset="100%" stop-color="#2a1447"/>
-    </linearGradient>
-    <linearGradient id="near" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#1c0d33"/>
-      <stop offset="100%" stop-color="#0b0418"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.21" y2="1"><stop offset="0%" stop-color="hsla(259, 63%, 19%, 1)"/><stop offset="100%" stop-color="hsla(35, 59%, 21%, 1)"/></linearGradient>
+    <radialGradient id="glow" cx="55%" cy="34%" r="65%"><stop offset="0%" stop-color="hsla(171, 89%, 64%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(35, 59%, 21%, 1)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="hsla(171, 89%, 64%, 1)" stop-opacity="0.0"/><stop offset="50%" stop-color="hsla(171, 89%, 64%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(217, 82%, 69%, 1)" stop-opacity="0.0"/></linearGradient>
   </defs>
-
-  <rect width="1200" height="630" fill="url(#sky)"/>
-
-  <g fill="#ffffff">
-    <circle cx="196" cy="118" r="2.5" opacity="0.9"/><circle cx="352" cy="76" r="2" opacity="0.7"/>
-    <circle cx="878" cy="104" r="2.5" opacity="0.85"/><circle cx="1042" cy="168" r="2" opacity="0.7"/>
-    <circle cx="268" cy="228" r="2" opacity="0.6"/><circle cx="962" cy="252" r="2" opacity="0.6"/>
-    <circle cx="452" cy="140" r="2" opacity="0.55"/><circle cx="742" cy="86" r="2" opacity="0.55"/>
-  </g>
-
-  <circle cx="600" cy="228" r="132" fill="url(#moon)"/>
-  <g fill="#e9a86a" opacity="0.35">
-    <circle cx="556" cy="200" r="20"/>
-    <circle cx="646" cy="248" r="14"/>
-    <circle cx="618" cy="168" r="10"/>
-  </g>
-
-  <path d="M0 452 L118 372 L214 424 L322 340 L438 430 L546 356 L664 438 L790 366 L906 442 L1010 384 L1128 448 L1200 410 L1200 630 L0 630 Z" fill="url(#far)" opacity="0.92"/>
-  <path d="M0 528 L142 470 L268 522 L392 462 L520 528 L648 466 L784 530 L912 476 L1044 532 L1200 486 L1200 630 L0 630 Z" fill="url(#near)"/>
-
-  <g stroke="#ffb45a" stroke-width="9" stroke-linecap="round" fill="none" opacity="0.95">
-    <path d="M516 168 L406 96"/>
-    <path d="M556 146 L470 62"/>
-    <path d="M684 168 L794 96"/>
-    <path d="M644 146 L730 62"/>
-  </g>
-
-  <g fill="#ffd9a0">
-    <circle cx="392" cy="318" r="3.5"/><circle cx="806" cy="330" r="3"/>
-    <circle cx="470" cy="286" r="2.5"/><circle cx="742" cy="296" r="2.5"/>
-    <circle cx="600" cy="336" r="3"/>
-  </g>
-
-  <rect x="286" y="474" width="628" height="112" rx="14" fill="#0b0418" opacity="0.55"/>
-  <text x="600" y="524" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="58" font-weight="bold" letter-spacing="5" fill="#fff4d0">AI BEAST</text>
-  <text x="600" y="570" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="44" font-weight="bold" letter-spacing="16" fill="#ff9a3a">WORLD</text>
-
-  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#b07cff" stroke-opacity="0.5" stroke-width="3"/>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="1171" y="246" width="180.5028823018074" height="3.892124228179455" rx="3" fill="hsla(217, 82%, 69%, 1)" opacity="0.1263338037021458" transform="rotate(307 600 210)"/><rect x="822" y="88" width="85.05692694336176" height="6.072251076810062" rx="3" fill="hsla(171, 89%, 64%, 1)" opacity="0.1747159180045128" transform="rotate(14 600 210)"/><rect x="254" y="150" width="174.62873347103596" height="4.099613492842764" rx="3" fill="hsla(217, 82%, 69%, 1)" opacity="0.0888350654579699" transform="rotate(352 600 210)"/><rect x="117" y="164" width="157.82490819692612" height="2.8447530763223767" rx="3" fill="hsla(171, 89%, 64%, 1)" opacity="0.08033877023495734" transform="rotate(149 600 210)"/><rect x="329" y="15" width="122.09143750369549" height="5.905324676074088" rx="3" fill="hsla(217, 82%, 69%, 1)" opacity="0.1196414737496525" transform="rotate(356 600 210)"/>
+  <circle cx="600" cy="280" r="101.6301832953468" fill="none" stroke="hsla(171, 89%, 64%, 1)" stroke-opacity="0.18" stroke-width="2"/><circle cx="600" cy="280" r="161.3766194973141" fill="none" stroke="hsla(171, 89%, 64%, 1)" stroke-opacity="0.3" stroke-width="3"/><circle cx="600" cy="280" r="209.6450913650915" fill="none" stroke="hsla(171, 89%, 64%, 1)" stroke-opacity="0.42" stroke-width="4"/><circle cx="600" cy="280" r="255.21215036977082" fill="none" stroke="hsla(171, 89%, 64%, 1)" stroke-opacity="0.54" stroke-width="5"/><g transform="translate(460,300)"><circle cx="0" cy="-110" r="32" fill="#fde68a"/><rect x="-26" y="-78" width="52" height="100" rx="18" fill="hsla(35, 59%, 21%, 1)"/><rect x="-80" y="-60" width="60" height="16" rx="8" fill="hsla(35, 59%, 21%, 1)" transform="rotate(-25)"/><rect x="20" y="-70" width="70" height="16" rx="8" fill="hsla(35, 59%, 21%, 1)" transform="rotate(35)"/><rect x="-22" y="20" width="18" height="80" rx="9" fill="#1e293b"/><rect x="4" y="20" width="18" height="80" rx="9" fill="#1e293b"/></g>
+    <g transform="translate(740,300) scale(-1,1)"><circle cx="0" cy="-110" r="32" fill="#fca5a5"/><rect x="-26" y="-78" width="52" height="100" rx="18" fill="hsla(217, 82%, 69%, 1)"/><rect x="-80" y="-60" width="60" height="16" rx="8" fill="hsla(217, 82%, 69%, 1)" transform="rotate(-25)"/><rect x="20" y="-70" width="70" height="16" rx="8" fill="hsla(217, 82%, 69%, 1)" transform="rotate(35)"/><rect x="-22" y="20" width="18" height="80" rx="9" fill="#1e293b"/><rect x="4" y="20" width="18" height="80" rx="9" fill="#1e293b"/></g>
+    <g fill="hsla(171, 89%, 64%, 1)" opacity="0.8"><path d="M600 240 l26 18 -26 18 -10-18z"/><path d="M600 240 l-26 18 26 18 10-18z"/></g>
+  <rect x="18" y="18" width="1164" height="384" rx="18" fill="none" stroke="hsla(171, 89%, 64%, 1)" stroke-opacity="0.18" stroke-width="2"/>
+  <rect x="0" y="430" width="1200" height="200" fill="#020617" opacity="0.35"/>
+  <rect x="120" y="455" width="960" height="3" rx="2" fill="url(#bar)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="62" font-weight="800" letter-spacing="4" fill="#f8fafc">AI Beast World</text>
+  <text x="600" y="582" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="700" letter-spacing="8" fill="hsla(171, 89%, 64%, 1)">RPG • 3D</text>
+  <rect x="1.5" y="1.5" width="1197" height="627" fill="none" stroke="hsla(171, 89%, 64%, 1)" stroke-opacity="0.45" stroke-width="3"/>
 </svg>

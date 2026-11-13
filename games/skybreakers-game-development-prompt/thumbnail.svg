@@ -1,44 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Skybreakers: Lost Kingdoms">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0a1a2e"/>
-      <stop offset="100%" stop-color="#123a4d"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.38" r="0.72">
-      <stop offset="0%" stop-color="#5ad8ff" stop-opacity="0.5"/>
-      <stop offset="55%" stop-color="#ffd76b" stop-opacity="0.14"/>
-      <stop offset="100%" stop-color="#123a4d" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#5ad8ff"/>
-      <stop offset="100%" stop-color="#ffd76b"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.33" y2="1"><stop offset="0%" stop-color="hsla(169, 73%, 10%, 1)"/><stop offset="100%" stop-color="hsla(286, 59%, 26%, 1)"/></linearGradient>
+    <radialGradient id="glow" cx="42%" cy="35%" r="65%"><stop offset="0%" stop-color="hsla(80, 84%, 66%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(286, 59%, 26%, 1)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="hsla(80, 84%, 66%, 1)" stop-opacity="0.0"/><stop offset="50%" stop-color="hsla(80, 84%, 66%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(182, 85%, 55%, 1)" stop-opacity="0.0"/></linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
   <rect width="1200" height="630" fill="url(#glow)"/>
-  <g fill="#ffffff">
-    <circle cx="140" cy="80" r="1.5" opacity="0.7"/>
-    <circle cx="380" cy="60" r="1.3" opacity="0.6"/>
-    <circle cx="700" cy="90" r="1.6" opacity="0.8"/>
-    <circle cx="1040" cy="70" r="1.4" opacity="0.7"/>
-    <circle cx="1150" cy="140" r="1.2" opacity="0.5"/>
-    <circle cx="90" cy="180" r="1.2" opacity="0.5"/>
-    <circle cx="260" cy="150" r="1.3" opacity="0.55"/>
-    <circle cx="860" cy="170" r="1.4" opacity="0.6"/>
-    <circle cx="520" cy="55" r="1.2" opacity="0.5"/>
-    <circle cx="980" cy="300" r="1.3" opacity="0.45"/>
-    <circle cx="160" cy="340" r="1.2" opacity="0.4"/>
-    <circle cx="1080" cy="420" r="1.3" opacity="0.45"/>
-  </g>
-  <circle cx="600" cy="252" r="158" fill="none" stroke="url(#accent)" stroke-opacity="0.55" stroke-width="4"/>
-  <circle cx="600" cy="252" r="118" fill="none" stroke="#5ad8ff" stroke-opacity="0.35" stroke-width="2.5"/>
-  <circle cx="600" cy="252" r="74" fill="#5ad8ff" opacity="0.16"/>
-  <circle cx="600" cy="252" r="40" fill="url(#accent)"/>
-  <path d="M600 62 L612 96 L600 88 L588 96 Z" fill="#ffd76b" opacity="0.9"/>
-  <path d="M420 252 a180 180 0 0 1 60 -130" stroke="#ffd76b" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
-  <path d="M780 252 a180 180 0 0 0 -60 -130" stroke="#5ad8ff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
-  <ellipse cx="600" cy="430" rx="380" ry="34" fill="#5ad8ff" opacity="0.08"/>
-  <text x="600" y="522" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="68" font-weight="bold" letter-spacing="8" fill="#f8fafc">SKYBREAKERS: LOST KINGDOMS</text>
-  <text x="600" y="572" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="bold" letter-spacing="10" fill="#ffd76b">FLY · EXPLORE · CONQUER</text>
-  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="url(#accent)" stroke-opacity="0.55" stroke-width="3"/>
+  <rect x="704" y="55" width="127.10346072912216" height="5.7406074670143425" rx="3" fill="hsla(182, 85%, 55%, 1)" opacity="0.11014613484963776" transform="rotate(58 600 210)"/><rect x="556" y="349" width="130.72491686791182" height="2.2750128023326397" rx="3" fill="hsla(80, 84%, 66%, 1)" opacity="0.08008238516747952" transform="rotate(128 600 210)"/><rect x="447" y="305" width="102.43056170642376" height="7.31348806200549" rx="3" fill="hsla(182, 85%, 55%, 1)" opacity="0.12100602009333669" transform="rotate(295 600 210)"/><rect x="512" y="324" width="81.96100205183029" height="6.305762416683137" rx="3" fill="hsla(80, 84%, 66%, 1)" opacity="0.12939224508590996" transform="rotate(311 600 210)"/><rect x="550" y="20" width="84.63704906404018" height="6.920523388776928" rx="3" fill="hsla(182, 85%, 55%, 1)" opacity="0.08962268269620836" transform="rotate(116 600 210)"/>
+  <ellipse cx="1168.9766731113195" cy="114.86542947590351" rx="123.27010844834149" ry="32.44776467978954" fill="#fff" opacity="0.23126413259189577"/><ellipse cx="665.9967673011124" cy="257.92770779691637" rx="109.14873760659248" ry="33.538893272168934" fill="#fff" opacity="0.16909196550026534"/><ellipse cx="254.20589530840516" cy="141.5721858944744" rx="115.16556693706661" ry="36.82063765078783" fill="#fff" opacity="0.2558191316295415"/><ellipse cx="1108.6256640963256" cy="240.91260307002813" rx="89.30522000417113" ry="37.54347657505423" fill="#fff" opacity="0.1831871203472838"/><ellipse cx="1009.7637089900672" cy="117.8697620285675" rx="143.27664021635428" ry="37.99888244085014" fill="#fff" opacity="0.2713150419713929"/><ellipse cx="352.53480803221464" cy="143.1966304546222" rx="147.80424662632868" ry="24.06506350915879" fill="#fff" opacity="0.2601213832804933"/>
+    <g transform="translate(600,280) rotate(-7.949594233650714)"><ellipse cx="0" cy="0" rx="230" ry="34" fill="#e2e8f0"/><path d="M-40 -8 L-230 -110 L-150 -110 L30 -8 Z" fill="#cbd5e1"/><path d="M-40 8 L-230 110 L-150 110 L30 8 Z" fill="#cbd5e1"/><path d="M150 0 L250 -45 L230 0 L250 45 Z" fill="#94a3b8"/><rect x="-80" y="-16" width="60" height="10" rx="5" fill="hsla(80, 84%, 66%, 1)"/><rect x="0" y="-16" width="60" height="10" rx="5" fill="hsla(80, 84%, 66%, 1)"/></g>
+    <path d="M80 380 Q 350 296.9940508622676 560 335.5152698419988 T 1100 292.30072458740324" stroke="hsla(80, 84%, 66%, 1)" stroke-width="5" fill="none" stroke-dasharray="16 14" opacity="0.6"/>
+  <rect x="18" y="18" width="1164" height="384" rx="18" fill="none" stroke="hsla(80, 84%, 66%, 1)" stroke-opacity="0.18" stroke-width="2"/>
+  <rect x="0" y="430" width="1200" height="200" fill="#020617" opacity="0.35"/>
+  <rect x="120" y="455" width="960" height="3" rx="2" fill="url(#bar)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="52" font-weight="800" letter-spacing="2" fill="#f8fafc">Skybreakers: Lost Kingdoms</text>
+  <text x="600" y="582" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="700" letter-spacing="8" fill="hsla(80, 84%, 66%, 1)">ADVENTURE • 3D</text>
+  <rect x="1.5" y="1.5" width="1197" height="627" fill="none" stroke="hsla(80, 84%, 66%, 1)" stroke-opacity="0.45" stroke-width="3"/>
 </svg>

@@ -1,64 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Starfall">
   <defs>
-    <linearGradient id="space" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#020617"/>
-      <stop offset="55%" stop-color="#0b1030"/>
-      <stop offset="100%" stop-color="#050716"/>
-    </linearGradient>
-    <radialGradient id="planet" cx="0.35" cy="0.3" r="0.9">
-      <stop offset="0%" stop-color="#38bdf8"/>
-      <stop offset="45%" stop-color="#1d4ed8"/>
-      <stop offset="100%" stop-color="#0b1030"/>
-    </radialGradient>
-    <linearGradient id="engine" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#e0f2fe"/>
-      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
-    </linearGradient>
-    <linearGradient id="laser" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#f43f5e" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#fb7185"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.59" y2="1"><stop offset="0%" stop-color="hsla(78, 69%, 16%, 1)"/><stop offset="100%" stop-color="hsla(165, 60%, 27%, 1)"/></linearGradient>
+    <radialGradient id="glow" cx="45%" cy="30%" r="65%"><stop offset="0%" stop-color="hsla(266, 81%, 63%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(165, 60%, 27%, 1)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="hsla(266, 81%, 63%, 1)" stop-opacity="0.0"/><stop offset="50%" stop-color="hsla(266, 81%, 63%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(307, 93%, 67%, 1)" stop-opacity="0.0"/></linearGradient>
   </defs>
-
-  <rect width="1200" height="630" fill="url(#space)"/>
-  <g fill="#ffffff">
-    <circle cx="90" cy="80" r="1.6" opacity="0.8"/><circle cx="240" cy="140" r="1.2" opacity="0.6"/>
-    <circle cx="420" cy="60" r="1.8" opacity="0.9"/><circle cx="610" cy="110" r="1.2" opacity="0.5"/>
-    <circle cx="820" cy="70" r="1.6" opacity="0.8"/><circle cx="990" cy="130" r="1.4" opacity="0.7"/>
-    <circle cx="1120" cy="60" r="1.8" opacity="0.9"/><circle cx="150" cy="260" r="1.2" opacity="0.5"/>
-    <circle cx="1080" cy="280" r="1.4" opacity="0.6"/><circle cx="520" cy="200" r="1.2" opacity="0.5"/>
-    <circle cx="330" cy="320" r="1.4" opacity="0.6"/><circle cx="900" cy="230" r="1.2" opacity="0.5"/>
-  </g>
-
-  <circle cx="980" cy="560" r="260" fill="url(#planet)" opacity="0.9"/>
-  <path d="M760 430 A260 260 0 0 0 1200 420" stroke="#7dd3fc" stroke-width="3" fill="none" opacity="0.5"/>
-
-  <!-- enemy drones -->
-  <g fill="#f43f5e">
-    <polygon points="300,210 322,222 300,234 278,222"/>
-    <polygon points="880,180 900,191 880,202 860,191" opacity="0.85"/>
-  </g>
-  <g stroke="url(#laser)" stroke-width="4" stroke-linecap="round">
-    <line x1="560" y1="260" x2="330" y2="222"/>
-    <line x1="620" y1="240" x2="870" y2="192"/>
-  </g>
-
-  <!-- player ship (sleek arrow) -->
-  <g transform="translate(600 330) rotate(-18)">
-    <polygon points="0,-64 26,26 0,10 -26,26" fill="#e2e8f0"/>
-    <polygon points="0,-52 12,12 0,2 -12,12" fill="#38bdf8"/>
-    <polygon points="-26,26 -8,10 -14,34" fill="#94a3b8"/>
-    <polygon points="26,26 8,10 14,34" fill="#94a3b8"/>
-    <rect x="-7" y="30" width="14" height="46" rx="7" fill="url(#engine)"/>
-  </g>
-
-  <g stroke="#38bdf8" stroke-width="3" opacity="0.55" stroke-linecap="round">
-    <line x1="120" y1="420" x2="300" y2="420"/>
-    <line x1="80" y1="470" x2="230" y2="470"/>
-  </g>
-
-  <text x="600" y="560" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="82" font-weight="bold" letter-spacing="14" fill="#f8fafc">STARFALL</text>
-  <text x="600" y="600" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="22" font-weight="bold" letter-spacing="10" fill="#7dd3fc">SPACE COMBAT</text>
-
-  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="3"/>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="95" y="213" width="192.50399067997932" height="5.566303878091276" rx="3" fill="hsla(307, 93%, 67%, 1)" opacity="0.17632737808860838" transform="rotate(350 600 210)"/><rect x="312" y="64" width="89.42421577870846" height="2.0934113222174346" rx="3" fill="hsla(266, 81%, 63%, 1)" opacity="0.11603706503286958" transform="rotate(138 600 210)"/><rect x="1001" y="150" width="69.30601757019758" height="6.216747529804707" rx="3" fill="hsla(307, 93%, 67%, 1)" opacity="0.11073683531023562" transform="rotate(252 600 210)"/>
+  <circle cx="909.7" cy="188.2" r="1.42" fill="#fff" opacity="0.64"/><circle cx="314.3" cy="373.4" r="1.62" fill="#fff" opacity="0.48"/><circle cx="552.0" cy="20.1" r="2.95" fill="#fff" opacity="0.34"/><circle cx="803.6" cy="116.3" r="2.10" fill="#fff" opacity="0.37"/><circle cx="1055.3" cy="215.5" r="2.13" fill="#fff" opacity="0.58"/><circle cx="686.4" cy="303.1" r="0.90" fill="#fff" opacity="0.40"/><circle cx="654.1" cy="183.2" r="2.63" fill="#fff" opacity="0.80"/><circle cx="1019.1" cy="46.7" r="2.74" fill="#fff" opacity="0.30"/><circle cx="31.1" cy="318.5" r="2.94" fill="#fff" opacity="0.25"/><circle cx="285.9" cy="64.1" r="2.62" fill="#fff" opacity="0.33"/><circle cx="672.0" cy="267.2" r="0.81" fill="#fff" opacity="0.84"/><circle cx="569.9" cy="122.2" r="1.73" fill="#fff" opacity="0.84"/><g opacity="0.25"><path d="M0 320 L200 260 L400 360 L1200 300" fill="none" stroke="hsla(307, 93%, 67%, 1)" stroke-width="40"/><path d="M0 355 L320 280 L500 370 L1200 325" fill="none" stroke="hsla(307, 93%, 67%, 1)" stroke-width="40"/><path d="M0 390 L440 300 L600 380 L1200 350" fill="none" stroke="hsla(307, 93%, 67%, 1)" stroke-width="40"/><path d="M0 425 L560 320 L700 390 L1200 375" fill="none" stroke="hsla(307, 93%, 67%, 1)" stroke-width="40"/><path d="M0 460 L680 340 L800 400 L1200 400" fill="none" stroke="hsla(307, 93%, 67%, 1)" stroke-width="40"/><path d="M0 495 L800 360 L900 410 L1200 425" fill="none" stroke="hsla(307, 93%, 67%, 1)" stroke-width="40"/></g>
+    <g transform="translate(600,280)">
+      <circle r="185" fill="none" stroke="hsla(266, 81%, 63%, 1)" stroke-opacity="0.8" stroke-width="5"/><circle r="120" fill="none" stroke="hsla(266, 81%, 63%, 1)" stroke-opacity="0.5" stroke-width="3"/><circle r="55" fill="none" stroke="hsla(266, 81%, 63%, 1)" stroke-opacity="0.35" stroke-width="2"/>
+      <line x1="-210" y1="0" x2="-30" y2="0" stroke="#e2e8f0" stroke-width="3"/><line x1="30" y1="0" x2="210" y2="0" stroke="#e2e8f0" stroke-width="3"/>
+      <line x1="0" y1="-210" x2="0" y2="-30" stroke="#e2e8f0" stroke-width="3"/><line x1="0" y1="30" x2="0" y2="210" stroke="#e2e8f0" stroke-width="3"/>
+      <circle r="10" fill="none" stroke="#ef4444" stroke-width="4"/><circle r="3" fill="#ef4444"/>
+      <g transform="translate(170,95) rotate(12)"><rect x="-210" y="-14" width="300" height="22" rx="6" fill="#334155"/><rect x="80" y="-8" width="70" height="10" rx="3" fill="#0f172a"/><rect x="-230" y="-8" width="30" height="24" rx="4" fill="#1f2937"/></g>
+    </g>
+  <rect x="18" y="18" width="1164" height="384" rx="18" fill="none" stroke="hsla(266, 81%, 63%, 1)" stroke-opacity="0.18" stroke-width="2"/>
+  <rect x="0" y="430" width="1200" height="200" fill="#020617" opacity="0.35"/>
+  <rect x="120" y="455" width="960" height="3" rx="2" fill="url(#bar)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="62" font-weight="800" letter-spacing="4" fill="#f8fafc">Starfall</text>
+  <text x="600" y="582" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="700" letter-spacing="8" fill="hsla(266, 81%, 63%, 1)">SHOOTER • 3D</text>
+  <rect x="1.5" y="1.5" width="1197" height="627" fill="none" stroke="hsla(266, 81%, 63%, 1)" stroke-opacity="0.45" stroke-width="3"/>
 </svg>

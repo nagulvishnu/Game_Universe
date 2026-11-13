@@ -1,39 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Dropzone 50">
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0d2a52"/>
-      <stop offset="55%" stop-color="#2f6fb5"/>
-      <stop offset="100%" stop-color="#8fc4ea"/>
-    </linearGradient>
-    <linearGradient id="chute" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#bcd9f2"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.31" y2="1"><stop offset="0%" stop-color="hsla(130, 74%, 15%, 1)"/><stop offset="100%" stop-color="hsla(167, 54%, 23%, 1)"/></linearGradient>
+    <radialGradient id="glow" cx="45%" cy="32%" r="65%"><stop offset="0%" stop-color="hsla(216, 81%, 61%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(167, 54%, 23%, 1)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="hsla(216, 81%, 61%, 1)" stop-opacity="0.0"/><stop offset="50%" stop-color="hsla(216, 81%, 61%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(291, 84%, 62%, 1)" stop-opacity="0.0"/></linearGradient>
   </defs>
-  <rect width="1200" height="630" fill="url(#sky)"/>
-  <circle cx="948" cy="132" r="58" fill="#eaf6ff" opacity="0.9"/>
-  <g fill="#ffffff" opacity="0.75">
-    <ellipse cx="250" cy="140" rx="96" ry="34"/>
-    <ellipse cx="322" cy="126" rx="64" ry="26"/>
-    <ellipse cx="820" cy="228" rx="78" ry="26" opacity="0.6"/>
-    <ellipse cx="452" cy="252" rx="58" ry="20" opacity="0.5"/>
-  </g>
-  <g stroke="#6fb7ff" stroke-width="3" stroke-dasharray="10 12" opacity="0.55" fill="none">
-    <path d="M600 236 L560 356"/>
-    <path d="M600 236 L640 356"/>
-  </g>
-  <path d="M600 236 C520 236 452 292 452 292 C452 292 520 336 600 336 C680 336 748 292 748 292 C748 292 680 236 600 236 Z" fill="url(#chute)"/>
-  <path d="M600 236 L600 336" stroke="#8fb4d6" stroke-width="3"/>
-  <path d="M530 262 L600 336 L670 262" fill="none" stroke="#8fb4d6" stroke-width="3"/>
-  <circle cx="600" cy="382" r="20" fill="#12314f"/>
-  <rect x="586" y="400" width="28" height="52" rx="12" fill="#12314f"/>
-  <rect x="566" y="412" width="20" height="46" rx="10" fill="#12314f"/>
-  <rect x="614" y="412" width="20" height="46" rx="10" fill="#12314f"/>
-  <g fill="#2f6fb5" opacity="0.85">
-    <path d="M0 520 L150 470 L300 516 L470 462 L640 514 L820 466 L990 520 L1200 470 L1200 630 L0 630 Z"/>
-    <path d="M0 578 L180 540 L360 584 L560 542 L760 588 L960 546 L1200 590 L1200 630 L0 630 Z" fill="#1c4a7d"/>
-  </g>
-  <text x="600" y="140" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="66" font-weight="bold" letter-spacing="8" fill="#ffffff">DROPZONE 50</text>
-  <text x="600" y="180" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="26" font-weight="bold" letter-spacing="10" fill="#cfe6ff">BATTLE ROYALE</text>
-  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#6fb7ff" stroke-opacity="0.55" stroke-width="3"/>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="1094" y="206" width="80.89306209236383" height="4.985295449849218" rx="3" fill="hsla(291, 84%, 62%, 1)" opacity="0.16625763493590057" transform="rotate(284 600 210)"/><rect x="418" y="378" width="169.70780529081821" height="7.328449844382703" rx="3" fill="hsla(216, 81%, 61%, 1)" opacity="0.13406418399885298" transform="rotate(345 600 210)"/><rect x="153" y="122" width="99.17999438941479" height="3.775818976573646" rx="3" fill="hsla(291, 84%, 62%, 1)" opacity="0.1564114085584879" transform="rotate(131 600 210)"/><rect x="64" y="271" width="176.50680717080832" height="5.247601106762886" rx="3" fill="hsla(216, 81%, 61%, 1)" opacity="0.11984076841734351" transform="rotate(301 600 210)"/><rect x="617" y="385" width="58.43880519270897" height="2.204707735683769" rx="3" fill="hsla(291, 84%, 62%, 1)" opacity="0.14176763329654932" transform="rotate(284 600 210)"/><rect x="806" y="99" width="52.22786318510771" height="4.4082268555648625" rx="3" fill="hsla(216, 81%, 61%, 1)" opacity="0.17696135087870063" transform="rotate(68 600 210)"/>
+  <circle cx="796.8" cy="219.8" r="1.82" fill="#fff" opacity="0.42"/><circle cx="691.2" cy="58.6" r="2.14" fill="#fff" opacity="0.39"/><circle cx="323.0" cy="284.8" r="0.89" fill="#fff" opacity="0.61"/><circle cx="234.1" cy="311.5" r="1.22" fill="#fff" opacity="0.60"/><circle cx="46.8" cy="382.3" r="1.53" fill="#fff" opacity="0.69"/><circle cx="549.0" cy="310.9" r="1.11" fill="#fff" opacity="0.28"/><circle cx="633.7" cy="166.1" r="2.86" fill="#fff" opacity="0.83"/><circle cx="328.3" cy="148.2" r="2.72" fill="#fff" opacity="0.84"/><circle cx="0.7" cy="379.5" r="2.51" fill="#fff" opacity="0.27"/><circle cx="847.6" cy="49.1" r="2.81" fill="#fff" opacity="0.42"/><circle cx="396.8" cy="364.5" r="1.91" fill="#fff" opacity="0.35"/><circle cx="459.4" cy="289.5" r="2.53" fill="#fff" opacity="0.47"/><g opacity="0.25"><path d="M0 320 L200 260 L400 360 L1200 300" fill="none" stroke="hsla(291, 84%, 62%, 1)" stroke-width="40"/><path d="M0 355 L320 280 L500 370 L1200 325" fill="none" stroke="hsla(291, 84%, 62%, 1)" stroke-width="40"/><path d="M0 390 L440 300 L600 380 L1200 350" fill="none" stroke="hsla(291, 84%, 62%, 1)" stroke-width="40"/><path d="M0 425 L560 320 L700 390 L1200 375" fill="none" stroke="hsla(291, 84%, 62%, 1)" stroke-width="40"/><path d="M0 460 L680 340 L800 400 L1200 400" fill="none" stroke="hsla(291, 84%, 62%, 1)" stroke-width="40"/><path d="M0 495 L800 360 L900 410 L1200 425" fill="none" stroke="hsla(291, 84%, 62%, 1)" stroke-width="40"/></g>
+    <g transform="translate(600,280)">
+      <circle r="185" fill="none" stroke="hsla(216, 81%, 61%, 1)" stroke-opacity="0.8" stroke-width="5"/><circle r="120" fill="none" stroke="hsla(216, 81%, 61%, 1)" stroke-opacity="0.5" stroke-width="3"/><circle r="55" fill="none" stroke="hsla(216, 81%, 61%, 1)" stroke-opacity="0.35" stroke-width="2"/>
+      <line x1="-210" y1="0" x2="-30" y2="0" stroke="#e2e8f0" stroke-width="3"/><line x1="30" y1="0" x2="210" y2="0" stroke="#e2e8f0" stroke-width="3"/>
+      <line x1="0" y1="-210" x2="0" y2="-30" stroke="#e2e8f0" stroke-width="3"/><line x1="0" y1="30" x2="0" y2="210" stroke="#e2e8f0" stroke-width="3"/>
+      <circle r="10" fill="none" stroke="#ef4444" stroke-width="4"/><circle r="3" fill="#ef4444"/>
+      <g transform="translate(170,95) rotate(12)"><rect x="-210" y="-14" width="300" height="22" rx="6" fill="#334155"/><rect x="80" y="-8" width="70" height="10" rx="3" fill="#0f172a"/><rect x="-230" y="-8" width="30" height="24" rx="4" fill="#1f2937"/></g>
+    </g>
+  <rect x="18" y="18" width="1164" height="384" rx="18" fill="none" stroke="hsla(216, 81%, 61%, 1)" stroke-opacity="0.18" stroke-width="2"/>
+  <rect x="0" y="430" width="1200" height="200" fill="#020617" opacity="0.35"/>
+  <rect x="120" y="455" width="960" height="3" rx="2" fill="url(#bar)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="62" font-weight="800" letter-spacing="4" fill="#f8fafc">Dropzone 50</text>
+  <text x="600" y="582" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="700" letter-spacing="8" fill="hsla(216, 81%, 61%, 1)">BATTLE ROYALE • 3D</text>
+  <rect x="1.5" y="1.5" width="1197" height="627" fill="none" stroke="hsla(216, 81%, 61%, 1)" stroke-opacity="0.45" stroke-width="3"/>
 </svg>

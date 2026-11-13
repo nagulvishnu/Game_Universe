@@ -1,90 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="LAST DROP">
   <defs>
-    <linearGradient id="dusk" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#1e1b4b"/>
-      <stop offset="45%" stop-color="#7c2d12"/>
-      <stop offset="75%" stop-color="#ea580c"/>
-      <stop offset="100%" stop-color="#fef3c7"/>
-    </linearGradient>
-    <linearGradient id="isle" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#166534"/>
-      <stop offset="100%" stop-color="#052e16"/>
-    </linearGradient>
-    <linearGradient id="shoot" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#fef9c3"/>
-      <stop offset="100%" stop-color="#f97316"/>
-    </linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.25" y2="1"><stop offset="0%" stop-color="hsla(177, 63%, 12%, 1)"/><stop offset="100%" stop-color="hsla(240, 47%, 24%, 1)"/></linearGradient>
+    <radialGradient id="glow" cx="39%" cy="43%" r="65%"><stop offset="0%" stop-color="hsla(285, 93%, 67%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(240, 47%, 24%, 1)" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="hsla(285, 93%, 67%, 1)" stop-opacity="0.0"/><stop offset="50%" stop-color="hsla(285, 93%, 67%, 1)" stop-opacity="0.5"/><stop offset="100%" stop-color="hsla(347, 85%, 58%, 1)" stop-opacity="0.0"/></linearGradient>
   </defs>
-
-  <rect width="1200" height="630" fill="url(#dusk)"/>
-
-  <circle cx="600" cy="430" r="120" fill="#fde68a" opacity="0.9"/>
-  <circle cx="600" cy="430" r="120" fill="none" stroke="#fef3c7" stroke-width="6" opacity="0.6"/>
-
-  <!-- clouds -->
-  <g fill="#fef3c7" opacity="0.35">
-    <ellipse cx="200" cy="170" rx="110" ry="34"/>
-    <ellipse cx="290" cy="155" rx="80" ry="28"/>
-    <ellipse cx="960" cy="140" rx="120" ry="32"/>
-    <ellipse cx="870" cy="160" rx="70" ry="24"/>
-    <ellipse cx="560" cy="120" rx="90" ry="24" opacity="0.7"/>
-  </g>
-
-  <!-- island below -->
-  <ellipse cx="600" cy="640" rx="520" ry="150" fill="url(#isle)"/>
-  <ellipse cx="600" cy="640" rx="520" ry="150" fill="none" stroke="#4ade80" stroke-opacity="0.5" stroke-width="4"/>
-  <g fill="#0a1f10" opacity="0.85">
-    <polygon points="380,570 430,520 480,570"/>
-    <polygon points="700,560 760,505 820,560"/>
-    <polygon points="540,585 590,540 640,585"/>
-  </g>
-  <g fill="#14532d">
-    <rect x="660" y="540" width="40" height="40"/><rect x="710" y="525" width="34" height="55"/>
-    <rect x="450" y="548" width="36" height="40"/>
-  </g>
-
-  <!-- supply crates on island -->
-  <g transform="translate(880 560)">
-    <rect x="-22" y="-22" width="44" height="44" rx="4" fill="#b45309" stroke="#fbbf24" stroke-width="3"/>
-    <line x1="-22" y1="0" x2="22" y2="0" stroke="#fbbf24" stroke-width="3"/>
-  </g>
-
-  <!-- parachute drop (player) -->
-  <g transform="translate(450 240)">
-    <path d="M-110 0 A110 90 0 0 1 110 0 Z" fill="#e11d48"/>
-    <path d="M-110 0 A110 90 0 0 1 110 0 Z" fill="none" stroke="#fecdd3" stroke-width="4"/>
-    <path d="M-55 -78 A110 90 0 0 1 55 -78" fill="none" stroke="#fecdd3" stroke-width="4" opacity="0.8"/>
-    <line x1="-110" y1="0" x2="-18" y2="96" stroke="#f8fafc" stroke-width="3"/>
-    <line x1="110" y1="0" x2="18" y2="96" stroke="#f8fafc" stroke-width="3"/>
-    <line x1="-58" y1="-74" x2="-10" y2="96" stroke="#f8fafc" stroke-width="2.5" opacity="0.8"/>
-    <line x1="58" y1="-74" x2="10" y2="96" stroke="#f8fafc" stroke-width="2.5" opacity="0.8"/>
-    <!-- diver -->
-    <circle cx="0" cy="112" r="14" fill="#0f172a"/>
-    <path d="M-16 126 L16 126 L22 170 L-22 170 Z" fill="#0f172a"/>
-    <rect x="-30" y="130" width="16" height="40" rx="7" fill="#0f172a" transform="rotate(14 -30 130)"/>
-    <rect x="14" y="130" width="16" height="40" rx="7" fill="#0f172a" transform="rotate(-14 14 130)"/>
-    <rect x="-6" y="122" width="12" height="34" rx="5" fill="#38bdf8"/>
-  </g>
-
-  <!-- second distant drop -->
-  <g transform="translate(830 210) scale(0.5)" opacity="0.75">
-    <path d="M-110 0 A110 90 0 0 1 110 0 Z" fill="#0ea5e9"/>
-    <line x1="-110" y1="0" x2="-14" y2="100" stroke="#f8fafc" stroke-width="4"/>
-    <line x1="110" y1="0" x2="14" y2="100" stroke="#f8fafc" stroke-width="4"/>
-    <circle cx="0" cy="118" r="16" fill="#0f172a"/>
-  </g>
-
-  <!-- drop plane -->
-  <g transform="translate(600 70)" fill="#e2e8f0">
-    <ellipse cx="0" cy="0" rx="90" ry="16"/>
-    <polygon points="-20,-4 -70,-34 -50,-34 -4,-6"/>
-    <polygon points="-20,4 -70,34 -50,34 -4,6"/>
-    <polygon points="84,0 110,-18 104,0 110,18"/>
-    <rect x="-8" y="-4" width="14" height="8" rx="3" fill="#38bdf8"/>
-  </g>
-
-  <text x="600" y="530" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="92" font-weight="bold" letter-spacing="16" fill="#ffffff">LAST DROP</text>
-  <text x="600" y="574" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="bold" letter-spacing="12" fill="#fef3c7">ANIME BATTLE ROYALE</text>
-
-  <rect x="0.5" y="0.5" width="1199" height="629" fill="none" stroke="#f97316" stroke-opacity="0.55" stroke-width="3"/>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect x="57" y="253" width="93.37671052664518" height="6.246316035743803" rx="3" fill="hsla(347, 85%, 58%, 1)" opacity="0.08163085608743131" transform="rotate(7 600 210)"/><rect x="843" y="316" width="48.65602560341358" height="5.869269112125039" rx="3" fill="hsla(285, 93%, 67%, 1)" opacity="0.19476137491874396" transform="rotate(7 600 210)"/><rect x="546" y="13" width="110.52658181637526" height="5.160471121314913" rx="3" fill="hsla(347, 85%, 58%, 1)" opacity="0.10594308289699256" transform="rotate(179 600 210)"/><rect x="597" y="397" width="62.662367299199104" height="6.842377434484661" rx="3" fill="hsla(285, 93%, 67%, 1)" opacity="0.09920049214735627" transform="rotate(181 600 210)"/><rect x="474" y="183" width="158.67364194244146" height="7.978892681654543" rx="3" fill="hsla(347, 85%, 58%, 1)" opacity="0.0869482168275863" transform="rotate(28 600 210)"/><rect x="911" y="387" width="47.390693835914135" height="5.090566701255739" rx="3" fill="hsla(285, 93%, 67%, 1)" opacity="0.10302960191853344" transform="rotate(234 600 210)"/>
+  <circle cx="967.5" cy="165.7" r="2.74" fill="#fff" opacity="0.65"/><circle cx="983.0" cy="83.4" r="1.33" fill="#fff" opacity="0.28"/><circle cx="136.4" cy="192.9" r="2.11" fill="#fff" opacity="0.49"/><circle cx="766.6" cy="17.9" r="1.95" fill="#fff" opacity="0.57"/><circle cx="741.0" cy="134.6" r="1.36" fill="#fff" opacity="0.28"/><circle cx="331.4" cy="256.0" r="1.54" fill="#fff" opacity="0.54"/><circle cx="1081.5" cy="372.3" r="1.34" fill="#fff" opacity="0.48"/><circle cx="1038.9" cy="100.6" r="2.15" fill="#fff" opacity="0.35"/><circle cx="384.3" cy="116.6" r="1.30" fill="#fff" opacity="0.82"/><circle cx="827.4" cy="269.8" r="1.73" fill="#fff" opacity="0.61"/><circle cx="1026.1" cy="291.3" r="2.86" fill="#fff" opacity="0.29"/><circle cx="458.4" cy="28.3" r="2.61" fill="#fff" opacity="0.40"/><g opacity="0.25"><path d="M0 320 L200 260 L400 360 L1200 300" fill="none" stroke="hsla(347, 85%, 58%, 1)" stroke-width="40"/><path d="M0 355 L320 280 L500 370 L1200 325" fill="none" stroke="hsla(347, 85%, 58%, 1)" stroke-width="40"/><path d="M0 390 L440 300 L600 380 L1200 350" fill="none" stroke="hsla(347, 85%, 58%, 1)" stroke-width="40"/><path d="M0 425 L560 320 L700 390 L1200 375" fill="none" stroke="hsla(347, 85%, 58%, 1)" stroke-width="40"/><path d="M0 460 L680 340 L800 400 L1200 400" fill="none" stroke="hsla(347, 85%, 58%, 1)" stroke-width="40"/><path d="M0 495 L800 360 L900 410 L1200 425" fill="none" stroke="hsla(347, 85%, 58%, 1)" stroke-width="40"/></g>
+    <g transform="translate(600,280)">
+      <circle r="185" fill="none" stroke="hsla(285, 93%, 67%, 1)" stroke-opacity="0.8" stroke-width="5"/><circle r="120" fill="none" stroke="hsla(285, 93%, 67%, 1)" stroke-opacity="0.5" stroke-width="3"/><circle r="55" fill="none" stroke="hsla(285, 93%, 67%, 1)" stroke-opacity="0.35" stroke-width="2"/>
+      <line x1="-210" y1="0" x2="-30" y2="0" stroke="#e2e8f0" stroke-width="3"/><line x1="30" y1="0" x2="210" y2="0" stroke="#e2e8f0" stroke-width="3"/>
+      <line x1="0" y1="-210" x2="0" y2="-30" stroke="#e2e8f0" stroke-width="3"/><line x1="0" y1="30" x2="0" y2="210" stroke="#e2e8f0" stroke-width="3"/>
+      <circle r="10" fill="none" stroke="#ef4444" stroke-width="4"/><circle r="3" fill="#ef4444"/>
+      <g transform="translate(170,95) rotate(12)"><rect x="-210" y="-14" width="300" height="22" rx="6" fill="#334155"/><rect x="80" y="-8" width="70" height="10" rx="3" fill="#0f172a"/><rect x="-230" y="-8" width="30" height="24" rx="4" fill="#1f2937"/></g>
+    </g>
+  <rect x="18" y="18" width="1164" height="384" rx="18" fill="none" stroke="hsla(285, 93%, 67%, 1)" stroke-opacity="0.18" stroke-width="2"/>
+  <rect x="0" y="430" width="1200" height="200" fill="#020617" opacity="0.35"/>
+  <rect x="120" y="455" width="960" height="3" rx="2" fill="url(#bar)"/>
+  <text x="600" y="535" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="62" font-weight="800" letter-spacing="4" fill="#f8fafc">LAST DROP</text>
+  <text x="600" y="582" text-anchor="middle" font-family="Verdana, Geneva, sans-serif" font-size="24" font-weight="700" letter-spacing="8" fill="hsla(285, 93%, 67%, 1)">BATTLE ROYALE • 3D</text>
+  <rect x="1.5" y="1.5" width="1197" height="627" fill="none" stroke="hsla(285, 93%, 67%, 1)" stroke-opacity="0.45" stroke-width="3"/>
 </svg>
