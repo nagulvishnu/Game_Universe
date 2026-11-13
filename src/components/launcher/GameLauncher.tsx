@@ -29,7 +29,7 @@ function LauncherInner({
   onRetry: () => void;
 }) {
   const router = useRouter();
-  const { cameFromHub } = useUI();
+  const { cameFromHub, launching } = useUI();
   const [phase, setPhase] = useState<Phase>("loading");
   const [progress, setProgress] = useState(4);
   const [src, setSrc] = useState<string | null>(null);
@@ -39,6 +39,7 @@ function LauncherInner({
   const wrapRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const startedAt = useRef(0);
+  const showLoadingOverlay = phase === "loading" && !(launching?.id === game.id);
 
   // 1) Preflight: verify the entry exists (real request), then mount the iframe.
   useEffect(() => {
@@ -192,14 +193,16 @@ function LauncherInner({
 
         {phase === "loading" && (
           <div
-            className="absolute inset-0 z-20 grid place-items-center bg-[#07080c] px-6"
+            className={`absolute inset-0 z-20 grid place-items-center px-6 ${showLoadingOverlay ? "bg-[#07080c]" : "pointer-events-none bg-transparent"}`}
             role="status"
             aria-live="polite"
             data-testid="game-loading"
           >
-            <div className="gu-fallback-orb left-[15%] top-[20%] h-72 w-72" style={{ background: "var(--c1)" }} aria-hidden />
-            <div className="relative w-full max-w-xl text-center">
-              <p className="gu-kicker">Entering</p>
+            {showLoadingOverlay && (
+              <div className="gu-fallback-orb left-[15%] top-[20%] h-72 w-72" style={{ background: "var(--c1)" }} aria-hidden />
+            )}
+            <div className={`relative w-full max-w-xl text-center ${showLoadingOverlay ? "" : "opacity-0"}`}>
+              <p className="gu-kicker">Loading</p>
               <h1 className="gu-title gu-glow-text mt-3 text-3xl sm:text-5xl">{game.title}</h1>
               <div
                 className="gu-bar mt-10"

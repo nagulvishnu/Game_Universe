@@ -239,18 +239,19 @@ export function HolographicUniverse() {
       timelineRef.current?.kill();
       timelineRef.current = null;
       const engine = engineRef.current;
+      const index = cards.findIndex((c) => c.id === id);
       if (engine) {
-        engine.autoOrbit = true;
+        engine.autoOrbit = false;
         engine.setBoost(0, 0.14);
+        if (index >= 0) engine.orbitAngle = engine.landingTargetFor(index, 0);
         engine.setSelected(id);
         engine.setSelectionProgress(1);
       }
       setSelectedId(id);
       setPhase("revealing");
       sfx("reveal");
-      launch(id);
     },
-    [getGame, openDetails, launch, phase, sfx],
+    [cards, getGame, openDetails, phase, sfx],
   );
 
   /* ---------------- orbit drag ---------------- */

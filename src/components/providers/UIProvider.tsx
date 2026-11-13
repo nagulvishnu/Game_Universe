@@ -95,11 +95,11 @@ if (lastPath !== pathname) {
     [getGame, reducedMotion, router, sfx],
   );
 
-  // Once the game route is mounted, fade the launch overlay out (launcher shows its own loader).
+  // Once the game route is mounted, hand off quickly to the in-game launcher loader.
   useEffect(() => {
     if (!launching) return;
     if (pathname.startsWith("/game/")) {
-      const t = setTimeout(() => setLaunching(null), 350);
+      const t = setTimeout(() => setLaunching(null), 120);
       return () => clearTimeout(t);
     }
   }, [pathname, launching]);
